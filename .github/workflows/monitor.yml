@@ -1,18 +1,31 @@
 name: Forest Guard Autonomous 21-Day Monitoring & Deploy
 
 on:
-  schedule:
-    # Evaluates daily at 06:00 UTC whether the 21-day cadence is due
-    - cron: '0 6 * * *'
+  # AUTOMATED SCHEDULE DISABLED: In accordance with Stage 2 safety protocol,
+  # automatic daily scheduling remains disabled until ingestion safeguards, MGRS mosaicing,
+  # and real hosted-runner telemetry have been empirically verified and approved.
+  # schedule:
+  #   - cron: '0 6 * * *'
+
   workflow_dispatch:
     inputs:
+      batch_day:
+        description: 'Scheduled batch day (1 to 21) from Maharashtra GIS catalogue'
+        required: false
+        type: number
+        default: 1
+      max_tiles:
+        description: 'Maximum tiles to evaluate in this test run (e.g. 5 for rapid verification, 71 for full batch)'
+        required: false
+        type: number
+        default: 5
       force_run:
         description: 'Force monitoring execution immediately (bypasses 21-day due-time check)'
         required: false
         type: boolean
         default: false
       allow_synthetic:
-        description: 'Allow offline test fixtures fallback (simulated evaluation mode)'
+        description: 'Allow offline test fixtures fallback (simulated evaluation mode only)'
         required: false
         type: boolean
         default: false
@@ -68,8 +81,18 @@ jobs:
           if [ "${{ inputs.allow_synthetic }}" = "true" ]; then
             SYNTHETIC_FLAG="--allow-synthetic"
           fi
+
+          BATCH_FLAG=""
+          if [ -n "${{ inputs.batch_day }}" ]; then
+            BATCH_FLAG="--batch-day ${{ inputs.batch_day }}"
+          fi
+
+          MAX_TILES_FLAG=""
+          if [ -n "${{ inputs.max_tiles }}" ]; then
+            MAX_TILES_FLAG="--max-tiles ${{ inputs.max_tiles }}"
+          fi
           
-          python -m forestguard.workflow_runner $FORCE_FLAG $SYNTHETIC_FLAG
+          python -m forestguard.workflow_runner $FORCE_FLAG $SYNTHETIC_FLAG $BATCH_FLAG $MAX_TILES_FLAG
 
       - name: Commit & push updated monitoring data and reports
         run: |

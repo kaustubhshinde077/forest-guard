@@ -82,11 +82,51 @@ def get_default_sectors(repo_root: str) -> List[Dict[str, Any]]:
     return sectors
 
 
+def get_batch_sectors(
+    repo_root: str,
+    batch_day: Optional[int] = None,
+    max_tiles: Optional[int] = None
+) -> List[Dict[str, Any]]:
+    """
+    Return sectors scheduled for the specified batch day from the Maharashtra GIS catalogue.
+    If batch_day is None or catalogue is missing, returns the default operational sectors.
+    """
+    cat_path = os.path.join(repo_root, "data/catalogue/maharashtra_tiles.json")
+    if batch_day is not None and os.path.exists(cat_path):
+        with open(cat_path, "r", encoding="utf-8") as f:
+            cat_data = json.load(f)
+        tiles = cat_data.get("tiles", [])
+        batch_tiles = [t for t in tiles if t.get("scheduled_batch_day") == batch_day]
+        logger.info("Loaded %d tiles from catalogue for scheduled Batch Day %d", len(batch_tiles), batch_day)
+        if max_tiles:
+            batch_tiles = batch_tiles[:max_tiles]
+            logger.info("Constrained batch to %d tiles via max_tiles limit", len(batch_tiles))
+
+        sectors = []
+        for t in batch_tiles:
+            sectors.append({
+                "sector_id": t["tile_id"],
+                "name": f"{t['tile_id']} — {t['primary_district']} ({t['region']})",
+                "bbox": t["bbox_epsg4326"],
+                "bbox_epsg7755": t["bbox_epsg7755"],
+                "terrestrial_area_km2": t["terrestrial_area_km2"],
+                "terrestrial_area_ha": t["terrestrial_area_ha"],
+                "district": t["primary_district"],
+                "region": t["region"],
+                "is_forest_priority": t["is_forest_priority"]
+            })
+        return sectors
+
+    return get_default_sectors(repo_root)
+
+
 def run_pipeline(
     cadence_days: int = 21,
     force: bool = False,
     allow_synthetic: bool = False,
     check_only: bool = False,
+    batch_day: Optional[int] = None,
+    max_tiles: Optional[int] = None,
     data_dir: Optional[str] = None,
     web_dir: Optional[str] = None
 ) -> int:
@@ -102,6 +142,8 @@ def run_pipeline(
     logger.info(f"Target Data Directory: {target_data_dir}")
     logger.info(f"Target Web Public Dir: {target_web_dir}")
     logger.info(f"Monitoring Cadence:    {cadence_days} days")
+    logger.info(f"Batch Day Specified:   {batch_day}")
+    logger.info(f"Max Tiles Limit:       {max_tiles}")
     logger.info(f"Force Run Override:    {force}")
     logger.info(f"Allow Synthetic Mode:  {allow_synthetic}")
     logger.info("=" * 70)
@@ -120,8 +162,8 @@ def run_pipeline(
     state["cadence_days"] = cadence_days
     state["last_attempt_timestamp"] = now_iso
 
-    # Due-time guard check
-    if not is_due and not force:
+    # Due-time guard check (if not batch-day testing and not forced)
+    if batch_day is None and not is_due and not force:
         logger.info("Monitoring cycle is not due yet. Recording scheduled check and exiting cleanly.")
         history_entry = {
             "timestamp": now_iso,
@@ -134,8 +176,24 @@ def run_pipeline(
         store.save_monitoring_state(state)
         return 0
 
-    # Execute Monitoring Cycle
-    logger.info("Proceeding with full satellite monitoring and investigation cycle...")
+    # Retrieve Candidate Sectors
+    sectors = get_batch_sectors(repo_root, batch_day=batch_day, max_tiles=max_tiles)
+
+    # Duplicate Prevention & Resumability Guard
+    tile_states = state.setdefault("tiles", {})
+    pending_sectors = []
+    for sec in sectors:
+        sid = sec["sector_id"]
+        t_record = tile_states.get(sid, {})
+        status = t_record.get("status")
+        # If successfully monitored within cadence window, skip (duplicate prevention)
+        if status in ("monitored_no_change", "monitored_candidate_detected") and not force:
+            logger.info("Tile %s already successfully monitored (%s). Skipping for duplicate prevention.", sid, status)
+            continue
+        pending_sectors.append(sec)
+
+    logger.info("Evaluating %d pending sectors (out of %d total in batch)", len(pending_sectors), len(sectors))
+
     orchestrator = MonitoringOrchestrator(
         report_store=store,
         cadence_days=cadence_days,
@@ -143,16 +201,55 @@ def run_pipeline(
         allow_synthetic_fallback=allow_synthetic
     )
 
-    sectors = get_default_sectors(repo_root)
     summary = orchestrator.run_scheduled_monitoring_cycle(
-        sectors=sectors,
+        sectors=pending_sectors,
         force_offline_fixtures=allow_synthetic
     )
 
-    # Update state
+    # Update durable per-tile state
+    failed_sec_ids = {fs["sector_id"]: fs for fs in summary.get("failed_sectors", [])}
+    reported_ids = {rp.get("sector_id") for rp in summary.get("reports_published", [])}
+
+    for sec in pending_sectors:
+        sid = sec["sector_id"]
+        if sid in failed_sec_ids:
+            fail_info = failed_sec_ids[sid]
+            tile_states[sid] = {
+                "status": fail_info.get("status", "retrieval_failed"),
+                "reason": fail_info.get("reason"),
+                "last_attempt": now_iso,
+                "terrestrial_area_km2": sec.get("terrestrial_area_km2", 225.0)
+            }
+        elif sid in reported_ids or summary["changes_detected_count"] > 0:
+            tile_states[sid] = {
+                "status": "monitored_candidate_detected",
+                "last_monitored": now_iso,
+                "terrestrial_area_km2": sec.get("terrestrial_area_km2", 225.0)
+            }
+        else:
+            tile_states[sid] = {
+                "status": "monitored_no_change",
+                "last_monitored": now_iso,
+                "terrestrial_area_km2": sec.get("terrestrial_area_km2", 225.0)
+            }
+
+    # Strict Monitored Area Calculation: ONLY successful tiles count
+    monitored_km2 = sum(
+        t.get("terrestrial_area_km2", 0.0)
+        for t in tile_states.values()
+        if t.get("status") in ("monitored_no_change", "monitored_candidate_detected")
+    )
+    state["monitored_terrestrial_area_km2"] = round(monitored_km2, 2)
+    state["total_catalogue_tiles_monitored"] = len([
+        t for t in tile_states.values()
+        if t.get("status") in ("monitored_no_change", "monitored_candidate_detected")
+    ])
+
+    # Update overall state
     state["last_successful_run"] = now_iso
     state["total_runs_completed"] = state.get("total_runs_completed", 0) + 1
     state["last_run_summary"] = summary
+    state["current_batch_day"] = batch_day
 
     if summary["investigations_conducted_count"] > 0:
         state["last_run_status"] = "completed_changes_detected"
@@ -163,7 +260,8 @@ def run_pipeline(
 
     history_entry = {
         "timestamp": now_iso,
-        "action": "full_monitoring_cycle",
+        "action": "batch_monitoring_cycle" if batch_day is not None else "full_monitoring_cycle",
+        "batch_day": batch_day,
         "forced": force,
         "status": state["last_run_status"],
         "sectors_evaluated": summary["sectors_evaluated"],
@@ -178,10 +276,12 @@ def run_pipeline(
 
     logger.info("=" * 70)
     logger.info(f"CYCLE COMPLETE: Status={state['last_run_status']}")
-    logger.info(f"Changes Detected:        {summary['changes_detected_count']}")
-    logger.info(f"Investigations Conducted: {summary['investigations_conducted_count']}")
-    logger.info(f"Reports Published:       {len(summary['reports_published'])}")
-    logger.info(f"Failed / Cloud Sectors:  {len(summary['failed_sectors'])}")
+    logger.info(f"Monitored Terrestrial Area: {state['monitored_terrestrial_area_km2']} km²")
+    logger.info(f"Tiles Successfully Monitored: {state['total_catalogue_tiles_monitored']}")
+    logger.info(f"Changes Detected:            {summary['changes_detected_count']}")
+    logger.info(f"Investigations Conducted:    {summary['investigations_conducted_count']}")
+    logger.info(f"Reports Published:           {len(summary['reports_published'])}")
+    logger.info(f"Failed / Incomplete Sectors: {len(summary['failed_sectors'])}")
     logger.info("=" * 70)
 
     return 0
@@ -193,6 +293,8 @@ def main():
     parser.add_argument("--force", action="store_true", help="Force run immediately (bypass due-time guard)")
     parser.add_argument("--allow-synthetic", action="store_true", help="Allow synthetic fallback fixtures (for testing only)")
     parser.add_argument("--check-only", action="store_true", help="Check if monitoring is due without running")
+    parser.add_argument("--batch-day", type=int, default=None, help="Scheduled batch day (1 to 21) from Maharashtra catalogue")
+    parser.add_argument("--max-tiles", type=int, default=None, help="Maximum tiles to evaluate in this run")
     parser.add_argument("--data-dir", type=str, default=None, help="Path to persistent data directory")
     parser.add_argument("--web-dir", type=str, default=None, help="Path to web public data directory")
 
@@ -202,6 +304,8 @@ def main():
         force=args.force,
         allow_synthetic=args.allow_synthetic,
         check_only=args.check_only,
+        batch_day=args.batch_day,
+        max_tiles=args.max_tiles,
         data_dir=args.data_dir,
         web_dir=args.web_dir
     ))

@@ -1,3 +1,4 @@
+import math
 import logging
 from typing import Tuple, List, Optional, Dict, Any
 import cv2
@@ -64,6 +65,30 @@ class NonNDVIChangeDetector:
         """
         Execute substantive OpenCV 5 change detection without vegetation indices.
         """
+        # Safeguard: Reject same-date observation pairs (e.g. adjacent MGRS granules on same day)
+        if acquisition_dates and len(acquisition_dates) >= 2:
+            d_before = str(acquisition_dates[0])[:10]
+            d_after = str(acquisition_dates[1])[:10]
+            if d_before == d_after:
+                logger.warning(
+                    "Rejected same-date observation pair (%s == %s). Identical calendar dates cannot form a temporal change pair.",
+                    d_before, d_after
+                )
+                return DetectionResult(
+                    status="rejected_same_date_pair",
+                    alignment_method="none",
+                    alignment_metric_name="none",
+                    alignment_metric_value=0.0,
+                    alignment_metric_unit="none",
+                    alignment_error=0.0,
+                    quality_warnings=[f"Observations share identical acquisition date ({d_before}). Rejected from temporal analysis."],
+                    cloud_shadow_mask_coverage_pct=0.0,
+                    candidate_regions=[],
+                    total_candidate_loss_ha=0.0,
+                    total_candidate_recovery_ha=0.0,
+                    metadata_summary={"rejection_reason": "identical_acquisition_dates", "acquisition_dates": list(acquisition_dates)}
+                )
+
         quality_warnings = []
         quality_warnings.extend(QualityAndMaskEngine.assess_quality(img_before))
         quality_warnings.extend(QualityAndMaskEngine.assess_quality(img_after))
@@ -120,8 +145,8 @@ class NonNDVIChangeDetector:
         recovery_thresh = np.mean(recovery_signal) + 2.5 * np.std(recovery_signal)
 
         # Threshold to binary masks
-        loss_bin = (loss_signal > max(50.0, loss_thresh)).astype(np.uint8) * 255
-        recovery_bin = (recovery_signal > max(50.0, recovery_thresh)).astype(np.uint8) * 255
+        loss_bin = (loss_signal > max(5.0, loss_thresh)).astype(np.uint8) * 255
+        recovery_bin = (recovery_signal > max(5.0, recovery_thresh)).astype(np.uint8) * 255
 
         # Morphological opening to eliminate isolated 1-2 pixel noise
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -216,8 +241,16 @@ class NonNDVIChangeDetector:
             ch = int(stats[i, cv2.CC_STAT_HEIGHT])
             cx, cy = centroids[i]
 
-            # In raster GIS, area = count of active pixels * pixel ground area
-            area_m2 = pixel_count * self.pixel_area_m2
+            # True ground area calculation (equal-area corrected for EPSG:7755 within India extent)
+            if geo_bbox and len(geo_bbox) == 4 and (68.0 <= geo_bbox[0] <= 98.0) and (6.0 <= geo_bbox[1] <= 38.0):
+                mean_lat = (geo_bbox[1] + geo_bbox[3]) / 2.0
+                rad = math.radians(mean_lat)
+                k_local = 0.998786 * (math.cos(rad) / math.cos(math.radians(20.0)))
+                k_local = max(0.95, min(1.05, k_local))
+                true_pixel_area_m2 = self.pixel_area_m2 / (k_local ** 2)
+                area_m2 = pixel_count * true_pixel_area_m2
+            else:
+                area_m2 = pixel_count * self.pixel_area_m2
             area_ha = round(area_m2 / 10000.0, 3)
             total_ha += area_ha
 

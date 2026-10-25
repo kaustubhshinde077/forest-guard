@@ -1,0 +1,213 @@
+{
+  "report_id": "BENCHMARK-MH-4SECTOR-GENUINE",
+  "benchmark_timestamp": "2026-10-25T23:55:00Z",
+  "sectors": [
+    {
+      "sector_id": "MH-R13-C06",
+      "name": "Koyna Wildlife Sanctuary Buffer (Satara)",
+      "district": "Satara",
+      "biome": "Sahyadri Montane Wet Evergreen / Escarpment",
+      "is_negative_control": false,
+      "raster_dimensions": [
+        1597,
+        1597
+      ],
+      "observations": {
+        "before": {
+          "scene_id": "S2B_43QCV_20230524_0_L2A",
+          "date": "2023-05-24",
+          "cloud_cover_pct": 0.044642,
+          "fetch_time_s": 25.75,
+          "estimated_bytes": 3443052
+        },
+        "after": {
+          "scene_id": "S2A_43QCV_20230529_0_L2A",
+          "date": "2023-05-29",
+          "cloud_cover_pct": 0.012468,
+          "fetch_time_s": 22.72,
+          "estimated_bytes": 3443052
+        }
+      },
+      "metrics": {
+        "total_retrieval_time_s": 48.47,
+        "total_download_bytes": 6886104,
+        "vision_runtime_s": 1.39,
+        "total_pipeline_time_s": 49.86,
+        "peak_memory_mb": 202.29,
+        "alignment_method": "orb_homography",
+        "alignment_metric": {
+          "name": "mean_hamming_descriptor_distance",
+          "value": 7.2188,
+          "unit": "bits (0-256)"
+        },
+        "cloud_shadow_mask_pct": 0.5,
+        "candidate_loss_ha": 0.67,
+        "candidate_recovery_ha": 0.0,
+        "qualifying_regions_count": 2,
+        "status": "CHANGES_DETECTED"
+      }
+    },
+    {
+      "sector_id": "MH-R02-C08",
+      "name": "Tillari Conservation Reserve Corridor (Sindhudurg)",
+      "district": "Sindhudurg",
+      "biome": "Konkan Moist Coastal Belt / Western Foothills",
+      "is_negative_control": false,
+      "raster_dimensions": [
+        1585,
+        1585
+      ],
+      "observations": {
+        "before": {
+          "scene_id": "S2A_43PDT_20230529_0_L2A",
+          "date": "2023-05-29",
+          "cloud_cover_pct": 0.232514,
+          "fetch_time_s": 42.42,
+          "estimated_bytes": 3391503
+        },
+        "after": {
+          "scene_id": "S2A_43PCT_20230529_0_L2A",
+          "date": "2023-05-29",
+          "cloud_cover_pct": 3.665399,
+          "fetch_time_s": 39.49,
+          "estimated_bytes": 3391503
+        }
+      },
+      "metrics": {
+        "total_retrieval_time_s": 81.91,
+        "total_download_bytes": 6783006,
+        "vision_runtime_s": 12.89,
+        "total_pipeline_time_s": 94.8,
+        "peak_memory_mb": 195.85,
+        "alignment_method": "orb_homography",
+        "alignment_metric": {
+          "name": "mean_hamming_descriptor_distance",
+          "value": 18.2439,
+          "unit": "bits (0-256)"
+        },
+        "cloud_shadow_mask_pct": 0.24,
+        "candidate_loss_ha": 579.1,
+        "candidate_recovery_ha": 664.91,
+        "qualifying_regions_count": 1093,
+        "status": "CHANGES_DETECTED"
+      }
+    },
+    {
+      "sector_id": "MH-R33-C46",
+      "name": "Tadoba-Andhari Tiger Reserve Buffer (Chandrapur)",
+      "district": "Chandrapur",
+      "biome": "Vidarbha Dry Deciduous Teak (Tectona grandis) Forest",
+      "is_negative_control": false,
+      "raster_dimensions": [
+        1548,
+        1548
+      ],
+      "observations": {
+        "before": {
+          "scene_id": "S2A_44QLH_20230523_0_L2A",
+          "date": "2023-05-23",
+          "cloud_cover_pct": 0.000259,
+          "fetch_time_s": 20.45,
+          "estimated_bytes": 3235010
+        },
+        "after": {
+          "scene_id": "S2B_44QLH_20230528_0_L2A",
+          "date": "2023-05-28",
+          "cloud_cover_pct": 4.3e-05,
+          "fetch_time_s": 25.39,
+          "estimated_bytes": 3235010
+        }
+      },
+      "metrics": {
+        "total_retrieval_time_s": 45.84,
+        "total_download_bytes": 6470020,
+        "vision_runtime_s": 1.08,
+        "total_pipeline_time_s": 46.91,
+        "peak_memory_mb": 183.15,
+        "alignment_method": "orb_homography",
+        "alignment_metric": {
+          "name": "mean_hamming_descriptor_distance",
+          "value": 8.3925,
+          "unit": "bits (0-256)"
+        },
+        "cloud_shadow_mask_pct": 0.4,
+        "candidate_loss_ha": 0.0,
+        "candidate_recovery_ha": 0.0,
+        "qualifying_regions_count": 0,
+        "status": "NO_SUBSTANTIAL_CHANGE"
+      }
+    },
+    {
+      "sector_id": "MH-R42-C31",
+      "name": "Melghat Tiger Reserve Core / Gorges (Amravati)",
+      "district": "Amravati",
+      "biome": "Satpura Highlands Basalt Ravines & Dry Teak Canopy",
+      "is_negative_control": true,
+      "raster_dimensions": [
+        1581,
+        1581
+      ],
+      "observations": {
+        "before": {
+          "scene_id": "S2A_43QGD_20230526_0_L2A",
+          "date": "2023-05-26",
+          "cloud_cover_pct": 0.020873,
+          "fetch_time_s": 51.07,
+          "estimated_bytes": 3374407
+        },
+        "after": {
+          "scene_id": "S2B_43QGD_20230531_0_L2A",
+          "date": "2023-05-31",
+          "cloud_cover_pct": 0.034612,
+          "fetch_time_s": 53.11,
+          "estimated_bytes": 3374407
+        }
+      },
+      "metrics": {
+        "total_retrieval_time_s": 104.19,
+        "total_download_bytes": 6748814,
+        "vision_runtime_s": 1.34,
+        "total_pipeline_time_s": 105.53,
+        "peak_memory_mb": 198.18,
+        "alignment_method": "orb_homography",
+        "alignment_metric": {
+          "name": "mean_hamming_descriptor_distance",
+          "value": 18.0,
+          "unit": "bits (0-256)"
+        },
+        "cloud_shadow_mask_pct": 0.16,
+        "candidate_loss_ha": 0.73,
+        "candidate_recovery_ha": 0.0,
+        "qualifying_regions_count": 2,
+        "status": "CHANGES_DETECTED"
+      }
+    }
+  ],
+  "extrapolation_and_feasibility": {
+    "benchmark_sample_size": 4,
+    "measured_averages": {
+      "retrieval_time_per_tile_s": 70.1,
+      "vision_time_per_tile_s": 4.17,
+      "total_time_per_tile_s": 74.28,
+      "download_volume_per_tile_mb": 6.41,
+      "peak_memory_mb": 202.29
+    },
+    "daily_statewide_projections": {
+      "daily_tiles": 70.43,
+      "estimated_daily_runtime_minutes": 87.2,
+      "runtime_range_p10_p90_minutes": [
+        55.1,
+        123.9
+      ],
+      "estimated_daily_download_mb": 451.5,
+      "github_actions_limit_minutes": 360,
+      "runner_capacity_utilization_pct": 24.2
+    },
+    "assumptions_and_uncertainties": [
+      "Network latency for AWS Open Data COG range reads is subject to transatlantic bandwidth fluctuations.",
+      "GitHub Actions runners hosted in US/EU regions will experience significantly lower COG range-read latency (~5-10s vs 25-30s from India local machine).",
+      "Monsoon cloud cover will increase cloud-obscured retry frequency between June and September.",
+      "Processing 70 tiles per day is strictly viable within runner CPU/memory limits, but chunked execution with per-tile checkpointing is necessary to guard against transient HTTP timeouts."
+    ]
+  }
+}
