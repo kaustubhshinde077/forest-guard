@@ -1,0 +1,23 @@
+# AWS Lambda Python 3.12 Base Image (x86_64 or arm64)
+FROM public.ecr.aws/lambda/python:3.12
+
+# Install minimal OS dependencies required for OpenCV
+RUN microdnf update -y && microdnf install -y \
+    mesa-libGL \
+    glib2 \
+    && microdnf clean all
+
+# Copy and install pinned requirements
+COPY requirements.txt ${LAMBDA_TASK_ROOT}/
+RUN pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt
+
+# Copy source tree and benchmark fixtures into task root
+COPY src/ ${LAMBDA_TASK_ROOT}/
+COPY data/ ${LAMBDA_TASK_ROOT}/data/
+
+ENV PYTHONPATH=${LAMBDA_TASK_ROOT}
+ENV FORESTGUARD_DATA_DIR=${LAMBDA_TASK_ROOT}/data
+ENV FORESTGUARD_FIXTURES_DIR=${LAMBDA_TASK_ROOT}/data/fixtures
+
+# Default Lambda handler for FastAPI (can be overridden by ImageConfig.Command in CloudFormation)
+CMD [ "forestguard.api.main.handler" ]

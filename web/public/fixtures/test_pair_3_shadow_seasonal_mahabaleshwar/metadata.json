@@ -1,0 +1,34 @@
+{
+  "name": "Mahabaleshwar Seasonal Phenology & Cloud Shadow (Negative Control)",
+  "bbox": [
+    73.65,
+    17.905,
+    73.67,
+    17.925
+  ],
+  "acquisition_date_before": "2023-11-15",
+  "acquisition_date_after": "2024-04-28",
+  "satellite_source": "Copernicus Sentinel-2 L2A MSI (Modeled)",
+  "resolution_m_per_pixel": 10.0,
+  "image_dimensions": [
+    400,
+    400
+  ],
+  "documented_ground_truth": {
+    "event_type": "seasonal_phenology_negative_control",
+    "expected_area_ha": 0.0,
+    "uncertainty_range_ha": [
+      0.0,
+      0.0
+    ]
+  },
+  "authenticity_status": "synthetic_simulation",
+  "image_origin": "Procedural simulation of deciduous yellowing and synthetic cloud-shadow polygon attenuation",
+  "is_genuine_satellite_raster": false,
+  "simulated_crs": "EPSG:4326",
+  "real_world_reference_site": "Mahabaleshwar Escarpment, Maharashtra (17.9150 N, 73.6600 E)",
+  "real_world_event_basis": "Natural dry-season leaf drop and steep terrain cloud shadow (negative control target)",
+  "real_world_satellite_product_reference": "Sentinel-2 Tile 43QCV seasonal comparison series",
+  "provenance_note": "Created during Phase 1 for deterministic offline pipeline and loader verification; pixel values are procedurally generated, not downloaded raw satellite GeoTIFFs.",
+  "shared_baseline_notice": "Generated with independent seed=303 to avoid shared baseline artifacts across fixtures."
+}

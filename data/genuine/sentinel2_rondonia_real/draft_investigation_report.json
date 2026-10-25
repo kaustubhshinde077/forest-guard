@@ -1,0 +1,273 @@
+{
+  "incident_id": "DRAFT-INC-RONDONIA-13-20261025",
+  "report_title": "[VALIDATION DRAFT - UNCONFIRMED] Candidate Corridor Change: Jamari Buffer, Rond\u00f4nia",
+  "report_date": "2026-10-25",
+  "event_category": "forest_loss",
+  "investigation_status": "insufficient_public_evidence",
+  "is_synthetic_test": false,
+  "investigation_mode": "live_web_research",
+  "geographic_coordinates": [
+    -63.49459,
+    -9.27437
+  ],
+  "geographic_bounding_box": [
+    -63.49626,
+    -9.27774,
+    -63.49308,
+    -9.27149
+  ],
+  "affected_area_hectares": 6.62,
+  "measurement_uncertainty_hectares": 0.936,
+  "observation_dates": [
+    "2020-09-12T14:35:28.842000Z",
+    "2023-09-22T14:35:28.333000Z"
+  ],
+  "visual_geometry": "linear_corridor",
+  "aspect_ratio": 3.94,
+  "heuristic_score": 0.97,
+  "confidence_score": 0.97,
+  "summary": "This validation draft report evaluates a 6.62 ha linear land-cover change corridor located at coordinates [-63.49459, -9.27437] in Candeias do Jamari, Rond\u00f4nia. Based on a 3-year observation gap between September 12, 2020, and September 22, 2023, the exact date, month, or season of clearing remains unknown, and spatial overlap analysis indicates only partial intersection with official reference data.",
+  "detailed_findings": "Visual observations from Sentinel-2 satellite imagery reveal a 6.62 ha linear corridor with an aspect ratio of 3.94 centered at coordinates [-63.49459, -9.27437]. Comparative analysis utilizing an observation gap of 3 years\u2014spanning from the 'Before' image on September 12, 2020 (2020-09-12T14:35:28.842000Z) to the 'After' image on September 22, 2023 (2023-09-22T14:35:28.333000Z)\u2014demonstrates a significant alteration in land cover, but leaves the exact date, month, or season of clearing strictly UNKNOWN. Independent reference data reveals that the geometric intersection with official PRODES 2022 deforestation polygon #4 accounts for exactly 0.2043 ha, representing 3.09% of the corridor. The remaining 6.4157 ha (96.91%) does not overlap any PRODES polygon spanning the 2008-2023 period. Consequently, spatial overlap alone does not prove the entire feature is confirmed deforestation. Source-reported claims gathered via live web searches highlight regional municipal road recovery (such as vicinal roads in Coqueiro do Magu and Triunfo) and enforcement dynamics in Candeias do Jamari, but these sources provide solely regional context and establish no direct facts regarding this exact 6.62 ha corridor. Third-party registries, such as Registro Rural, operate as secondary aggregators reflecting public IBAMA records rather than direct primary investigative findings.",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Rural road opening or vicinal infrastructure expansion",
+      "supporting_evidence": "The linear morphology and aspect ratio (3.94) of the 6.62 ha corridor strongly resemble local infrastructure development or vicinal road clearing patterns observed across Candeias do Jamari."
+    },
+    {
+      "hypothesis": "Logging access spur",
+      "supporting_evidence": "Narrow linear penetration into forested matrices often correlates with timber extraction pathways or temporary access routes established by operators."
+    },
+    {
+      "hypothesis": "Agricultural perimeter expansion or firebreak",
+      "supporting_evidence": "Clearing along property boundaries or intended cultivation zones can manifest as linear corridors utilized for demarcation or fire protection."
+    }
+  ],
+  "relevant_jurisdictional_authorities": [
+    {
+      "entity_name": "Prefeitura Municipal de Candeias do Jamari",
+      "jurisdictional_role": "Municipal administration, local vicinal road management, and municipal zoning enforcement.",
+      "attribution_note": "Identifies jurisdictional authority; NOT a responsible party for the change."
+    },
+    {
+      "entity_name": "Governo do Estado de Rond\u00f4nia (SEDSAM / AGEAGRO / AGERO)",
+      "jurisdictional_role": "State-level environmental licensing, territorial management, and regional infrastructure oversight.",
+      "attribution_note": "Identifies jurisdictional authority; NOT a responsible party for the change."
+    },
+    {
+      "entity_name": "IBAMA (Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renov\u00e1veis)",
+      "jurisdictional_role": "Federal environmental enforcement, monitoring of illegal deforestation, and issuance of embargoes.",
+      "attribution_note": "Identifies jurisdictional authority; NOT a responsible party for the change."
+    }
+  ],
+  "linked_entities_or_projects": [
+    {
+      "entity_name": "Prefeitura Municipal de Candeias do Jamari",
+      "jurisdictional_role": "Municipal administration, local vicinal road management, and municipal zoning enforcement.",
+      "attribution_note": "Identifies jurisdictional authority; NOT a responsible party for the change."
+    },
+    {
+      "entity_name": "Governo do Estado de Rond\u00f4nia (SEDSAM / AGEAGRO / AGERO)",
+      "jurisdictional_role": "State-level environmental licensing, territorial management, and regional infrastructure oversight.",
+      "attribution_note": "Identifies jurisdictional authority; NOT a responsible party for the change."
+    },
+    {
+      "entity_name": "IBAMA (Instituto Brasileiro do Meio Ambiente e dos Recursos Naturais Renov\u00e1veis)",
+      "jurisdictional_role": "Federal environmental enforcement, monitoring of illegal deforestation, and issuance of embargoes.",
+      "attribution_note": "Identifies jurisdictional authority; NOT a responsible party for the change."
+    }
+  ],
+  "conflicting_accounts": [
+    "While regional municipal and state reports emphasize active vicinal road maintenance and infrastructure investments in Candeias do Jamari, independent satellite tracking and PRODES data show only a minor 3.09% overlap with historical deforestation polygons, leaving the legal and operational status of the remaining 96.91% ambiguous."
+  ],
+  "unresolved_questions_and_unknowns": [
+    "Exact land tenure ownership and corresponding property registry (CAR / Cadastro Ambiental Rural) details.",
+    "Whether the non-overlapping 6.42 ha portion represents an authorized legal clearing, an unpermitted private trail, or municipal infrastructure.",
+    "Exact date, month, or season within the 3-year observation window (2020-2023) when the clearing occurred."
+  ],
+  "tree_count_estimate": {
+    "is_supported": true,
+    "forest_type": "Amazon Lowland Terra Firme Rainforest (Non-Flooded Moist Tropical Forest)",
+    "estimation_status": "provisional",
+    "diameter_threshold": "DBH >= 10 cm (stems >= 31.4 cm circumference)",
+    "canopy_density_trees_per_ha_min": 500,
+    "canopy_density_trees_per_ha_max": 700,
+    "estimated_affected_trees_min": 3310,
+    "estimated_affected_trees_max": 4634,
+    "density_source": "Malhi et al. (2004, Glob. Change Biol., RAINFOR network) & ter Steege et al. (2013, Science)",
+    "source_url": "https://doi.org/10.1111/j.1529-8817.2003.00778.x",
+    "doi": "10.1111/j.1529-8817.2003.00778.x",
+    "forest_stratum": "Southwest Amazonian lowland terra firme on oxisols/ultisols",
+    "calculation_basis": "Calculated from measured candidate area (6.62 ha) multiplied by documented density range (500 - 700 stems/ha with DBH >= 10 cm) from Malhi et al. (2004, Glob. Change Biol., RAINFOR network) & ter Steege et al. (2013, Science) (DOI: 10.1111/j.1529-8817.2003.00778.x).",
+    "limitations": "Provisional estimate: Reflects potential undisturbed stems (DBH >= 10 cm) based on published RAINFOR empirical plot syntheses. Satellite imagery alone cannot distinguish whether prior degradation, selective harvesting, or secondary regrowth existed before the 2020 observation."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "Prefeitura de Candeias do jamari concluiu Asfalto ...",
+      "url": "https://www.instagram.com/reel/DNt_oEnWBl8",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-25",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "municipal_public_communication",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Regional road expansion and municipal vicinal infrastructure dynamics in Candeias do Jamari"
+      ],
+      "conflicts_with": null,
+      "snippet": "Foi iniciada a recupera\u00e7\u00e3o da estrada vicinal do povoado Coqueiro do Magu, com o objetivo de melhorar as condi\u00e7\u00f5es de tr\u00e1fego e garantir mais"
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "\u00c1gua e Esgoto - A\u00e7\u00f5es de cadastramento preparam infraestrutura de \u00e1gua no distrito de Triunfo, em Candeias do Jamari - Governo do Estado de Rond\u00f4nia - \r\n\t\tGoverno do Estado de Rond\u00f4nia",
+      "url": "https://rondonia.ro.gov.br/acoes-de-cadastramento-preparam-infraestrutura-de-agua-no-distrito-de-triunfo-em-candeias-do-jamari",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-25",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "regional_news_media",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Regional road expansion and municipal vicinal infrastructure dynamics in Candeias do Jamari"
+      ],
+      "conflicts_with": null,
+      "snippet": "Title: \u00c1gua e Esgoto - A\u00e7\u00f5es de cadastramento preparam infraestrutura de \u00e1gua no distrito de Triunfo, em Candeias do Jamari - Governo do Estado de Rond\u00f4nia - \r\n\t\tGoverno do Estado de Rond\u00f4nia\n| ADASA - Ag\u00eancia Reguladora de \u00c1guas, Energia e Saneamento B\u00e1sico do DF  - AGERO | Abrir |. | AGEAC - Ag\u00eancia Reguladora dos Servi\u00e7os P\u00fablicos do Estado do Acre  - AGERO | Abrir |. | AGENERSA - Ag\u00eancia Reguladora de Energia e Saneamento B\u00e1sico do Estado do Rio de Janeiro  - AGERO | Abrir |. | AGER - Ag\u00eancia Estadual de Regula\u00e7\u00e3o dos Servi\u00e7os P\u00fablicos Delegados do MT  - AGERO | Abrir |. | AGERBA - Ag\u00eancia Estadual de Regula\u00e7\u00e3o de Servi\u00e7os P\u00fablicos de Energia, Transporte e Comunica\u00e7\u00f5es da BA  - AGERO | Abrir |. | AGERGS - Ag\u00eancia Estadual de Regula\u00e7\u00e3o dos Servi\u00e7os P\u00fablicos Delegados do Rio Grande do Sul  - AGERO | Abrir |. | AGESAN - Ag\u00eancia Reguladora de Servi\u00e7os de Saneamento B\u00e1sico do Estado de Santa Catarina  - AGERO | Abrir |. | AGETRANSP - Ag\u00eancia Reguladora de Servi\u00e7os P\u00fablicos Concedidos de Transportes Aquavi\u00e1rios, Ferrovi\u00e1rios e Metrovi\u00e1rios e de Rodovias do Estado do RJ  - AGERO | Abrir |. | AGR - Ag\u00eancia Goiana de Regula\u00e7\u00e3o, Controle e Fiscaliza\u00e7\u00e3o de Servi\u00e7os P\u00fablicos  - AGERO | Abrir |. | ARCE - Ag\u00eancia Reguladora de Servi\u00e7os P\u00fablicos Delegados do CE  - AGERO | Abrir |. | ARCON - Ag\u00eancia de Regula\u00e7\u00e3o e Controle de Servi\u00e7os P\u00fablicos do PA  - AGERO | Abrir |. | ARSAE - Ag\u00eancia Reguladora de Servi\u00e7os de Abastecimento de \u00c1gua e de Esgotamento Sanit\u00e1rio do Estado de Minas Gerais - MG  - AGERO | Abrir |. | ARSAL - Ag\u00eancia Reguladora de Servi\u00e7os P\u00fablicos do Estado de Alagoas  - AGERO | Abrir |. | ARSAM - Ag\u00eancia Reguladora dos Servi\u00e7os P\u00fablicos Concedidos do Estado do Amazonas  - AGERO | Abrir |. | ARSEMA - Ag\u00eancia Reguladora de Servi\u00e7os P\u00fablicos do Maranh\u00e3o  - AGERO | Abrir |. | ARSEP - Ag\u00eancia Reguladora de Servi\u00e7os P\u00fablicos do Rio Grande do Norte  - AGERO | Abrir |. | ARTESP - Ag\u00eancia Reguladora de Servi\u00e7os P\u00fablicos Delegados de Transporte do Estado de S\u00e3o Paulo  - AGERO | Abrir |. | ASPE - Ag\u00eancia de Servi\u00e7os P\u00fablicos de Energia do Estado do Esp\u00edrito Santo  - AGERO | Abrir |. | ATR.TO - Ag\u00eancia Tocantinense de Regula\u00e7\u00e3o Controle e Fiscaliza\u00e7\u00e3o de Servi\u00e7os P\u00fablicos  - AGERO | Abrir |."
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "CEP de Candeias do Jamari/RO: CEP dos bairros e ruas da cidade | QualCep",
+      "url": "https://www.qualcep.com.br/ro/candeias-do-jamari-1925",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-25",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "regional_news_media",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Regional road expansion and municipal vicinal infrastructure dynamics in Candeias do Jamari"
+      ],
+      "conflicts_with": null,
+      "snippet": "Title: CEP de Candeias do Jamari/RO: CEP dos bairros e ruas da cidade | QualCep\n# CEP Candeias do Jamari/RO. ## Lista de CEPs da cidade de Candeias do Jamari. A cidade de**Candeias do Jamari/RO** possui cerca de 4 CEPs. Localize na p\u00e1gina a rua, avenida ou bairro para localizar o CEP correto para o endere\u00e7o desejado.O menor CEP da cidade \u00e9 76860-000 e o maior CEP \u00e9 76860-971. A cidade de Candeias do Jamari est\u00e1 localizada no estado de **Rond\u00f4nia** e tem cerca de 22 mil habitantes segundo o IBGE. Quem nasce na cidade de Candeias do Jamari/RO \u00e9 chamado de candeiense e o DDD utilizado \u00e9 (69). | CEP | Nome da rua | Bairro |. | 76860-970 | Avenida Tancredo Neves 100 | Centro |. | 76860-971 | Avenida Ivo Melly 218-A Centro | Triunfo |. ## Mapa de Candeias do Jamari/Rond\u00f4nia. ## Dados do IBGE. ### Identifica\u00e7\u00e3o. | Prefeito | LINDOMAR BARBOSA ALVES 2025 |. ### Popula\u00e7\u00e3o e Territ\u00f3rio. | \u00c1rea territorial | 6.843,9 km\u00b2 |. | Popula\u00e7\u00e3o residente | 22.310 pessoas |. | Densidade demogr\u00e1fica | 2,89 hab/km\u00b2 |. | Popula\u00e7\u00e3o urbana | 17.059 pessoas |. | Popula\u00e7\u00e3o rural | 5.251 pessoas |. | \u00cdndice de envelhecimento | 46,12 |. ### Economia e Finan\u00e7as. | PIB per capita | R$\u00a044.895,13 2023 |. | Receitas brutas realizadas | R$\u00a0123.456.837,96 2024 |. | Despesas empenhadas | R$\u00a0118.062.521,33 2024 |. | Rendimento m\u00e9dio | R$\u00a01.819,70 |. | Rendimento mediano | R$\u00a01.400,00 |. ### Educa\u00e7\u00e3o e Sa\u00fade. | Escolariza\u00e7\u00e3o 6 a 14 anos | 97.1% 2022 |. | Taxa de alfabetiza\u00e7\u00e3o | 91,87% |. | IDEB \u2014 Rede p\u00fablica | 4.7 2023 |. | Mortalidade infantil | 14.75 \u00f3bitos por mil nascidos vivos 2023 |. ### Infraestrutura e Urbanismo. | Arboriza\u00e7\u00e3o de vias p\u00fablicas | 59.65% 2022 |. | Urbaniza\u00e7\u00e3o de vias p\u00fablicas | 3.4% 2010 |. | Esgotamento sanit\u00e1rio adequado | 1.15% 2022 |. | Domic\u00edlios com internet | 5.861 |. | Domic\u00edlios sem internet | 1.581 |. ### Atividade Empresarial. | Pessoal ocupado | 2.459 2021 |."
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "5\u00aa Fase (2023 a 2027)",
+      "url": "https://www.socioambiental.org/sites/default/files/noticias-e-posts/2023-06/PPCDAm_2023PDF_230605_074206.pdf",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-25",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "civil_society_analysis",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Environmental agency enforcement operations and public embargo registries in Candeias do Jamari"
+      ],
+      "conflicts_with": null,
+      "snippet": "de 37% e 44% no n\u00famero de autos de infra\u00e7\u00e3o e em-bargos il\u00edcitos emitidos pelo Ibama contra a flora na Amaz\u00f4nia, respectivamente. Essa defasagem no esfor\u00e7o de fiscaliza\u00e7\u00e3o foi em parte mitigada em 2021 e 2022, com o re-torno do n\u00famero de autos e embargos a n\u00edveis similares aos observados em 2018, mas que, por sua vez, ainda s\u00e3o muito inferiores \u00e0 m\u00e9dia dos per\u00edodos anteriores de vig\u00eancia do PPCDAm. Durante o mesmo per\u00edodo foram paralisados os processos de cria\u00e7\u00e3o de unidades de conserva\u00e7\u00e3o e homologa\u00e7\u00e3o de terras ind\u00edgenas na regi\u00e3o, enquanto pro-liferaram projetos de lei em \u00e2mbito federal e estadual voltados para a redu\u00e7\u00e3o dessas \u00e1reas e iniciativas legislativas propostas ou apoiadas pela base do governo com forte impacto indutor na expectativa de impunidade aos crimes e infra\u00e7\u00f5es [...] BRASIL, MMA, IBAMA, 2011; BRASIL, MMA, ICMBio, 2017; JARDIM et al., 2017). Durante os anos seguintes, a situa\u00e7\u00e3o tornou-se ain-da mais cr\u00edtica. No, Ibama, por exemplo, o n\u00famero de servidores efetivos caiu para 2.675 em 2020. O n\u00famero total de servidores que atuam como fiscais tamb\u00e9m foi reduzido de 965, em 2016, para 691, em 2020, em todo o Brasil (redu\u00e7\u00e3o de 64% em compara\u00e7\u00e3o com 2010). Esse decr\u00e9scimo dr\u00e1stico no n\u00famero de fiscais \u00e9 explicado n\u00e3o s\u00f3 pela falta de reposi\u00e7\u00e3o dos servidores aposentados por novos concursados, mas tamb\u00e9m pela designa\u00e7\u00e3o para exercerem outras fun\u00e7\u00f5es em setores diversos. Em consequ\u00eancia de toda a situa\u00e7\u00e3o descrita, entre 2018 e 2022, o desmatamento pas-sou de 7,5 mil km2 para 11,5 mil km\u00b2, registrando, em 2021, uma taxa de 13 mil km\u00b2, a maior desde 2006"
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "5\u00aa Fase (2023 a 2027) - Portal Gov.br",
+      "url": "https://www.gov.br/icmbio/pt-br/acesso-a-informacao/acoes-e-programas/governanca-e-gestao-estrategica/gestao-estrategica/compromissos-assumidos/combate-ao-desmatamento/copy2_of_PPCDAm.pdf",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-25",
+      "evidence_tier": "primary_official_record",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Environmental agency enforcement operations and public embargo registries in Candeias do Jamari"
+      ],
+      "conflicts_with": null,
+      "snippet": "de 37% e 44% no n\u00famero de autos de infra\u00e7\u00e3o e em-bargos il\u00edcitos emitidos pelo Ibama contra a flora na Amaz\u00f4nia, respectivamente. Essa defasagem no esfor\u00e7o de fiscaliza\u00e7\u00e3o foi em parte mitigada em 2021 e 2022, com o re-torno do n\u00famero de autos e embargos a n\u00edveis similares aos observados em 2018, mas que, por sua vez, ainda s\u00e3o muito inferiores \u00e0 m\u00e9dia dos per\u00edodos anteriores de vig\u00eancia do PPCDAm. Durante o mesmo per\u00edodo foram paralisados os processos de cria\u00e7\u00e3o de unidades de conserva\u00e7\u00e3o e homologa\u00e7\u00e3o de terras ind\u00edgenas na regi\u00e3o, enquanto pro-liferaram projetos de lei em \u00e2mbito federal e estadual voltados para a redu\u00e7\u00e3o dessas \u00e1reas e iniciativas legislativas propostas ou apoiadas pela base do governo com forte impacto indutor na expectativa de impunidade aos crimes e infra\u00e7\u00f5es [...] BRASIL, MMA, IBAMA, 2011; BRASIL, MMA, ICMBio, 2017; JARDIM et al., 2017). Durante os anos seguintes, a situa\u00e7\u00e3o tornou-se ain-da mais cr\u00edtica. No, Ibama, por exemplo, o n\u00famero de servidores efetivos caiu para 2.675 em 2020. O n\u00famero total de servidores que atuam como fiscais tamb\u00e9m foi reduzido de 965, em 2016, para 691, em 2020, em todo o Brasil (redu\u00e7\u00e3o de 64% em compara\u00e7\u00e3o com 2010). Esse decr\u00e9scimo dr\u00e1stico no n\u00famero de fiscais \u00e9 explicado n\u00e3o s\u00f3 pela falta de reposi\u00e7\u00e3o dos servidores aposentados por novos concursados, mas tamb\u00e9m pela designa\u00e7\u00e3o para exercerem outras fun\u00e7\u00f5es em setores diversos. Em consequ\u00eancia de toda a situa\u00e7\u00e3o descrita, entre 2018 e 2022, o desmatamento pas-sou de 7,5 mil km2 para 11,5 mil km\u00b2, registrando, em 2021, uma taxa de 13 mil km\u00b2, a maior desde 2006 [...] Plano de A\u00e7\u00e3o para Preven\u00e7\u00e3o e Controle do Desmatamento na Amaz\u00f4nia Legal (PPCDAm) Decreto n\u00ba 11.367, de 1\u00ba de janeiro de 2023 44 Figura 10. \u00c1rea embargada na Amaz\u00f4nia Legal pelo Ibama e taxa de desmatamento na Amaz\u00f4nia medido pelo Prodes entre 2004-2022 \u00c9 poss\u00edvel tamb\u00e9m relacionar o aumento do desmatamento ap\u00f3s 2012 \u00e0 expectativa de novas anistias ambientais. A aprova\u00e7\u00e3o da Lei n\u00ba 12.651, de 25 de maio de 2012, em subs-titui\u00e7\u00e3o ao C\u00f3digo Florestal de 1965, promoveu a suspens\u00e3o de todas as multas, a anistia de 58% do desmatamento ocorrido de forma ilegal at\u00e9 2008 e a oferta de um prazo de 20 anos para a regulariza\u00e7\u00e3o ambiental das demais \u00e1reas (PFAFF et al., 2015; AMIN et al., 2019). Apesar da nova legisla\u00e7\u00e3o ter sido apresentada como uma forma de garantir mais seguran\u00e7a jur\u00eddica, desde"
+    },
+    {
+      "source_id": "SRC-06",
+      "title": "Embargo IBAMA \u2014 Desmatamento - Candeias do Jamari/RO",
+      "url": "https://www.registrorural.com.br/embargos/embargo-c5bfad29-2f3b-4966-ba9b-c759efc44054/desmatamento-em-candeias-do-jamari-ro",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-25",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "secondary_third_party_registry",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Environmental agency enforcement operations and public embargo registries in Candeias do Jamari"
+      ],
+      "conflicts_with": null,
+      "snippet": "Im\u00f3veis que cruzam o embargo ; Assentamento de 5.160,78 ha em Candeias do Jamari - RO. Candeias Do Jamari \u2013 RO \u00b7 5.160,78 ha \u00b7 Dados n\u00e3o dispon\u00edveis ; Assentamento"
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 non-NDVI geometric profiling, exact UTM polygon, and spatial bounding box for Region #13.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Region #13: 6.6200 ha exact polygon (662 px), Geometry=linear_corridor (Aspect=3.94), Observation Gap=2020-09-12T14:35:28.842000Z to 2023-09-22T14:35:28.333000Z (3-year interval), Centroid=[-63.49459, -9.27437], Exact PRODES 2022 Polygon Intersection=0.2043 ha (3.09%), Non-Overlapping Area=6.4157 ha (96.91% Unverified)."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "tool_execution",
+      "decision_rationale": "High aspect-ratio linear corridor geometry suggests rural roadway opening or infrastructure access spur.",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Candeias do Jamari Rondonia abertura estrada vicinal infraestrutura desmatamento 2021 2022",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 live records for Candeias do Jamari road infrastructure and clearing.",
+      "findings_extracted": [
+        "[SRC-01] (municipal_public_communication / regional_context) Prefeitura de Candeias do jamari concluiu Asfalto ... (https://www.instagram.com/reel/DNt_oEnWBl8)",
+        "[SRC-02] (regional_news_media / regional_context) \u00c1gua e Esgoto - A\u00e7\u00f5es de cadastramento preparam infraestrutura de \u00e1gua no distrito de Triunfo, em Candeias do Jamari - Governo do Estado de Rond\u00f4nia - \r\n\t\tGoverno do Estado de Rond\u00f4nia (https://rondonia.ro.gov.br/acoes-de-cadastramento-preparam-infraestrutura-de-agua-no-distrito-de-triunfo-em-candeias-do-jamari)",
+        "[SRC-03] (regional_news_media / regional_context) CEP de Candeias do Jamari/RO: CEP dos bairros e ruas da cidade | QualCep (https://www.qualcep.com.br/ro/candeias-do-jamari-1925)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Adaptive follow-up: Check regulatory enforcement records, IBAMA operations, and embargos matching the PRODES 2022 timeline.",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "IBAMA operacao embargo desmatamento Candeias do Jamari Rondonia 2021 2022",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 live records regarding environmental enforcement and embargos.",
+      "findings_extracted": [
+        "[SRC-04] (civil_society_analysis / regional_context) 5\u00aa Fase (2023 a 2027) (https://www.socioambiental.org/sites/default/files/noticias-e-posts/2023-06/PPCDAm_2023PDF_230605_074206.pdf)",
+        "[SRC-05] (primary_official_record / regional_context) 5\u00aa Fase (2023 a 2027) - Portal Gov.br (https://www.gov.br/icmbio/pt-br/acesso-a-informacao/acoes-e-programas/governanca-e-gestao-estrategica/gestao-estrategica/compromissos-assumidos/combate-ao-desmatamento/copy2_of_PPCDAm.pdf)",
+        "[SRC-06] (secondary_third_party_registry / regional_context) Embargo IBAMA \u2014 Desmatamento - Candeias do Jamari/RO (https://www.registrorural.com.br/embargos/embargo-c5bfad29-2f3b-4966-ba9b-c759efc44054/desmatamento-em-candeias-do-jamari-ro)"
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate provisional stem impact range using peer-reviewed Amazonian plot inventories (Malhi et al. 2004; ter Steege et al. 2013).",
+      "execution_mode": "live_web_research",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "stratum": "Southwest Amazonian lowland terra firme on oxisols/ultisols"
+      },
+      "tool_outputs_summary": "Provisional potential stems: 3,310 to 4,634 trees (DBH >= 10 cm). Status: PROVISIONAL.",
+      "findings_extracted": [
+        "Stratum: Amazon Lowland Terra Firme Rainforest (Non-Flooded Moist Tropical Forest)",
+        "Citation: Malhi et al. (2004, Glob. Change Biol., RAINFOR network) & ter Steege et al. (2013, Science) (DOI: 10.1111/j.1529-8817.2003.00778.x)",
+        "Threshold: DBH >= 10 cm (stems >= 31.4 cm circumference)",
+        "Baseline: 500-700 stems/ha",
+        "Provisional Impact Range: 3,310 - 4,634 stems"
+      ]
+    }
+  ]
+}

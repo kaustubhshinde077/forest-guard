@@ -1,0 +1,139 @@
+{
+  "incident_id": "INC-TEST_PAIR_4_GL-01",
+  "report_title": "[SYNTHETIC TEST] Forest Loss Investigation: Rondonia Block Clearcut",
+  "report_date": "2026-10-25",
+  "event_category": "forest_loss",
+  "investigation_status": "concluded_with_evidence",
+  "is_synthetic_test": true,
+  "investigation_mode": "offline_simulated",
+  "geographic_coordinates": [
+    -63.48753,
+    -9.25497
+  ],
+  "geographic_bounding_box": [
+    -63.48894,
+    -9.256,
+    -63.48606,
+    -9.254
+  ],
+  "affected_area_hectares": 18.4,
+  "measurement_uncertainty_hectares": 0.84,
+  "observation_dates": [
+    "2023-07-18",
+    "2023-09-26"
+  ],
+  "visual_geometry": "compact_block",
+  "aspect_ratio": 1.15,
+  "confidence_score": 0.97,
+  "summary": "Autonomous vision analysis identified a compact_block of 18.40 ha (+/- 0.84 ha) at coordinates -9.2550 N, -63.4875 E between 2023-07-18 and 2023-09-26. Investigation mode: offline_simulated. Public records research linked the event to Commercial Agricultural Clearcutting. Investigation status: concluded_with_evidence.",
+  "detailed_findings": "OpenCV 5 classical computer vision detected a significant forest loss candidate covering 1840 raster pixels (18.40 ha). The candidate region exhibited a major-to-minor aspect ratio of 1.15 and a compactness of 0.819. Investigation of public registries retrieved 1 records (Execution: offline_simulated). Estimated tree impact ranges from 9200 to 12880 trees, based on FAO Global Forest Resources Assessment & RAINFOR Plot Network Syntheses (stems >= 10 cm DBH).",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Commercial Agricultural Clearcutting",
+      "supporting_evidence": "Compact orthogonal geometry matching standard mechanized clearing practices in the biome."
+    }
+  ],
+  "linked_entities_or_projects": [],
+  "conflicting_accounts": [],
+  "unresolved_questions_and_unknowns": [
+    "Specific land title ownership or commercial leaseholders remain unverified in public gazettes."
+  ],
+  "tree_count_estimate": {
+    "is_supported": true,
+    "forest_type": "Amazon Lowland Terra Firme Rainforest (Non-Flooded)",
+    "canopy_density_trees_per_ha_min": 500,
+    "canopy_density_trees_per_ha_max": 700,
+    "estimated_affected_trees_min": 9200,
+    "estimated_affected_trees_max": 12880,
+    "density_source": "FAO Global Forest Resources Assessment & RAINFOR Plot Network Syntheses (stems >= 10 cm DBH)",
+    "source_url": "https://www.fao.org/forest-resources-assessment",
+    "calculation_basis": "Calculated from measured area (18.40 ha) multiplied by documented density range (500 - 700 stems/ha with DBH >= 10 cm) from FAO Global Forest Resources Assessment & RAINFOR Plot Network Syntheses (stems >= 10 cm DBH).",
+    "limitations": "Estimate reflects potential stems (DBH >= 10 cm) based on published stratified regional inventories. Does not reflect local slope variations, rock outcrops, or selective harvesting."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "[SIMULATED TEST RECORD] INPE PRODES Amazon Monitoring Alert: Jamari Sector",
+      "url": "http://terrabrasilis.dpi.inpe.br/app/dashboard/alerts/biomes/legal_amazon/jamari_test",
+      "publisher": "National Institute for Space Research (INPE Test Fixture)",
+      "publication_date": "2023-08-15",
+      "access_date": "2026-10-25",
+      "evidence_tier": "simulated_test_record",
+      "is_live_retrieval": false,
+      "supports_claims": [
+        "Compact rectangular geometry indicates mechanical agricultural clearcutting or commercial plot clearance."
+      ],
+      "conflicts_with": null,
+      "snippet": "Simulated benchmark alert: 18.4 ha mechanical agricultural clearcut benchmark in Rond\u00f4nia terra firme forest."
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 geometric and spatial measurements to establish investigative leads.",
+      "execution_mode": "offline_simulated",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Vision telemetry intake for Region 1: Type=forest_loss_candidate, Area=18.4ha (+/-0.84), Geometry=compact_block (Aspect=1.15, Compactness=0.819), Coordinates=[-63.48753, -9.25497], Dates=['2023-07-18', '2023-09-26']."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "lead_formulation",
+      "decision_rationale": "Adaptive lead generation driven directly by detected geometry and change classification.",
+      "execution_mode": "offline_simulated",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Lead 'LEAD-01-CLEARCUT': Query='PRODES forest clearance agricultural clearcut commercial land diversion Rondonia Block Clearcut 2023' (Compact rectangular geometry indicates mechanical agricultural clearcutting or commercial plot clearance.)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for official_clearance",
+      "execution_mode": "offline_simulated",
+      "tool_name": "search_public_records (mock_offline_search)",
+      "tool_inputs": {
+        "query": "PRODES forest clearance agricultural clearcut commercial land diversion Rondonia Block Clearcut 2023",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 1 sources via mock_offline_search.",
+      "findings_extracted": [
+        "[OFFLINE MOCK] [SIMULATED TEST RECORD] INPE PRODES Amazon Monitoring Alert: Jamari Sector (http://terrabrasilis.dpi.inpe.br/app/dashboard/alerts/biomes/legal_amazon/jamari_test): Simulated benchmark alert: 18.4 ha mechanical agricultural clearcut benchmark in Rond\u00f4nia terra firme forest...."
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate defensible tree count estimate range from documented forestry density stratum.",
+      "execution_mode": "offline_simulated",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "region_context": "Rondonia Block Clearcut"
+      },
+      "tool_outputs_summary": "Calculated from measured area (18.40 ha) multiplied by documented density range (500 - 700 stems/ha with DBH >= 10 cm) from FAO Global Forest Resources Assessment & RAINFOR Plot Network Syntheses (stems >= 10 cm DBH).",
+      "findings_extracted": [
+        "Forest Type: Amazon Lowland Terra Firme Rainforest (Non-Flooded)",
+        "Density Source: FAO Global Forest Resources Assessment & RAINFOR Plot Network Syntheses (stems >= 10 cm DBH) (https://www.fao.org/forest-resources-assessment)",
+        "Estimated Tree Impact Range: 9200 to 12880 trees"
+      ]
+    },
+    {
+      "step_number": 5,
+      "step_type": "report_generation",
+      "decision_rationale": "Final synthesis of visual telemetry, citations, uncertainty, and unknowns.",
+      "execution_mode": "offline_simulated",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Report INC-TEST_PAIR_4_GL-01 compiled in 'offline_simulated' mode with status 'concluded_with_evidence'."
+      ]
+    }
+  ]
+}

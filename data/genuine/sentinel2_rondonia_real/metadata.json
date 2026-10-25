@@ -1,0 +1,50 @@
+{
+  "pair_id": "genuine_sentinel2_rondonia_2020_2023",
+  "status": "genuine_satellite_acquisition",
+  "source": "Copernicus Sentinel-2 MSI Level-2A (TCI)",
+  "catalog": "AWS Element 84 Earth Search STAC (v1)",
+  "licensing": "Creative Commons CC-BY 4.0 / Copernicus Sentinel Data Terms",
+  "scene_before": {
+    "product_id": "S2B_20LMQ_20200912_0_L2A",
+    "acquisition_date": "2020-09-12T14:35:28.842000Z",
+    "cloud_cover_percent": 0.613,
+    "cog_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/20/L/MQ/2020/9/S2B_20LMQ_20200912_0_L2A/TCI.tif"
+  },
+  "scene_after": {
+    "product_id": "S2A_20LMQ_20230922_0_L2A",
+    "acquisition_date": "2023-09-22T14:35:28.333000Z",
+    "cloud_cover_percent": 0.05,
+    "cog_url": "https://sentinel-cogs.s3.us-west-2.amazonaws.com/sentinel-s2-l2a-cogs/20/L/MQ/2023/9/S2A_20LMQ_20230922_0_L2A/TCI.tif"
+  },
+  "geospatial": {
+    "crs": "EPSG:32720",
+    "bbox_wgs84": [
+      -63.5,
+      -9.28,
+      -63.46,
+      -9.24
+    ],
+    "center_lat": -9.26,
+    "center_lon": -63.480000000000004,
+    "pixel_resolution_m": 10.0,
+    "raster_width": 439,
+    "raster_height": 442,
+    "affine_transform": [
+      [
+        10.0,
+        0.0,
+        445070.0
+      ],
+      [
+        0.0,
+        -10.0,
+        8978590.0
+      ]
+    ]
+  },
+  "reference_ground_truth": {
+    "region": "Rond\u00f4nia, Brazil (Amazon Basin)",
+    "context": "Deforestation and pasture expansion documented by INPE PRODES / Global Forest Watch",
+    "expected_change_type": "forest_loss"
+  }
+}

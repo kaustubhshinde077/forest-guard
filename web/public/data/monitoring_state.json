@@ -1,0 +1,59 @@
+{
+  "cadence_days": 21,
+  "last_successful_run": "2026-10-25T12:00:00Z",
+  "last_attempt_timestamp": "2026-10-25T20:30:00Z",
+  "total_runs_completed": 1,
+  "last_run_status": "completed_changes_detected",
+  "last_run_summary": {
+    "cycle_start_time": "2026-10-25T12:00:00Z",
+    "cadence_days": 21,
+    "significance_threshold_ha": 1.0,
+    "sectors_evaluated": 4,
+    "changes_detected_count": 3,
+    "investigations_conducted_count": 3,
+    "reports_published": [
+      {
+        "incident_id": "INC-TEST_PAIR_1_LO-01",
+        "title": "[SYNTHETIC TEST] Forest Loss Investigation: Koyna Corridor Forest Loss",
+        "area_ha": 4.16,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": true
+      },
+      {
+        "incident_id": "INC-TEST_PAIR_2_RE-01",
+        "title": "[SYNTHETIC TEST] Forest Recovery Investigation: Tillari Buffer Canopy Regrowth",
+        "area_ha": 6.5,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": true
+      },
+      {
+        "incident_id": "INC-TEST_PAIR_4_GL-01",
+        "title": "[SYNTHETIC TEST] Global Benchmark Forest Loss: Rondonia Deforestation Corridor",
+        "area_ha": 18.4,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": true
+      }
+    ],
+    "failed_sectors": []
+  },
+  "history": [
+    {
+      "timestamp": "2026-10-25T12:00:00Z",
+      "action": "full_monitoring_cycle",
+      "forced": false,
+      "status": "completed_changes_detected",
+      "sectors_evaluated": 4,
+      "changes_detected": 3,
+      "investigations_conducted": 3,
+      "reports_published": [
+        "INC-TEST_PAIR_1_LO-01",
+        "INC-TEST_PAIR_2_RE-01",
+        "INC-TEST_PAIR_4_GL-01"
+      ],
+      "failed_sectors": []
+    }
+  ]
+}

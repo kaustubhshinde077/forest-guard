@@ -1,0 +1,34 @@
+{
+  "name": "Koyna Corridor Forest Loss",
+  "bbox": [
+    73.705,
+    17.405,
+    73.725,
+    17.42
+  ],
+  "acquisition_date_before": "2023-02-14",
+  "acquisition_date_after": "2023-05-25",
+  "satellite_source": "Copernicus Sentinel-2 L2A MSI (Modeled)",
+  "resolution_m_per_pixel": 10.0,
+  "image_dimensions": [
+    400,
+    400
+  ],
+  "documented_ground_truth": {
+    "event_type": "linear_corridor_loss",
+    "expected_area_ha": 4.2,
+    "uncertainty_range_ha": [
+      3.57,
+      4.83
+    ]
+  },
+  "authenticity_status": "synthetic_simulation",
+  "image_origin": "Procedural simulation using Gaussian canopy noise with synthetic polygon cut matching corridor geometry",
+  "is_genuine_satellite_raster": false,
+  "simulated_crs": "EPSG:4326",
+  "real_world_reference_site": "Koyna Wildlife Sanctuary Buffer, Maharashtra (17.4120 N, 73.7145 E)",
+  "real_world_event_basis": "Documented linear road clearing along the ridge corridor",
+  "real_world_satellite_product_reference": "S2B_MSIL2A_20230114T053159_N0510_R105_T43QCV_20240810T132542.SAFE (CDSE Product ID: 6631e419-687c-4fc1-bc5c-a48b18295722)",
+  "provenance_note": "Created during Phase 1 for deterministic offline pipeline and loader verification; pixel values are procedurally generated, not downloaded raw satellite GeoTIFFs.",
+  "shared_baseline_notice": "Generated with independent seed=101 to avoid shared baseline artifacts across fixtures."
+}

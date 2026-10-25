@@ -1,0 +1,229 @@
+# Forest Guard — Complete AWS Serverless CloudFormation Template
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'Forest Guard — Complete Serverless Infrastructure (S3 Frontend & Storage, CloudFront, Lambda API, EventBridge Scheduler)'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: prod
+  ECRImageUri:
+    Type: String
+    Description: 'ECR Container Image URI for Forest Guard Backend (FastAPI + OpenCV 5)'
+    Default: '123456789012.dkr.ecr.ap-south-1.amazonaws.com/forestguard-backend:latest'
+  CadenceDays:
+    Type: Number
+    Default: 21
+    Description: 'Monitoring cadence interval in days'
+
+Resources:
+  # 1. S3 Bucket for Static Frontend Distribution
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'forestguard-frontend-${AWS::AccountId}-${AWS::Region}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # 2. S3 Bucket for Permanent Durable Report & Artifact Storage
+  ReportStorageBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'forestguard-reports-${AWS::AccountId}-${AWS::Region}'
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # 3. CloudFront Origin Access Control (OAC)
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: ForestGuardFrontendOAC
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # 4. CloudFront CDN Distribution
+  FrontendDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Comment: 'Forest Guard Static Frontend CDN'
+        Origins:
+          - Id: S3FrontendOrigin
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt CloudFrontOAC.Id
+            S3OriginConfig: {}
+        DefaultCacheBehavior:
+          TargetOriginId: S3FrontendOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          CachedMethods: [GET, HEAD]
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+
+  # 5. S3 Bucket Policy for CloudFront OAC
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Statement:
+          - Action: s3:GetObject
+            Effect: Allow
+            Resource: !Sub '${FrontendBucket.Arn}/*'
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${FrontendDistribution.Id}'
+
+  # 6. IAM Execution Role for Lambda Backend & Orchestrator
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: ForestGuardS3StorageAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource:
+                  - !GetAtt ReportStorageBucket.Arn
+                  - !Sub '${ReportStorageBucket.Arn}/*'
+
+  # 7. Lambda Function (FastAPI REST Backend via Container Image)
+  BackendApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'forestguard-api-${EnvironmentName}'
+      PackageType: Image
+      Code:
+        ImageUri: !Ref ECRImageUri
+      ImageConfig:
+        Command: ["forestguard.api.main.handler"]
+      MemorySize: 1024
+      Timeout: 30
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          FORESTGUARD_S3_BUCKET: !Ref ReportStorageBucket
+          FORESTGUARD_ENV: production
+
+  # 8. HTTP API Gateway (v2) for Serverless FastAPI Backend
+  HttpApiGateway:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: !Sub 'forestguard-api-gw-${EnvironmentName}'
+      ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins: ['*']
+        AllowMethods: ['GET', 'OPTIONS']
+        AllowHeaders: ['*']
+
+  ApiGatewayIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApiGateway
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt BackendApiFunction.Arn
+      PayloadFormatVersion: '2.0'
+
+  ApiGatewayDefaultRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApiGateway
+      RouteKey: '$default'
+      Target: !Sub 'integrations/${ApiGatewayIntegration}'
+
+  ApiGatewayStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApiGateway
+      StageName: '$default'
+      AutoDeploy: true
+
+  LambdaPermissionForApiGateway:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref BackendApiFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApiGateway}/*'
+
+  # 9. Lambda Function for Scheduled 21-Day Monitoring Workflow
+  ScheduledMonitoringFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'forestguard-scheduler-${EnvironmentName}'
+      PackageType: Image
+      Code:
+        ImageUri: !Ref ECRImageUri
+      ImageConfig:
+        Command: ["forestguard.orchestrator_lambda.handler"]
+      MemorySize: 1536
+      Timeout: 300
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          FORESTGUARD_S3_BUCKET: !Ref ReportStorageBucket
+          CADENCE_DAYS: !Ref CadenceDays
+
+  # 10. Amazon EventBridge (CloudWatch Events) Rule for 21-Day Schedule
+  TwentyOneDayEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub 'forestguard-21day-schedule-${EnvironmentName}'
+      Description: 'Triggers Forest Guard 21-day Copernicus satellite monitoring cycle'
+      ScheduleExpression: 'rate(21 days)'
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt ScheduledMonitoringFunction.Arn
+          Id: TargetScheduledMonitoringLambda
+
+  LambdaPermissionForEventBridge:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ScheduledMonitoringFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt TwentyOneDayEventRule.Arn
+
+Outputs:
+  PublicFrontendURL:
+    Description: 'Public CloudFront Distribution URL for Public Visitors'
+    Value: !Sub 'https://${FrontendDistribution.DomainName}'
+  FrontendBucketName:
+    Description: 'S3 Bucket storing frontend static export'
+    Value: !Ref FrontendBucket
+  BackendApiEndpoint:
+    Description: 'HTTP API Gateway URL'
+    Value: !Sub 'https://${HttpApiGateway}.execute-api.${AWS::Region}.amazonaws.com'
+  ReportStorageBucketName:
+    Description: 'Durable S3 Bucket storing all JSON reports & PNG evidence'
+    Value: !Ref ReportStorageBucket
