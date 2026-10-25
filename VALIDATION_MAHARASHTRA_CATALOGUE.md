@@ -155,20 +155,19 @@ In Sector B (Tillari), STAC returned two adjacent MGRS UTM granules (`43PDT` and
   3. **Spatial Overlap & Completeness Guard:** Valid-data coverage is tracked across the target grid. If coverage is $<80.0\%$, the sector is marked `incomplete_spatial_overlap` rather than proceeding to false edge detection.
   4. **Regression Test Verification:** `tests/test_safeguards_and_validation.py::test_tillari_regression_same_date_mismatch_rejected` verifies that identical calendar dates are rejected immediately, completely eliminating the 579 ha artifact.
 
-### 6.2 Scientific Validation: Known Maharashtra Forest Loss vs Negative Controls
-To establish detection sensitivity and precision beyond initial engineering checks, we validated the non-NDVI vision pipeline against a documented Maharashtra canopy loss scenario:
-- **Site:** Western Coalfields Limited (WCL) Durgapur / Padmapur Opencast Mining Buffer, Chandrapur Forest Division (`[79.28, 19.98, 79.32, 20.02]`).
-- **Independent Citation:** MoEFCC Forest Clearance Portal (`forestsclearance.nic.in` File No. FP/MH/MIN/14298/2015, WCL Opencast Mine expansion into dry deciduous teak forest).
-- **Validation Results:**
-  - **Negative Control (Unchanged Canopy):** Evaluated over a 2-year temporal span (`2021-03-15` to `2023-03-20`); detected **$0.00\text{ ha}$ loss** and 0 candidate regions, proving high precision and resilience against natural seasonal noise.
-  - **True Positive (3.5 ha Canopy Clearing):** Detected **$3.63\text{ ha}$ candidate loss** ($p < 0.05$), with heuristic score $0.97$, proving high sensitivity to genuine soil exposure without requiring spectral vegetation indices.
+### 6.2 Controlled Synthetic Unit Testing & Simulation of Canopy Clearing
+To verify algorithm mechanics without conflating test fixtures with live satellite data:
+- **Synthetic Unit Test (`tests/test_safeguards_and_validation.py::test_synthetic_canopy_clearing_unit_test`):** Programmatically generated NumPy arrays simulating dry deciduous teak canopy reflectance with an inserted 3.5 ha rectangular soil exposure patch.
+- **Clarification of Provenance:** This test is an offline **synthetic unit test** verifying algorithm sensitivity to morphological edge response and Reinhard color transfer. It does **not** use genuine satellite imagery and is **not** an empirically validated real-world true positive detection. Claims of $p < 0.05$ or formal statistical significance are removed.
+- **Empirical Genuine Satellite Benchmark:** Genuine Sentinel-2 Level-2A observations were separately benchmarked across four sectors (Koyna, Tillari, Tadoba, Melghat) in `data/benchmarks/maharashtra_4sector_benchmark.json`, where negative controls in Tadoba (Vidarbha) and Melghat (Satpura) confirmed $0.00\text{ ha}$ false loss.
 
-### 6.3 Reconciled Maharashtra Area Metrics
+### 6.3 Reconciled Maharashtra Area Metrics & Snyder LCC Scale Factor
 | Area Metric | Value ($\text{km}^2$) | Source & Operational Definition |
 | :--- | :--- | :--- |
 | **Mapped Terrestrial Polygon Area** | **$297,650.35\text{ km}^2$** | Equal-area union of surveyed 36 administrative district digital polygons (matches Survey of India summary value of $297,651.72\text{ km}^2$). |
 | **Statutory Geographical Area** | **$307,713.00\text{ km}^2$** | Government of India statutory reporting area including unsurveyed riverbeds, creeks, disputed interstate enclaves, and inter-tidal coastal zones. |
-| **Equal-Area / Geodesic Hectare Calculation** | Ground-truth scaled | Region hectares incorporate local latitude scale factor $k(\phi)$ in `EPSG:7755`, eliminating planar distortion at Maharashtra latitudes ($15.6^\circ\text{--}22.0^\circ\text{ N}$). |
+| **Snyder Lambert Scale Correction** | $k(\phi) \approx 0.9903\text{--}0.9932$ | Analytical Snyder (1987) point scale factor for `EPSG:7755`. Standard parallels $12^\circ\text{ N}$ and $28^\circ\text{ N}$ ($k=1.0$). Across Maharashtra, ground area is $\text{Area}_{\text{grid}} / (k^2(\phi))$, correcting a $1.38\%\text{--}1.96\%$ planar distortion against Albers Equal Area (`ESRI:102028`). |
+
 
 ### 6.4 Resumable Batch Workflow Architecture
 - **Runner Script:** `src/forestguard/workflow_runner.py` accepts `--batch-day` (1 to 21) and `--max-tiles` for chunked execution.

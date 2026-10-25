@@ -4,10 +4,12 @@
 > *Developed for STEM2Connect AI Hackathon 2026 & OpenCV AI Competition 2026 (Agentic Vision Special Award)*  
 > **100% Free, Zero-Cloud-Cost Architecture on GitHub Pages & GitHub Actions**
 
-[![Automated 21-Day Monitoring & Deploy](https://github.com/kaustubhshinde077/forest-guard/actions/workflows/monitor.yml/badge.svg)](https://github.com/kaustubhshinde077/forest-guard/actions/workflows/monitor.yml)
+[![Manual Pilot Workflow](https://img.shields.io/badge/GitHub%20Actions-Manual%20Pilot%20Only-yellow)](https://github.com/kaustubhshinde077/forest-guard/actions/workflows/monitor.yml)
 [![Live Dashboard](https://img.shields.io/badge/Live%20Dashboard-GitHub%20Pages-emerald)](https://kaustubhshinde077.github.io/forest-guard/)
 [![OpenCV 5](https://img.shields.io/badge/OpenCV-5.0.0.93%20Headless-blue)](https://opencv.org/)
 [![Model](https://img.shields.io/badge/AI%20Agent-Google%20Gemini%20%2B%20Tavily-purple)](https://aistudio.google.com/)
+[![Test Suite](https://img.shields.io/badge/Test%20Suite-39%20Passing-brightgreen)](https://github.com/kaustubhshinde077/forest-guard)
+
 
 ---
 
@@ -27,8 +29,8 @@ Forest Guard runs completely free without requiring an AWS account, cloud billin
 [Copernicus Sentinel-2 / AWS Open Data COGs]
                      │  (Open HTTPS byte-range reads)
                      ▼
-[GitHub Actions: Scheduled 21-Day Workflow Runner]
-  ├── Evaluates 21-day due-time guard (monitoring_state.json)
+[GitHub Actions: Manual Pilot Workflow Runner (Dispatch)]
+  ├── Evaluates 21-day due-time guard & batch schedule (1-21)
   ├── Executes OpenCV 5 non-NDVI detection & geometric profiling
   ├── Dispatches closed-loop Gemini & Tavily investigative agent (>= 1.0 ha)
   └── Writes reports, compressed PNG crops, and incidents.json via GitReportStore
@@ -84,18 +86,32 @@ cd forest-guard
 
 ### Running the Automated Test Suite
 ```bash
-# Run all 25 unit and integration tests
+# Run all 39 unit, regression, and spatial validation tests
 PYTHONPATH=src .venv/bin/pytest tests/
 ```
 
-### Running the 21-Day Workflow Runner
-```bash
-# Check if monitoring cycle is due (respects 21-day due-time guard)
-PYTHONPATH=src .venv/bin/python3 -m forestguard.workflow_runner
+### Running the Workflow Runner (Manual Pilot Mode)
+> [!NOTE]
+> Automated recurring cron schedules are intentionally disabled in `.github/workflows/monitor.yml`.
+> The workflow runs strictly via manual `workflow_dispatch` trigger or manual CLI execution.
 
-# Force run immediately for testing / evaluation
-PYTHONPATH=src .venv/bin/python3 -m forestguard.workflow_runner --force --allow-synthetic
+```bash
+# Run a specific interleaved daily batch (1 to 21) with a bounded tile limit (e.g. 5 tiles)
+PYTHONPATH=src .venv/bin/python3 -m forestguard.workflow_runner --batch-day 1 --max-tiles 5
+
+# Force run for testing / evaluation
+PYTHONPATH=src .venv/bin/python3 -m forestguard.workflow_runner --batch-day 1 --max-tiles 5 --force
 ```
+
+---
+
+## 🔬 Evidence Provenance & Verification Taxonomy
+
+Forest Guard maintains strict separation between test simulations, genuine satellite benchmarks, and live candidates:
+
+1. **Synthetic Unit Tests:** Offline programmatic NumPy arrays (`tests/test_safeguards_and_validation.py::test_synthetic_canopy_clearing_unit_test`) used strictly to verify algorithm mechanics (Reinhard color transfer, delta a* extraction, and morphological contours). Labeled as synthetic unit tests and never cited as real-world true positives.
+2. **Empirical Satellite Benchmarks:** Genuine Sentinel-2 Level-2A observations evaluated across 4 geographically diverse biomes (`data/benchmarks/maharashtra_4sector_benchmark.json`: Koyna, Tillari, Tadoba, Melghat) via open COG HTTP range requests, validating that unchanged teak and ravine canopies yield 0.00 ha false loss.
+3. **Live Satellite Change Candidates:** Field detections that meet the $\ge 1.0\text{ ha}$ threshold are labeled prominently as `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`. They undergo automated research through Gemini and Tavily and are never characterized as confirmed deforestation without official gazettes or regulatory filings.
 
 ---
 

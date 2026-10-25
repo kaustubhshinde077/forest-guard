@@ -6,7 +6,9 @@ import { fetchIncidents } from '@/lib/api';
 import { InvestigationReport } from '@/types/incident';
 import IncidentFeed from '@/components/IncidentFeed';
 import IncidentDetailView from '@/components/IncidentDetailView';
+import StatewideCoverageStatus from '@/components/StatewideCoverageStatus';
 import { Shield, Eye, Database, Terminal, Cpu, CheckCircle, RefreshCw } from 'lucide-react';
+
 
 const InteractiveMap = dynamic(() => import('@/components/InteractiveMap'), {
   ssr: false,
@@ -51,7 +53,7 @@ export default function Home() {
             Autonomous Forest Change Detection & Investigation Platform
           </h1>
           <p className="text-sm text-slate-300 mt-2 leading-relaxed">
-            Forest Guard monitors Copernicus Sentinel-2 satellite imagery over Maharashtra&apos;s Western Ghats, 
+            Forest Guard monitors Copernicus Sentinel-2 satellite imagery across Maharashtra&apos;s 36 administrative districts, 
             detects structural canopy change using pure OpenCV 5 classical vision (strictly without NDVI), 
             and dispatches Google Gemini to investigate official gazettes, clearances, and public records.
           </p>
@@ -84,6 +86,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Statewide Coverage & Pilot Status */}
+      <StatewideCoverageStatus />
 
       {/* Main Grid: Interactive Map + Incident Feed */}
       <section id="incidents" className="grid grid-cols-1 lg:grid-cols-12 gap-8">

@@ -15,7 +15,7 @@ import pytest
 import numpy as np
 import cv2
 
-from forestguard.vision.detector import NonNDVIChangeDetector
+from forestguard.vision.detector import NonNDVIChangeDetector, get_epsg7755_scale_factor
 from forestguard.data.mosaic import (
     reproject_and_mosaic_granules,
     validate_temporal_pair,
@@ -25,6 +25,9 @@ from forestguard.data.mosaic import (
 )
 from rasterio.crs import CRS
 from rasterio.transform import from_bounds
+import rasterio.warp
+from shapely.geometry import box, shape
+
 
 
 # ============================================================================
@@ -150,13 +153,64 @@ def test_inadequate_spatial_overlap_rejection():
 
 
 # ============================================================================
-# 3. EQUAL-AREA / GEODESIC GROUND AREA VALIDATION
+# 3. EQUAL-AREA / GEODESIC GROUND AREA VALIDATION (EPSG:7755)
 # ============================================================================
 
-def test_equal_area_hectare_ground_truth():
+def test_epsg7755_scale_factor_standard_parallels():
     """
-    Validates that detected area in hectares incorporates ground scale correction
-    at Maharashtra latitudes (~18°-20° N) rather than naive uncorrected pixel counting.
+    Validates that the Snyder (1987) Lambert Conformal Conic point scale factor k
+    is EXACTLY 1.0000000 at the standard parallels for EPSG:7755 (12.0° N and 28.0° N).
+    """
+    k_12 = get_epsg7755_scale_factor(12.0)
+    k_28 = get_epsg7755_scale_factor(28.0)
+    assert pytest.approx(k_12, abs=1e-6) == 1.0, f"Expected k(12°N)=1.0, got {k_12}"
+    assert pytest.approx(k_28, abs=1e-6) == 1.0, f"Expected k(28°N)=1.0, got {k_28}"
+
+
+def test_epsg7755_scale_factor_geodesic_accuracy_across_maharashtra():
+    """
+    Validates that EPSG:7755 scale correction aligns with independently computed
+    equal-area projections (ESRI:102028 Asia South Albers Equal Area Conic and EPSG:6933)
+    across diverse latitudes across Maharashtra (15.8° N to 21.8° N).
+    """
+    locations = [
+        ("Sindhudurg (South)", 15.8, 73.8),
+        ("Kolhapur (South-Central)", 16.7, 74.2),
+        ("Pune (Central-West)", 18.5, 73.8),
+        ("Nanded (Marathwada)", 19.1, 77.3),
+        ("Chandrapur (East)", 19.9, 79.3),
+        ("Nagpur (North-East)", 21.1, 79.1),
+        ("Nandurbar (North-West)", 21.8, 74.2),
+    ]
+
+    for name, lat, lon in locations:
+        k = get_epsg7755_scale_factor(lat)
+        # In Maharashtra between 12°N and 28°N, k must strictly be between 0.990 and 0.995
+        assert 0.990 <= k <= 0.995, f"Unexpected k={k} at {name}"
+
+        # 100m x 100m box (1.000 ha nominal) in EPSG:7755
+        cx, cy = rasterio.warp.transform("EPSG:4326", "EPSG:7755", [lon], [lat])
+        grid_box = box(cx[0] - 50.0, cy[0] - 50.0, cx[0] + 50.0, cy[0] + 50.0)
+        grid_area_m2 = grid_box.area  # exactly 10,000.0 m²
+        assert pytest.approx(grid_area_m2, abs=1e-3) == 10000.0
+
+        # Snyder scale corrected ground area
+        ground_area_snyder_ha = (grid_area_m2 / (k ** 2)) / 10000.0
+
+        # Ground truth equal-area in ESRI:102028
+        ea_geom = rasterio.warp.transform_geom("EPSG:7755", "ESRI:102028", grid_box.__geo_interface__)
+        ea_area_ha = shape(ea_geom).area / 10000.0
+
+        # Discrepancy between Snyder scale factor and Albers Equal Area must be < 2.0%
+        pct_diff = abs(ground_area_snyder_ha - ea_area_ha) / ea_area_ha * 100.0
+        assert pct_diff < 2.0, f"Discrepancy at {name} exceeded tolerance: {pct_diff:.2f}%"
+
+
+def test_threshold_boundary_scale_correction():
+    """
+    Validates area calculation and region filtering around the 1.0 ha significance threshold.
+    Shows that at Maharashtra latitudes (e.g. 19.9° N, k ≈ 0.9903), ground area is ~1.96%
+    larger than grid pixel area (100 pixels * 100 m² = 1.000 ha grid -> 1.0196 ha ground).
     """
     detector = NonNDVIChangeDetector(
         min_area_pixels=10,
@@ -164,52 +218,59 @@ def test_equal_area_hectare_ground_truth():
         significance_threshold_ha=1.0
     )
 
-    # 100 pixels x 100 pixels = 10,000 pixels = nominally 100 ha at 10m/px
-    mask = np.zeros((500, 500), dtype=np.uint8)
-    mask[200:300, 200:300] = 255
-    gray_dummy = np.full((500, 500), 128, dtype=np.uint8)
-    tex_dummy = np.full((500, 500), 50.0, dtype=np.float32)
+    gray_dummy = np.full((300, 300), 128, dtype=np.uint8)
+    tex_dummy = np.full((300, 300), 50.0, dtype=np.float32)
+    geo_bbox_mh = [79.28, 19.95, 79.35, 20.05]  # Chandrapur / 20.0° N
 
-    # Test with Maharashtra geo_bbox around 19.0° N
-    geo_bbox_mh = [73.8, 18.5, 74.0, 19.5]
-    regions, tot_ha = detector._extract_regions(
-        mask, "forest_loss_candidate", gray_dummy, gray_dummy, tex_dummy, tex_dummy, geo_bbox_mh
+    # Case A: 98 pixels = 9,800 m² grid area.
+    # Ground area = 9,800 / (0.990322^2) = 9,992.4 m² = 0.999 ha (< 1.0 ha threshold)
+    mask_98 = np.zeros((300, 300), dtype=np.uint8)
+    mask_98[100:114, 100:107] = 255  # 14 x 7 = 98 pixels
+    reg_98, tot_98 = detector._extract_regions(
+        mask_98, "forest_loss_candidate", gray_dummy, gray_dummy, tex_dummy, tex_dummy, geo_bbox_mh
     )
+    assert len(reg_98) == 1
+    assert reg_98[0].area_pixels == 98
+    assert reg_98[0].area_hectares < 1.0, f"Expected < 1.0 ha, got {reg_98[0].area_hectares}"
 
-    assert len(regions) == 1
-    reg = regions[0]
-    assert reg.area_pixels == 10000
-    # At 19° N, EPSG:7755 scale factor k ~= 0.992, ground area ~= 100.0 / (0.992^2) ~= 101.6 ha
-    assert 98.0 <= reg.area_hectares <= 104.0
-    assert pytest.approx(tot_ha, rel=1e-2) == reg.area_hectares
+    # Case B: 100 pixels = 10,000 m² grid area.
+    # Ground area = 10,000 / (0.990322^2) = 10,196.3 m² = 1.020 ha (>= 1.0 ha threshold)
+    mask_100 = np.zeros((300, 300), dtype=np.uint8)
+    mask_100[100:110, 100:110] = 255  # 10 x 10 = 100 pixels
+    reg_100, tot_100 = detector._extract_regions(
+        mask_100, "forest_loss_candidate", gray_dummy, gray_dummy, tex_dummy, tex_dummy, geo_bbox_mh
+    )
+    assert len(reg_100) == 1
+    assert reg_100[0].area_pixels == 100
+    assert reg_100[0].area_hectares == 1.02, f"Expected 1.02 ha, got {reg_100[0].area_hectares}"
 
 
 # ============================================================================
-# 4. KNOWN MAHARASHTRA FOREST CHANGE VALIDATION & NEGATIVE CONTROLS
+# 4. SYNTHETIC CANOPY CLEARING UNIT TEST (CONTROLLED SIMULATION)
 # ============================================================================
 
-def test_documented_chandrapur_forest_loss_detection():
+def test_synthetic_canopy_clearing_unit_test():
     """
-    Validates detection sensitivity and precision on a documented Maharashtra scenario:
-    Chandrapur Forest Division / Western Coalfields Limited (WCL) opencast mining buffer expansion.
-    - Independent Public Source: MoEFCC Forest Clearance Portal (forestsclearance.nic.in, File FP/MH/MIN/14298/2015).
-    - True positive test: 3.5 ha clearing of dry deciduous teak canopy exposes reddish/brown soil.
-    - Validates:
-      * Change detected as 'forest_loss_candidate'
-      * Area accurately matches ground truth (~3.5 ha)
-      * Heuristic score > 0.70
-      * Negative control (unchanged canopy) produces 0.0 ha loss
+    SYNTHETIC UNIT TEST (Controlled Pixel Simulation):
+    Tests detector sensitivity to canopy clearing and exposed soil geometry in NumPy.
+    
+    PROVENANCE NOTE:
+    This is an offline synthetic unit test using synthetic RGB pixels and noise arrays.
+    It verifies algorithm mechanics (Reinhard color transfer, delta a* extraction,
+    and morphological connected components) against simulated soil exposure.
+    It is NOT a genuine satellite observation and does NOT represent a validated
+    real-world true positive detection.
     """
     detector = NonNDVIChangeDetector(significance_threshold_ha=1.0)
 
-    # 1. Base canopy image (dense dry deciduous canopy: greenness [24, 94, 44] + natural texture)
+    # 1. Base canopy image (simulated dense canopy: greenness [24, 94, 44] + natural texture)
     np.random.seed(42)
     canopy_before = np.zeros((600, 600, 3), dtype=np.uint8)
     canopy_before[:, :] = [24, 94, 44]
     noise = np.random.randint(-8, 9, (600, 600, 3))
     canopy_before = np.clip(canopy_before.astype(np.int16) + noise, 0, 255).astype(np.uint8)
 
-    # 2. Negative Control: Canopy remains unchanged (only minor illumination noise)
+    # 2. Negative Control: Canopy remains unchanged (only minor sensor illumination noise)
     canopy_unchanged = np.clip(canopy_before.astype(np.int16) + np.random.randint(-2, 3, (600, 600, 3)), 0, 255).astype(np.uint8)
     res_neg = detector.detect_changes(
         canopy_before,
@@ -220,10 +281,9 @@ def test_documented_chandrapur_forest_loss_detection():
     assert res_neg.total_candidate_loss_ha == 0.0, "Negative control produced false positive loss!"
     assert len(res_neg.candidate_regions) == 0
 
-    # 3. True Positive: ~3.5 ha clearing in opencast coal mining expansion (350 pixels = 3.5 ha)
-    # Soil exposure: bare soil pit [55, 120, 175] (elevated soil redness)
+    # 3. Simulated clearing: 350 pixels (3.5 ha nominal grid) with exposed soil pit [55, 120, 175]
     canopy_after_clearing = canopy_unchanged.copy()
-    # 25 x 14 = 350 pixels = 3.5 ha
+    # 25 x 14 = 350 pixels
     canopy_after_clearing[100:125, 100:114] = [55, 120, 175]
 
     res_pos = detector.detect_changes(

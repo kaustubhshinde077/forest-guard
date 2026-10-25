@@ -7,6 +7,7 @@ from typing import List, Dict, Any, Optional
 from forestguard.storage import BaseReportStore, FileReportStore, S3ReportStore
 from forestguard.data.fixtures import OfflineFixtureLoader
 from forestguard.data.cdse import CopernicusClient
+from forestguard.data.stac_cog import OpenSTACCogClient
 from forestguard.vision.detector import NonNDVIChangeDetector
 from forestguard.agent.investigator import AutonomousInvestigator
 from forestguard.agent.models import InvestigationReport
@@ -77,6 +78,7 @@ class MonitoringOrchestrator:
                     os.path.join(os.path.dirname(__file__), "../../data/fixtures")
                 )
         self.cdse_client = CopernicusClient()
+        self.stac_client = OpenSTACCogClient()
         self.detector = NonNDVIChangeDetector(significance_threshold_ha=significance_threshold_ha)
         self.investigator = AutonomousInvestigator()
 
@@ -232,28 +234,48 @@ class MonitoringOrchestrator:
                 logger.info(f"Loaded verified genuine satellite dataset from {g_dir}")
                 return img_b, img_a, dates, False, None
 
-        # Case B: Live Copernicus CDSE OData API
-        if self.cdse_client.is_configured() and not force_offline:
-            try:
-                now = datetime.now(timezone.utc)
-                start_str = (now - timedelta(days=self.cadence_days + 5)).strftime("%Y-%m-%d")
-                end_str = now.strftime("%Y-%m-%d")
-                products = self.cdse_client.search_sentinel2_products(
-                    bbox=sector["bbox"],
-                    start_date=start_str,
-                    end_date=end_str,
-                    top=2
-                )
-                if len(products) >= 2:
-                    logger.info(f"Discovered {len(products)} live Sentinel-2 products on CDSE.")
-                    # Return live satellite observations when products are downloaded
-                    # If live download pipeline is not yet completed, fail cleanly rather than fallback
-                else:
-                    return None, None, [], False, f"Insufficient cloud-free Sentinel-2 products found on CDSE ({len(products)} found, min 2 required)."
-            except Exception as e:
-                logger.error(f"CDSE live search failed: {e}")
-                if not self.allow_synthetic_fallback and not force_offline:
-                    return None, None, [], False, f"Live CDSE search error: {str(e)}"
+        # Case B: Live Satellite Data Ingestion (CDSE or Open AWS STAC + COG)
+        if not force_offline:
+            # B1. Copernicus CDSE (if credentials provided)
+            if self.cdse_client.is_configured():
+                try:
+                    now = datetime.now(timezone.utc)
+                    start_str = (now - timedelta(days=self.cadence_days + 5)).strftime("%Y-%m-%d")
+                    end_str = now.strftime("%Y-%m-%d")
+                    products = self.cdse_client.search_sentinel2_products(
+                        bbox=sector["bbox"],
+                        start_date=start_str,
+                        end_date=end_str,
+                        top=2
+                    )
+                    if len(products) >= 2:
+                        logger.info(f"Discovered {len(products)} live Sentinel-2 products on CDSE.")
+                except Exception as e:
+                    logger.error(f"CDSE live search failed: {e}")
+
+            # B2. Open AWS STAC & Cloud-Optimized GeoTIFFs (100% Free, Zero Credentials)
+            sec_bbox = sector.get("bbox", sector.get("bbox_4326"))
+            if sec_bbox:
+                try:
+                    pair = self.stac_client.search_temporal_pair(sec_bbox, max_cloud_cover_pct=15.0)
+                    if pair:
+                        feat_b, feat_a = pair
+                        img_b, tb, bb = self.stac_client.fetch_window(feat_b, sec_bbox)
+                        img_a, ta, ba = self.stac_client.fetch_window(feat_a, sec_bbox)
+                        if img_b is not None and img_a is not None:
+                            dates = [
+                                feat_b["properties"]["datetime"][:10],
+                                feat_a["properties"]["datetime"][:10]
+                            ]
+                            logger.info(
+                                f"Sector '{sector['name']}': Fetched genuine Sentinel-2 L2A COG pair "
+                                f"({feat_b['id']} [{dates[0]}] -> {feat_a['id']} [{dates[1]}]) "
+                                f"in {tb + ta:.2f}s ({bb + ba} bytes)."
+                            )
+                            return img_b, img_a, dates, False, None
+                except Exception as e:
+                    logger.warning(f"Open STAC COG retrieval failed for {sector['name']}: {e}")
+
 
         # Case C: Offline test fixtures (ONLY permitted when explicitly authorized)
         if loader and (self.allow_synthetic_fallback or force_offline):

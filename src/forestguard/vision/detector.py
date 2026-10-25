@@ -10,6 +10,39 @@ from forestguard.vision.quality import QualityAndMaskEngine
 
 logger = logging.getLogger("forestguard.vision.detector")
 
+# WGS 84 Ellipsoid constants for EPSG:7755 Lambert Conformal Conic (India LCC)
+# Standard parallels: 12.0° N and 28.0° N. Reference: Snyder (1987), USGS PP 1395, pp. 104-108.
+_WGS84_A = 6378137.0
+_WGS84_F = 1.0 / 298.257223563
+_WGS84_E2 = 2.0 * _WGS84_F - _WGS84_F ** 2
+_WGS84_E = math.sqrt(_WGS84_E2)
+
+_PHI1 = math.radians(12.0)
+_PHI2 = math.radians(28.0)
+_M1 = math.cos(_PHI1) / math.sqrt(1.0 - _WGS84_E2 * (math.sin(_PHI1) ** 2))
+_M2 = math.cos(_PHI2) / math.sqrt(1.0 - _WGS84_E2 * (math.sin(_PHI2) ** 2))
+_T1 = math.tan(math.pi / 4.0 - _PHI1 / 2.0) / (((1.0 - _WGS84_E * math.sin(_PHI1)) / (1.0 + _WGS84_E * math.sin(_PHI1))) ** (_WGS84_E / 2.0))
+_T2 = math.tan(math.pi / 4.0 - _PHI2 / 2.0) / (((1.0 - _WGS84_E * math.sin(_PHI2)) / (1.0 + _WGS84_E * math.sin(_PHI2))) ** (_WGS84_E / 2.0))
+_LCC_N = (math.log(_M1) - math.log(_M2)) / (math.log(_T1) - math.log(_T2))
+_LCC_F = _M1 / (_LCC_N * (_T1 ** _LCC_N))
+
+
+def get_epsg7755_scale_factor(lat_deg: float) -> float:
+    """
+    Computes exact point scale factor k(phi) for EPSG:7755 (India Lambert Conformal Conic).
+    Snyder (1987) eq. 15-4.
+    At standard parallels (12°N and 28°N): k = 1.0000000.
+    Between 12°N and 28°N: k < 1.0 (minimum k ≈ 0.990322 at ~20.02°N).
+    True ground area = Grid area / (k^2).
+    """
+    phi = math.radians(lat_deg)
+    sin_phi = math.sin(phi)
+    m = math.cos(phi) / math.sqrt(1.0 - _WGS84_E2 * (sin_phi ** 2))
+    t = math.tan(math.pi / 4.0 - phi / 2.0) / (((1.0 - _WGS84_E * sin_phi) / (1.0 + _WGS84_E * sin_phi)) ** (_WGS84_E / 2.0))
+    k = (_LCC_F * _LCC_N * (t ** _LCC_N)) / m
+    return float(k)
+
+
 class NonNDVIChangeDetector:
     """
     Substantive classical computer vision change detector implemented using OpenCV 5.
@@ -244,9 +277,7 @@ class NonNDVIChangeDetector:
             # True ground area calculation (equal-area corrected for EPSG:7755 within India extent)
             if geo_bbox and len(geo_bbox) == 4 and (68.0 <= geo_bbox[0] <= 98.0) and (6.0 <= geo_bbox[1] <= 38.0):
                 mean_lat = (geo_bbox[1] + geo_bbox[3]) / 2.0
-                rad = math.radians(mean_lat)
-                k_local = 0.998786 * (math.cos(rad) / math.cos(math.radians(20.0)))
-                k_local = max(0.95, min(1.05, k_local))
+                k_local = get_epsg7755_scale_factor(mean_lat)
                 true_pixel_area_m2 = self.pixel_area_m2 / (k_local ** 2)
                 area_m2 = pixel_count * true_pixel_area_m2
             else:

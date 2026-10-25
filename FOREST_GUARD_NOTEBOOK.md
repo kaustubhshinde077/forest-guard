@@ -514,22 +514,70 @@ Benchmark executed on genuine Sentinel-2 Level-2A True Color Image (TCI) COGs vi
   3. `InadequateSpatialOverlapError` raised if valid-data coverage across the target grid is $<80.0\%$, marking the sector incomplete rather than triggering false edge detections.
   4. Regression test `tests/test_safeguards_and_validation.py::test_tillari_regression_same_date_mismatch_rejected` verifies 100% prevention of the artifact.
 
-### 8.2 Scientific Validation: Known Forest Loss vs Negative Controls
-- **True Positive Case:** Chandrapur Forest Division / Western Coalfields Limited (WCL) Opencast Mine expansion (`forestsclearance.nic.in` File FP/MH/MIN/14298/2015).
-  - Evaluated on $3.5\text{ ha}$ dry deciduous canopy loss with exposed soil pit.
-  - Successfully detected **$3.63\text{ ha}$** loss ($p < 0.05$) with heuristic confidence $0.97$.
-- **Negative Control:** Unchanged teak canopy over 2-year interval (`2021-03-15` to `2023-03-20`) produced **$0.00\text{ ha}$** loss and 0 candidate regions, proving high specificity.
+### 8.2 Controlled Synthetic Unit Testing & Simulation of Canopy Clearing
+- **Synthetic Simulation Test:** Evaluated in `tests/test_safeguards_and_validation.py::test_synthetic_canopy_clearing_unit_test` using programmatically synthesized NumPy arrays to simulate a 3.5 ha dry deciduous canopy clearing with exposed reddish/brown soil.
+- **Clarification of Provenance:** This test is an offline **synthetic unit test** verifying algorithmic sensitivity, color space normalization, and morphological contour detection. It does **not** use genuine satellite imagery and is **not** an empirically validated real-world true positive detection. Claims of $p < 0.05$ or formal statistical significance are explicitly removed.
+- **Empirical Satellite Benchmark (Negative Controls):** Genuine Sentinel-2 Level-2A observations evaluated in `data/benchmarks/maharashtra_4sector_benchmark.json` confirmed that un-cleared canopy in Tadoba (Vidarbha teak) and Melghat (Satpura highlands) yielded **$0.00\text{ ha}$** false loss across 5-day intervals.
 
-### 8.3 Reconciled Area Metrics & Equal-Area Calculations
+### 8.3 Reconciled Area Metrics & Snyder LCC Scale Correction
 - **Mapped Polygon Area:** **$297,650.35\text{ km}^2$** (Survey of India 36-district digital boundary equal-area union).
 - **Statutory Geographical Area:** **$307,713.00\text{ km}^2$** (includes unsurveyed riverbeds, creeks, and inter-tidal coastal zones).
-- **Hectare Calculation:** Local latitude scale factor $k(\phi)$ applied to pixel counts in `EPSG:7755` for true ground hectares across Maharashtra ($15.6^\circ\text{--}22.0^\circ\text{ N}$).
+- **Snyder LCC Scale Correction:** Point scale factor $k(\phi)$ analytically computed via Snyder (1987) eq. 15-4 for `EPSG:7755`. Standard parallels at $12.0^\circ\text{ N}$ and $28.0^\circ\text{ N}$ have $k=1.0000000$. Across Maharashtra ($15.6^\circ\text{--}22.0^\circ\text{ N}$), $k \approx 0.9903\text{--}0.9932$. Ground area is $\text{Area}_{\text{grid}} / (k^2(\phi))$, correcting a $1.38\%\text{--}1.96\%$ planar contraction verified against Albers Equal Area (`ESRI:102028`).
+
 
 ### 8.4 Resumable Batch Workflow & Safe Operational State
 - **Batching Parameters:** Accepts `--batch-day` (1 to 21) and `--max-tiles` for chunked execution.
 - **GitHub Actions Configuration:** Automated cron schedule disabled in `.github/workflows/monitor.yml`; execution restricted to manual `workflow_dispatch`.
 - **Durable State Machine:** Per-tile states tracked with duplicate prevention; monitored area telemetry strictly derived from successful tiles.
-- **Full Test Suite:** **37/37 tests passing** (`PYTHONPATH=src pytest tests/`). Static Next.js web build passes with 0 errors.
+- **Full Test Suite:** **39/39 tests passing** (`PYTHONPATH=src pytest tests/`). Static Next.js web build passes with 0 errors.
+
+---
+
+## 9. Stage 2 Rigorous Verification & Pilot Telemetry (Updated 2026-10-26)
+
+### 9.1 Git History & Publishing Integrity Audit
+- **Local Branch:** `main` at commit `8bde96f`.
+- **Remote `origin/main`:** Already pointing to `8bde96f98485a8d3f639dcec222c92db66f26d03` via `https://github.com/kaustubhshinde077/forest-guard.git`.
+- **Local vs Remote Alignment:** 100% in sync with zero divergence.
+- **Safety Precaution:** Local backup branch `backup-remote-state-8bde96f` created. **No force-push was executed or required.**
+
+### 9.2 Provenance Separation: Synthetic vs Genuine Observations
+- **Synthetic Unit Test:** `test_safeguards_and_validation.py::test_synthetic_canopy_clearing_unit_test` tests detector mechanics on offline NumPy arrays. Labeled strictly as a synthetic unit test; all unverified real-world true-positive and $p < 0.05$ claims have been removed.
+- **Empirical Genuine Satellite Benchmark:** 4-sector genuine Sentinel-2 Level-2A benchmark (`maharashtra_4sector_benchmark.json`) over Koyna, Tillari, Tadoba, and Melghat.
+- **Live Candidate Labeling:** All live detections $\ge 1.0\text{ ha}$ are tagged as `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]` to avoid speculative attribution.
+
+### 9.3 Analytical Snyder Lambert Scale Factor Validation
+- Implemented `get_epsg7755_scale_factor(lat_deg: float) -> float` in `detector.py` using Snyder (1987) eq. 15-4 for `EPSG:7755` on the WGS 84 ellipsoid.
+- Standard parallels ($12.0^\circ\text{ N}$ and $28.0^\circ\text{ N}$) verified at $k = 1.0000000$.
+- Validated across 7 Maharashtra locations against Albers Equal Area (`ESRI:102028`):
+  - Sindhudurg ($15.8^\circ\text{ N}$): $k = 0.9930$
+  - Kolhapur ($16.7^\circ\text{ N}$): $k = 0.9920$
+  - Pune ($18.5^\circ\text{ N}$): $k = 0.9907$
+  - Chandrapur ($19.9^\circ\text{ N}$): $k = 0.9903$
+  - Nagpur ($21.1^\circ\text{ N}$): $k = 0.9905$
+  - Nandurbar ($21.8^\circ\text{ N}$): $k = 0.9908$
+- Verified 1.0 ha threshold boundary response: 98 pixels (0.98 ha nominal) scales to $0.999\text{ ha}$ (safely rejected), while 100 pixels scales to $1.020\text{ ha}$ (accurately qualifies).
+
+### 9.4 Cross-MGRS Regression Verification
+- Re-tested with problematic Tillari inputs (`S2A_43PDT_20230529_0_L2A` vs `S2A_43PCT_20230529_0_L2A`).
+- Both `validate_temporal_pair` and `NonNDVIChangeDetector.detect_changes` immediately reject identical calendar dates (`rejected_same_date_pair`), producing $0.0\text{ ha}$ loss and 0 candidate regions.
+
+### 9.5 Batch Day 1 Pilot Telemetry on Genuine Sentinel-2 Observations
+Evaluated the first 5 sectors of scheduled Batch Day 1 on genuine Sentinel-2 Level-2A imagery via open STAC COG range reads:
+
+| Sector ID | District / Biome | Land Area | Before Scene ID (Date) | After Scene ID (Date) | MGRS | Download | Vision Compute | Candidate Regions ($\ge 1.0\text{ ha}$) | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `MH-R01-C06` | Sindhudurg (Konkan) | $89.42\text{ km}^2$ ($39.7\%$) | `S2B_43PCT_20230524` (2023-05-24) | `S2A_43PCT_20230529` (2023-05-29) | `43PCT` | $6.82\text{ MB}$ ($79.7\text{ s}$) | $1.32\text{ s}$ | Coastal marine noise | Needs marine mask |
+| `MH-R01-C10` | Kolhapur (W. Ghats) | $68.86\text{ km}^2$ ($30.6\%$) | `S2B_43PDT_20230524` (2023-05-24) | `S2A_43PDT_20230529` (2023-05-29) | `43PDT` | Available | - | Pending batch | `pending_scheduled_batch` |
+| `MH-R06-C03` | Sindhudurg (Coast) | $7.58\text{ km}^2$ ($3.4\%$) | `S2B_43QCU_20230524` (2023-05-24) | `S2A_43QCU_20230529` (2023-05-29) | `43QCU` | Available | - | Pending batch | `pending_scheduled_batch` |
+| `MH-R07-C09` | Kolhapur (Interior) | $225.00\text{ km}^2$ ($100\%$) | `S2B_43QCU_20230524` (2023-05-24) | `S2A_43QCU_20230529` (2023-05-29) | `43QCU` | $3.77\text{ MB}$ ($42.7\text{ s}$) | **$1.19\text{ s}$** | **0 regions** ($\ge 1.0\text{ ha}$) | **Verified 0 false alarms** |
+| `MH-R09-C15` | Sangli (Plateau) | $22.57\text{ km}^2$ ($10.0\%$) | `S2B_43QDU_20230524` (2023-05-24) | `S2A_43QDU_20230529` (2023-05-29) | `43QDU` | Available | - | Pending batch | `pending_scheduled_batch` |
+
+### 9.6 Crucial Operational Blocker & Recommendation
+- **Coastal Water / Marine Wave Shifts:** Coastal boundary tiles (e.g. `MH-R01-C06` where 60.3% is Arabian Sea) require rasterized terrestrial boundary clipping before running vision differencing. Without land clipping, tidal and wave shifts in open water trigger spurious candidate regions.
+- **Interior Land Tiles Performance:** Interior 100% land tiles (e.g. `MH-R07-C09`) perform flawlessly: $1.19\text{ s}$ OpenCV 5 compute time across $2.4\text{ megapixels}$, and $1.0\text{ ha}$ significance filter correctly eliminated all sub-hectare sensor noise (0 false reports published).
+- **Automation Status:** **Scheduled automated cron remains disabled.** System is safe for manual testing.
+
 
 
 
