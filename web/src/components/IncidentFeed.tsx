@@ -116,8 +116,8 @@ export default function IncidentFeed({
                         [SYNTHETIC TEST]
                       </span>
                     ) : (
-                      <span className="text-[10px] bg-emerald-950/80 text-emerald-300 px-1 rounded border border-emerald-800/50 font-bold">
-                        [GENUINE SATELLITE]
+                      <span className="text-[10px] bg-amber-950/80 text-amber-300 px-1 rounded border border-amber-800/50 font-bold">
+                        [UNCONFIRMED CANDIDATE]
                       </span>
                     )}
                   </div>

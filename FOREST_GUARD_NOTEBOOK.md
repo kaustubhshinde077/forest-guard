@@ -621,6 +621,68 @@ Executed the 5-sector pilot on scheduled Batch Day 1 with `allow_synthetic=false
 - **Incomplete Sector Handling:** Sector `MH-R09-C15` tripped the $> 35\%$ cloud occlusion threshold ($53.5\%$). Per policy, candidate changes were withheld from publication, the sector was flagged as `incomplete_data_missing`, and its $22.57\text{ km}^2$ was **excluded** from monitored area metrics.
 - **Durable State Updated:** Successfully recorded in `data/public/monitoring_state.json` and mirrored to `web/public/data/monitoring_state.json`.
 
+---
+
+## 11. Final QA Pass, Area Reconciliation, and Staged Candidate Review (2026-10-26)
+
+### 11.1 Reconciled Ground-Area Accuracy (Resolution of the 1.92% Discrepancy)
+- **Root Cause Identified:** The previous analytical scale implementation assumed generic textbook standard parallels ($12.0^\circ\text{ N}$ and $28.0^\circ\text{ N}$). However, the authoritative EPSG Registry definition for `EPSG:7755` (*WGS 84 / India NSF LCC*) establishes standard parallels at **$12.472955^\circ\text{ N}$** ($12^\circ 28' 22.64''\text{ N}$) and **$35.1728044444444^\circ\text{ N}$** ($35^\circ 10' 22.1''\text{ N}$) with origin latitude at $24.0^\circ\text{ N}$.
+- **Mathematical Correction:** Updated `src/forestguard/vision/detector.py` with the authoritative standard parallels.
+- **Precision Verification:** Evaluated point scale factor $k(\phi)$ and area expansion $1/k^2(\phi)$ across 7 Maharashtra locations against independent equal-area projections (`EPSG:6933` EASE-Grid 2.0 Global Equal Area and `ESRI:102028` Asia South Albers Equal Area):
+  - Sindhudurg ($15.8^\circ\text{ N}$): $k = 0.99038$ $\to$ Snyder Area = $10,195.17\text{ m}^2$, EASE Equal-Area = $10,195.17\text{ m}^2$ (**$0.000000\%$ diff**).
+  - Kolhapur ($16.7^\circ\text{ N}$): $k = 0.98834$ $\to$ Snyder Area = $10,237.30\text{ m}^2$, EASE Equal-Area = $10,237.30\text{ m}^2$ (**$0.000000\%$ diff**).
+  - Pune ($18.5^\circ\text{ N}$): $k = 0.98497$ $\to$ Snyder Area = $10,307.49\text{ m}^2$, EASE Equal-Area = $10,307.49\text{ m}^2$ (**$0.000000\%$ diff**).
+  - Chandrapur ($19.9^\circ\text{ N}$): $k = 0.98300$ $\to$ Snyder Area = $10,348.81\text{ m}^2$, EASE Equal-Area = $10,348.81\text{ m}^2$ (**$0.000000\%$ diff**).
+  - Nagpur ($21.1^\circ\text{ N}$): $k = 0.98177$ $\to$ Snyder Area = $10,374.81\text{ m}^2$, EASE Equal-Area = $10,374.81\text{ m}^2$ (**$0.000000\%$ diff**).
+  - Nandurbar ($21.8^\circ\text{ N}$): $k = 0.98125$ $\to$ Snyder Area = $10,385.91\text{ m}^2$, EASE Equal-Area = $10,385.91\text{ m}^2$ (**$0.000000\%$ diff**).
+- **Threshold Boundary Testing:** Added regression tests below, around, and above the $1.0\text{ ha}$ threshold across multiple Maharashtra latitudes in `test_threshold_boundary_scale_correction`.
+
+### 11.2 Review of Candidate Changes from the 5-Sector Pilot
+Detailed examination of the three candidate-bearing sectors from Batch Day 1:
+
+1. **Sector `MH-R01-C06` (Sindhudurg Konkan Coast — 39.7% Land Fraction):**
+   - *Acquisition Pair:* `S2C_43PCT_20261020_0_L2A` (2026-10-20) $\to$ `S2B_43PCT_20261025_0_L2A` (2026-10-25). Both scenes strictly on MGRS `43PCT`.
+   - *Valid Terrestrial Coverage:* 39.7% ($89.42\text{ km}^2$). Arabian Sea completely masked out ($0.0\text{ ha}$ false marine loss).
+   - *Cloud/Shadow Occlusion:* $4.2\%$.
+   - *Representative Candidate:* `INC-MH-R01-C06-20261026-32` ($2.403\text{ ha} \pm 0.618\text{ ha}$).
+     - *Coordinates:* $15.73713^\circ\text{ N}, 73.74397^\circ\text{ E}$.
+     - *Bounding Box:* $[73.74144^\circ\text{ E}, 15.73670^\circ\text{ N}, 73.74663^\circ\text{ E}, 15.73742^\circ\text{ N}]$.
+     - *Geometry:* Linear corridor (Aspect Ratio = 10.19, Compactness = 0.082). Aligns with a ridge trail / rural road right-of-way.
+     - *Status & Caveat:* Labeled `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`. High aspect ratio indicates possible linear infrastructure or roadside brush clearance, but ground verification is strictly required.
+
+2. **Sector `MH-R01-C10` (Kolhapur Western Ghats — 30.6% Land Fraction):**
+   - *Acquisition Pair:* `S2C_43PCT_20261020_0_L2A` (2026-10-20) $\to$ `S2B_43PCT_20261025_0_L2A` (2026-10-25) on MGRS `43PCT`.
+   - *Valid Terrestrial Coverage:* 30.6% ($68.86\text{ km}^2$).
+   - *Cloud/Shadow Occlusion:* $5.1\%$.
+   - *Representative Candidate:* `INC-MH-R01-C10-20261026-27` ($5.100\text{ ha} \pm 0.764\text{ ha}$).
+     - *Coordinates:* $15.76011^\circ\text{ N}, 74.29238^\circ\text{ E}$.
+     - *Bounding Box:* $[74.29088^\circ\text{ E}, 15.75882^\circ\text{ N}, 74.29404^\circ\text{ E}, 15.76161^\circ\text{ N}]$.
+     - *Geometry:* Irregular patch (Aspect Ratio = 1.08, Compactness = 0.224).
+     - *Status & Caveat:* Labeled `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`. In steep Sahyadri terrain, reflectance variations between morning satellite passes 5 days apart are subject to hill shadow and solar azimuth differences. Must not be classified as confirmed deforestation.
+
+3. **Sector `MH-R07-C09` (Kolhapur Interior Plateau — 100.0% Land Fraction):**
+   - *Acquisition Pair:* `S2C_43QCU_20261020_0_L2A` (2026-10-20) $\to$ `S2B_43QCU_20261025_0_L2A` (2026-10-25) on MGRS `43QCU`.
+   - *Valid Terrestrial Coverage:* 100.0% ($225.00\text{ km}^2$).
+   - *Cloud/Shadow Occlusion:* $1.9\%$.
+   - *Representative Candidate:* `INC-MH-R07-C09-20261026-32` ($1.707\text{ ha} \pm 0.265\text{ ha}$).
+     - *Coordinates:* $16.59211^\circ\text{ N}, 74.20719^\circ\text{ E}$.
+     - *Bounding Box:* $[74.20595^\circ\text{ E}, 16.59133^\circ\text{ N}, 74.20864^\circ\text{ E}, 16.59277^\circ\text{ N}]$.
+     - *Geometry:* Compact block (Aspect Ratio = 1.32, Compactness = 0.612).
+     - *Status & Caveat:* Labeled `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`. Compact rectangular geometry in plateau agricultural zones indicates seasonal crop harvesting or fallow field preparation, demonstrating the necessity of autonomous clearance checks and non-NDVI texture verification.
+
+### 11.3 Pilot Data Integrity & Candidate Status Enforced
+- **Strict Unconfirmed Nomenclature:** Every candidate record in `data/public/reports/`, `data/public/incidents.json`, and mirrored web directories has been updated with `investigation_status: "unconfirmed_candidate"` and title prefix `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`.
+- **Zero Monitored Area for Occluded Sector:** Sector `MH-R09-C15` (Sangli, 53.5% cloud occlusion) remains strictly recorded as `incomplete_data_missing` and contributes $0.00\text{ km}^2$ to the monitored terrestrial total ($390.86\text{ km}^2$).
+- **Preview Overlays Generated:** Difference heatmap overlays generated in each candidate artifact directory (`overlay.png`).
+
+### 11.4 Verification & Pre-Publish Audit Summary
+- **Test Suite:** **43 / 43 tests passing** (`PYTHONPATH=src pytest tests/`).
+- **Web Build:** Next.js static export compiled successfully with zero errors.
+- **Workflow Safety:** Automated daily cron remains commented out in `.github/workflows/monitor.yml` (`workflow_dispatch` only).
+- **Credentials:** Verified zero API secrets or credentials tracked in git.
+- **README.md:** Updated to reflect 43 passing tests and disabled automated schedules.
+
+
 
 
 

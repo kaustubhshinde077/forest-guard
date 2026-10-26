@@ -1,10 +1,10 @@
 [
   {
     "incident_id": "INC-MH-R07-C09-20261026-115",
-    "report_title": "Forest Loss Investigation: MH-R07-C09 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R07-C09 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -260,10 +260,10 @@
   },
   {
     "incident_id": "INC-MH-R07-C09-20261026-32",
-    "report_title": "Forest Loss Investigation: MH-R07-C09 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R07-C09 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -443,10 +443,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-77",
-    "report_title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -700,10 +700,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-76",
-    "report_title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -957,10 +957,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-68",
-    "report_title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -1214,10 +1214,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-59",
-    "report_title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -1471,10 +1471,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-38",
-    "report_title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -1654,10 +1654,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-32",
-    "report_title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -1837,10 +1837,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-30",
-    "report_title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -2020,10 +2020,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-27",
-    "report_title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -2203,10 +2203,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-26",
-    "report_title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -2386,10 +2386,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C10-20261026-23",
-    "report_title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -2569,10 +2569,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-50",
-    "report_title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -2826,10 +2826,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-49",
-    "report_title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -3083,10 +3083,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-48",
-    "report_title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -3340,10 +3340,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-47",
-    "report_title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_recovery",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -3597,10 +3597,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-37",
-    "report_title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -3780,10 +3780,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-32",
-    "report_title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -4039,10 +4039,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-03",
-    "report_title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [
@@ -4222,10 +4222,10 @@
   },
   {
     "incident_id": "INC-MH-R01-C06-20261026-01",
-    "report_title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+    "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
     "report_date": "2026-10-26",
     "event_category": "forest_loss",
-    "investigation_status": "concluded_with_evidence",
+    "investigation_status": "unconfirmed_candidate",
     "is_synthetic_test": false,
     "investigation_mode": "live_web_research",
     "geographic_coordinates": [

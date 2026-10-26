@@ -8,7 +8,7 @@
 [![Live Dashboard](https://img.shields.io/badge/Live%20Dashboard-GitHub%20Pages-emerald)](https://kaustubhshinde077.github.io/forest-guard/)
 [![OpenCV 5](https://img.shields.io/badge/OpenCV-5.0.0.93%20Headless-blue)](https://opencv.org/)
 [![Model](https://img.shields.io/badge/AI%20Agent-Google%20Gemini%20%2B%20Tavily-purple)](https://aistudio.google.com/)
-[![Test Suite](https://img.shields.io/badge/Test%20Suite-39%20Passing-brightgreen)](https://github.com/kaustubhshinde077/forest-guard)
+[![Test Suite](https://img.shields.io/badge/Test%20Suite-43%20Passing-brightgreen)](https://github.com/kaustubhshinde077/forest-guard)
 
 
 ---
@@ -86,7 +86,7 @@ cd forest-guard
 
 ### Running the Automated Test Suite
 ```bash
-# Run all 39 unit, regression, and spatial validation tests
+# Run all 43 unit, regression, and spatial validation tests
 PYTHONPATH=src .venv/bin/pytest tests/
 ```
 

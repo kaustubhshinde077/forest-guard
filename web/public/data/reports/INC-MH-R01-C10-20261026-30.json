@@ -1,9 +1,9 @@
 {
   "incident_id": "INC-MH-R01-C10-20261026-30",
-  "report_title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+  "report_title": "[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
   "report_date": "2026-10-26",
   "event_category": "forest_loss",
-  "investigation_status": "concluded_with_evidence",
+  "investigation_status": "unconfirmed_candidate",
   "is_synthetic_test": false,
   "investigation_mode": "live_web_research",
   "geographic_coordinates": [

@@ -59,8 +59,8 @@ export default function IncidentDetailView({ incident }: IncidentDetailViewProps
                 [SYNTHETIC TEST]
               </span>
             ) : (
-              <span className="px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 font-bold">
-                [GENUINE VERIFIED SATELLITE]
+              <span className="px-2 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/60 font-bold">
+                [UNCONFIRMED SATELLITE-CHANGE CANDIDATE]
               </span>
             )}
             <span className="px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">

@@ -303,14 +303,12 @@ class AutonomousInvestigator:
         
         has_primary = any(c.evidence_tier in ["primary_official_record", "credible_news_report"] and c.is_live_retrieval for c in citations)
         
-        if exec_mode == "offline_simulated":
-            status = "concluded_with_evidence" # In offline test mode, findings are backed by the simulation model
-        else:
-            status = "concluded_with_evidence" if has_primary else "insufficient_public_evidence"
-
-        title = f"{'Forest Loss' if is_loss else 'Forest Recovery'} Investigation: {site_name}"
         if is_synthetic_test:
-            title = f"[SYNTHETIC TEST] {title}"
+            status = "concluded_with_evidence" if exec_mode == "offline_simulated" or has_primary else "insufficient_public_evidence"
+            title = f"[SYNTHETIC TEST] {'Forest Loss' if is_loss else 'Forest Recovery'} Investigation: {site_name}"
+        else:
+            status = "unconfirmed_candidate"
+            title = f"[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] {'Forest Loss' if is_loss else 'Forest Recovery'} Candidate: {site_name}"
 
         causes = []
         entities = []

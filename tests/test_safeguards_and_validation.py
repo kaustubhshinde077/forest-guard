@@ -160,34 +160,35 @@ def test_inadequate_spatial_overlap_rejection():
 def test_epsg7755_scale_factor_standard_parallels():
     """
     Validates that the Snyder (1987) Lambert Conformal Conic point scale factor k
-    is EXACTLY 1.0000000 at the standard parallels for EPSG:7755 (12.0° N and 28.0° N).
+    is EXACTLY 1.0000000 at the authoritative standard parallels for EPSG:7755
+    (12.472955° N and 35.1728044444444° N).
     """
-    k_12 = get_epsg7755_scale_factor(12.0)
-    k_28 = get_epsg7755_scale_factor(28.0)
-    assert pytest.approx(k_12, abs=1e-6) == 1.0, f"Expected k(12°N)=1.0, got {k_12}"
-    assert pytest.approx(k_28, abs=1e-6) == 1.0, f"Expected k(28°N)=1.0, got {k_28}"
+    k_1 = get_epsg7755_scale_factor(12.472955)
+    k_2 = get_epsg7755_scale_factor(35.1728044444444)
+    assert pytest.approx(k_1, abs=1e-6) == 1.0, f"Expected k(SP1)=1.0, got {k_1}"
+    assert pytest.approx(k_2, abs=1e-6) == 1.0, f"Expected k(SP2)=1.0, got {k_2}"
 
 
 def test_epsg7755_scale_factor_geodesic_accuracy_across_maharashtra():
     """
     Validates that EPSG:7755 scale correction aligns with independently computed
-    equal-area projections (ESRI:102028 Asia South Albers Equal Area Conic and EPSG:6933)
+    equal-area projections (EPSG:6933 EASE-Grid 2.0 Global Equal Area and ESRI:102028 Albers)
     across diverse latitudes across Maharashtra (15.8° N to 21.8° N).
     """
     locations = [
-        ("Sindhudurg (South)", 15.8, 73.8),
-        ("Kolhapur (South-Central)", 16.7, 74.2),
-        ("Pune (Central-West)", 18.5, 73.8),
+        ("Sindhudurg (South Coast)", 15.8, 73.8),
+        ("Kolhapur (South Ghats)", 16.7, 74.2),
+        ("Pune (Central Ghats)", 18.5, 73.8),
         ("Nanded (Marathwada)", 19.1, 77.3),
-        ("Chandrapur (East)", 19.9, 79.3),
-        ("Nagpur (North-East)", 21.1, 79.1),
-        ("Nandurbar (North-West)", 21.8, 74.2),
+        ("Chandrapur (East Vidarbha)", 19.9, 79.3),
+        ("Nagpur (North Vidarbha)", 21.1, 79.1),
+        ("Nandurbar (Northwest Khandesh)", 21.8, 74.2),
     ]
 
     for name, lat, lon in locations:
         k = get_epsg7755_scale_factor(lat)
-        # In Maharashtra between 12°N and 28°N, k must strictly be between 0.990 and 0.995
-        assert 0.990 <= k <= 0.995, f"Unexpected k={k} at {name}"
+        # Across Maharashtra, k ranges from ~0.9904 (South) to ~0.9812 (North)
+        assert 0.980 <= k <= 0.995, f"Unexpected k={k} at {name}"
 
         # 100m x 100m box (1.000 ha nominal) in EPSG:7755
         cx, cy = rasterio.warp.transform("EPSG:4326", "EPSG:7755", [lon], [lat])
@@ -198,21 +199,47 @@ def test_epsg7755_scale_factor_geodesic_accuracy_across_maharashtra():
         # Snyder scale corrected ground area
         ground_area_snyder_ha = (grid_area_m2 / (k ** 2)) / 10000.0
 
-        # Ground truth equal-area in ESRI:102028
-        ea_geom = rasterio.warp.transform_geom("EPSG:7755", "ESRI:102028", grid_box.__geo_interface__)
+        # Ground truth equal-area in EPSG:6933 (EASE-Grid 2.0 Global Equal-Area)
+        ea_geom = rasterio.warp.transform_geom("EPSG:7755", "EPSG:6933", grid_box.__geo_interface__)
         ea_area_ha = shape(ea_geom).area / 10000.0
 
-        # Discrepancy between Snyder scale factor and Albers Equal Area must be < 2.0%
+        # Discrepancy between Snyder scale factor and true Equal Area must be < 0.001%
         pct_diff = abs(ground_area_snyder_ha - ea_area_ha) / ea_area_ha * 100.0
-        assert pct_diff < 2.0, f"Discrepancy at {name} exceeded tolerance: {pct_diff:.2f}%"
+        assert pct_diff < 0.001, f"Discrepancy at {name} exceeded tolerance: {pct_diff:.6f}%"
 
 
 def test_threshold_boundary_scale_correction():
     """
-    Validates area calculation and region filtering around the 1.0 ha significance threshold.
-    Shows that at Maharashtra latitudes (e.g. 19.9° N, k ≈ 0.9903), ground area is ~1.96%
-    larger than grid pixel area (100 pixels * 100 m² = 1.000 ha grid -> 1.0196 ha ground).
+    Validates area calculation and region filtering around the 1.0 ha significance threshold
+    at several Maharashtra locations below, around, and above the boundary.
     """
+    from forestguard.vision.detector import compute_ground_area_hectares
+
+    # 1. South Maharashtra (Sindhudurg, 15.8° N, k ≈ 0.99038)
+    assert compute_ground_area_hectares(90, 15.8) < 0.95   # Below threshold
+    assert compute_ground_area_hectares(98, 15.8) < 1.00   # 0.9991 ha -> safely below 1.0 ha
+    assert compute_ground_area_hectares(100, 15.8) >= 1.00 # 1.0195 ha -> qualifies >= 1.0 ha
+    assert compute_ground_area_hectares(200, 15.8) >= 2.00 # 2.0390 ha -> above 2.0 ha
+
+    # 2. Central Maharashtra (Pune, 18.5° N, k ≈ 0.98497)
+    assert compute_ground_area_hectares(95, 18.5) < 0.98   # Below threshold
+    assert compute_ground_area_hectares(97, 18.5) < 1.00   # 0.9998 ha -> safely below 1.0 ha
+    assert compute_ground_area_hectares(98, 18.5) >= 1.00  # 1.0101 ha -> qualifies >= 1.0 ha
+    assert compute_ground_area_hectares(105, 18.5) > 1.08  # Above threshold
+
+    # 3. East Maharashtra (Chandrapur, 19.9° N, k ≈ 0.98300)
+    assert compute_ground_area_hectares(95, 19.9) < 0.99   # 0.9831 ha -> below threshold
+    assert compute_ground_area_hectares(96, 19.9) < 1.00   # 0.9935 ha -> safely below 1.0 ha
+    assert compute_ground_area_hectares(97, 19.9) >= 1.00  # 1.0038 ha -> qualifies >= 1.0 ha
+    assert compute_ground_area_hectares(100, 19.9) > 1.03  # 1.0349 ha -> above threshold
+
+    # 4. North Maharashtra (Nandurbar, 21.8° N, k ≈ 0.98125)
+    assert compute_ground_area_hectares(90, 21.8) < 0.94   # Below threshold
+    assert compute_ground_area_hectares(96, 21.8) < 1.00   # 0.9970 ha -> safely below 1.0 ha
+    assert compute_ground_area_hectares(97, 21.8) >= 1.00  # 1.0074 ha -> qualifies >= 1.0 ha
+    assert compute_ground_area_hectares(200, 21.8) > 2.07  # 2.0772 ha -> above threshold
+
+    # 5. Detector Integration Check with actual OpenCV Connected Components
     detector = NonNDVIChangeDetector(
         min_area_pixels=10,
         resolution_m_per_pixel=10.0,
@@ -223,27 +250,25 @@ def test_threshold_boundary_scale_correction():
     tex_dummy = np.full((300, 300), 50.0, dtype=np.float32)
     geo_bbox_mh = [79.28, 19.95, 79.35, 20.05]  # Chandrapur / 20.0° N
 
-    # Case A: 98 pixels = 9,800 m² grid area.
-    # Ground area = 9,800 / (0.990322^2) = 9,992.4 m² = 0.999 ha (< 1.0 ha threshold)
-    mask_98 = np.zeros((300, 300), dtype=np.uint8)
-    mask_98[100:114, 100:107] = 255  # 14 x 7 = 98 pixels
-    reg_98, tot_98 = detector._extract_regions(
-        mask_98, "forest_loss_candidate", gray_dummy, gray_dummy, tex_dummy, tex_dummy, geo_bbox_mh
+    # 95 pixels at 20°N -> 0.983 ha (below threshold)
+    mask_95 = np.zeros((300, 300), dtype=np.uint8)
+    mask_95[100:119, 100:105] = 255  # 19 x 5 = 95 pixels
+    reg_95, _ = detector._extract_regions(
+        mask_95, "forest_loss_candidate", gray_dummy, gray_dummy, tex_dummy, tex_dummy, geo_bbox_mh
     )
-    assert len(reg_98) == 1
-    assert reg_98[0].area_pixels == 98
-    assert reg_98[0].area_hectares < 1.0, f"Expected < 1.0 ha, got {reg_98[0].area_hectares}"
+    assert len(reg_95) == 1
+    assert reg_95[0].area_hectares < 1.0
+    assert any("Sub-threshold" in c for c in reg_95[0].detection_caveats)
 
-    # Case B: 100 pixels = 10,000 m² grid area.
-    # Ground area = 10,000 / (0.990322^2) = 10,196.3 m² = 1.020 ha (>= 1.0 ha threshold)
+    # 100 pixels at 20°N -> 1.035 ha (above threshold)
     mask_100 = np.zeros((300, 300), dtype=np.uint8)
     mask_100[100:110, 100:110] = 255  # 10 x 10 = 100 pixels
-    reg_100, tot_100 = detector._extract_regions(
+    reg_100, _ = detector._extract_regions(
         mask_100, "forest_loss_candidate", gray_dummy, gray_dummy, tex_dummy, tex_dummy, geo_bbox_mh
     )
     assert len(reg_100) == 1
-    assert reg_100[0].area_pixels == 100
-    assert reg_100[0].area_hectares == 1.02, f"Expected 1.02 ha, got {reg_100[0].area_hectares}"
+    assert reg_100[0].area_hectares >= 1.0
+    assert not any("Sub-threshold" in c for c in reg_100[0].detection_caveats)
 
 
 # ============================================================================

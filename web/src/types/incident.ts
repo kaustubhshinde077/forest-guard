@@ -41,7 +41,7 @@ export interface InvestigationReport {
   report_title: string;
   report_date: string;
   event_category: 'forest_loss' | 'forest_recovery' | 'unconfirmed_change';
-  investigation_status: 'concluded_with_evidence' | 'insufficient_public_evidence' | 'disputed_accounts';
+  investigation_status: 'concluded_with_evidence' | 'insufficient_public_evidence' | 'disputed_accounts' | 'unconfirmed_candidate';
   is_synthetic_test: boolean;
   investigation_mode: 'live_web_research' | 'offline_simulated';
   geographic_coordinates: [number, number]; // [lon, lat]

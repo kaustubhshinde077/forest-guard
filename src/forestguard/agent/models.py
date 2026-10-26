@@ -53,7 +53,7 @@ class InvestigationReport(BaseModel):
     report_title: str
     report_date: str
     event_category: str = Field(description="'forest_loss', 'forest_recovery', 'unconfirmed_change'")
-    investigation_status: str = Field(description="'concluded_with_evidence', 'insufficient_public_evidence', 'disputed_accounts'")
+    investigation_status: str = Field(description="'concluded_with_evidence', 'insufficient_public_evidence', 'disputed_accounts', 'unconfirmed_candidate'")
     is_synthetic_test: bool = True
     investigation_mode: str = Field(default="offline_simulated", description="'live_web_research' or 'offline_simulated_evaluation'")
     
