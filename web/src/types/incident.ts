@@ -49,6 +49,7 @@ export interface InvestigationReport {
   affected_area_hectares: number;
   measurement_uncertainty_hectares: number;
   observation_dates: [string, string];
+  source_scene_ids?: string[];
   visual_geometry: string;
   aspect_ratio: number;
   heuristic_score?: number; // Uncalibrated heuristic contrast and geometry score (0.0 to 1.0)

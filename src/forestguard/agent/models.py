@@ -63,6 +63,7 @@ class InvestigationReport(BaseModel):
     affected_area_hectares: float
     measurement_uncertainty_hectares: float
     observation_dates: List[str] = Field(description="[before_date, after_date]")
+    source_scene_ids: List[str] = Field(default_factory=list, description="Contributing satellite scene/granule identifiers")
     visual_geometry: str
     aspect_ratio: float
     heuristic_score: float = Field(default=0.0, description="Uncalibrated heuristic score (0.0 to 1.0). Not a calibrated probability.")

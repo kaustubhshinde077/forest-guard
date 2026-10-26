@@ -71,6 +71,7 @@ class AutonomousInvestigator:
         # Step 1: Vision Telemetry Intake & Initial Lead Formulation
         geo_coord = region.estimated_geo_centroid or [73.7145, 17.4120]
         site_name = site_context.get("name", "Monitored Forest Sector")
+        source_scene_ids = site_context.get("source_scene_ids", [])
         
         intake_desc = (
             f"Vision telemetry intake for Region {region.region_id}: "
@@ -175,7 +176,8 @@ class AutonomousInvestigator:
             tree_estimate=tree_estimate,
             trace=trace,
             is_synthetic_test=is_synthetic_test,
-            exec_mode=exec_mode
+            exec_mode=exec_mode,
+            source_scene_ids=source_scene_ids
         )
 
         trace.append(DecisionTraceStep(
@@ -296,7 +298,8 @@ class AutonomousInvestigator:
         tree_estimate: TreeCountEstimate,
         trace: List[DecisionTraceStep],
         is_synthetic_test: bool,
-        exec_mode: str
+        exec_mode: str,
+        source_scene_ids: Optional[List[str]] = None
     ) -> InvestigationReport:
         is_loss = region.change_type == "forest_loss_candidate"
         event_category = "forest_loss" if is_loss else "forest_recovery"
@@ -384,6 +387,7 @@ class AutonomousInvestigator:
             affected_area_hectares=region.area_hectares,
             measurement_uncertainty_hectares=region.uncertainty_hectares,
             observation_dates=observation_dates,
+            source_scene_ids=source_scene_ids or [],
             visual_geometry=region.geometry_classification,
             aspect_ratio=region.aspect_ratio,
             heuristic_score=region.heuristic_score,

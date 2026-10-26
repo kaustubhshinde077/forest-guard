@@ -179,5 +179,9 @@
         "Report INC-MH-R01-C06-20261026-37 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
       ]
     }
+  ],
+  "source_scene_ids": [
+    "S2C_43PCT_20261020_0_L2A",
+    "S2B_43PCT_20261025_0_L2A"
   ]
 }

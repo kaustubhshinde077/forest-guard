@@ -255,5 +255,9 @@
         "Report INC-MH-R07-C09-20261026-115 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
       ]
     }
+  ],
+  "source_scene_ids": [
+    "S2C_43QCU_20261020_0_L2A",
+    "S2B_43QCU_20261025_0_L2A"
   ]
 }

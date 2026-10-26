@@ -1,6 +1,6 @@
 {
   "incident_id": "INC-TEST_PAIR_4_GL-01",
-  "report_title": "[SYNTHETIC TEST] Forest Loss Investigation: Rondonia Block Clearcut",
+  "report_title": "[DEMONSTRATION / SYNTHETIC] Forest Loss Investigation: Rondonia Block Clearcut",
   "report_date": "2026-10-25",
   "event_category": "forest_loss",
   "investigation_status": "concluded_with_evidence",
@@ -135,5 +135,9 @@
         "Report INC-TEST_PAIR_4_GL-01 compiled in 'offline_simulated' mode with status 'concluded_with_evidence'."
       ]
     }
+  ],
+  "source_scene_ids": [
+    "SIMULATED_TEST_FIXTURE_BEFORE",
+    "SIMULATED_TEST_FIXTURE_AFTER"
   ]
 }
