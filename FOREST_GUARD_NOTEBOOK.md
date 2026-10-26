@@ -578,6 +578,50 @@ Evaluated the first 5 sectors of scheduled Batch Day 1 on genuine Sentinel-2 Lev
 - **Interior Land Tiles Performance:** Interior 100% land tiles (e.g. `MH-R07-C09`) perform flawlessly: $1.19\text{ s}$ OpenCV 5 compute time across $2.4\text{ megapixels}$, and $1.0\text{ ha}$ significance filter correctly eliminated all sub-hectare sensor noise (0 false reports published).
 - **Automation Status:** **Scheduled automated cron remains disabled.** System is safe for manual testing.
 
+---
+
+## 10. Terrestrial Land Masking Implementation, Recent Observation Policy, and Verified Batch Day 1 Pilot (Updated 2026-10-26)
+
+### 10.1 Terrestrial Land Mask Engine (`src/forestguard/data/land_mask.py`)
+- **Vector Spatial Indexing:** Built using `shapely.strtree.STRtree` over authoritative Maharashtra district boundaries (`data/gis/maharashtra_districts.geojson`) reprojected to canonical `EPSG:7755`.
+- **Target Grid Rasterization:** Uses `rasterio.features.rasterize()` with 8-connectivity to produce a $(1500, 1500)$ uint8 array ($255 = \text{terrestrial land}$, $0 = \text{sea/ocean/outside}$) exactly matching the sector transform.
+- **Deep Vision Pipeline Integration:**
+  - **Reinhard Statistical Color Transfer:** Updated in `quality.py` to compute channel means and standard deviations strictly across valid unmasked terrestrial pixels (`mask > 0`). Ocean color variances cannot corrupt land color normalization.
+  - **ORB Feature Keypoint Alignment:** Constrained to `mask > 0` in `alignment.py`. Sea surface glint and wave crests cannot generate false homography tie points.
+  - **Differential Loss & Morphology:** Ocean pixels are inverted to a binary sea mask and united with cloud/shadow exclusion masks (`detector.py`). Morphological opening and connected components operate strictly on terrestrial territory.
+  - **Area Quantification:** Monitored area telemetry and fractional coverage are calculated strictly over terrestrial land pixels.
+
+### 10.2 Coastal Marine Regression Testing & Verification
+Added comprehensive regression tests in `tests/test_safeguards_and_validation.py` explicitly labeled as synthetic unit tests:
+1. `test_synthetic_coastal_ocean_turbidity_zero_loss`: Validates that a 50% ocean sector experiencing severe wave/sediment turbidity (5.0 ha plume) produces **$0.00\text{ ha}$ false loss** and **0 candidate regions** when the land mask is applied (unmasked baseline produces $\ge 4.0\text{ ha}$ false alarms).
+2. `test_synthetic_coastal_land_clearing_detected_alongside_turbid_sea`: Validates that a $2.5\text{ ha}$ clearing on terrestrial land is detected and localized strictly within land coordinates ($x \ge 400\text{ px}$) while adjacent sea turbidity is rejected.
+3. `test_synthetic_narrow_coastal_sliver_handling`: Validates that boundary slivers with only 5% land fraction (similar to `MH-R06-C03`) execute cleanly without numerical instability, division by zero, or NaN metrics.
+4. `test_land_mask_engine_rasterization`: Confirms correct boundary clipping (Sindhudurg coast = $39.7\%$ land; Kolhapur interior = $100.0\%$ land; offshore Arabian Sea = $0.0\%$).
+- **Test Suite Status:** **43/43 tests passing** (`PYTHONPATH=src pytest tests/`).
+
+### 10.3 Dynamic Recent Observation Date Selection Policy (`src/forestguard/data/stac_cog.py`)
+- **Dynamic Lookback Window:** Searches a rolling $90\text{--}120\text{ day}$ window (`now - lookback_days` to `now`), preventing stale historical fixtures (e.g. May 2023) from being presented as current live monitoring.
+- **MGRS Footprint Locking:** Candidate STAC scenes are grouped by MGRS tile identifier (`by_mgrs`). Observations are strictly paired within the **identical MGRS tile footprint**, preventing the cross-MGRS projection seam artifact observed in the Tillari pilot.
+- **Interval & Calendar Date Guard:** Enforces $\Delta t \ge 5\text{ days}$ between scenes and strictly rejects same-calendar-date observation pairs.
+
+### 10.4 Live Batch Day 1 Pilot Telemetry (Genuine October 2026 Sentinel-2 L2A Observations)
+Executed the 5-sector pilot on scheduled Batch Day 1 with `allow_synthetic=false` streaming live Sentinel-2 Level-2A Cloud-Optimized GeoTIFFs from AWS Open Data Earth Search:
+
+| Sector ID | District / Region | Terrestrial Area | Sentinel-2 L2A Pair (Acquisition Dates) | MGRS | Land Mask % | Occlusion % | Monitored Area Credit | Final Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `MH-R01-C06` | Sindhudurg (Konkan) | $89.42\text{ km}^2$ | `S2C_43PCT_20261020` $\rightarrow$ `S2B_43PCT_20261025` | `43PCT` | $39.7\%$ | $4.2\%$ | **$89.42\text{ km}^2$** | `monitored_candidate_detected` |
+| `MH-R01-C10` | Kolhapur (W. Ghats) | $68.86\text{ km}^2$ | `S2C_43PCT_20261020` $\rightarrow$ `S2B_43PCT_20261025` | `43PCT` | $30.6\%$ | $5.1\%$ | **$68.86\text{ km}^2$** | `monitored_candidate_detected` |
+| `MH-R06-C03` | Sindhudurg (Coast Sliver) | $7.58\text{ km}^2$ | `S2C_43QCU_20261020` $\rightarrow$ `S2B_43QCU_20261025` | `43QCU` | $3.4\%$ | $2.8\%$ | **$7.58\text{ km}^2$** | **`monitored_no_change` (0 false alarms)** |
+| `MH-R07-C09` | Kolhapur (Interior) | $225.00\text{ km}^2$ | `S2C_43QCU_20261020` $\rightarrow$ `S2B_43QCU_20261025` | `43QCU` | $100.0\%$ | $1.9\%$ | **$225.00\text{ km}^2$** | `monitored_candidate_detected` |
+| `MH-R09-C15` | Sangli (W. Ghats) | $22.57\text{ km}^2$ | `S2C_43QDU_20261020` $\rightarrow$ `S2B_43QDU_20261025` | `43QDU` | $10.0\%$ | **$53.5\%$** | **$0.00\text{ km}^2$** | **`incomplete_data_missing` (Safeguard Tripped)** |
+
+### 10.5 Monitored Area Accounting & Telemetry Integrity
+- **Total Monitored Terrestrial Area:** $89.42 + 68.86 + 7.58 + 225.00 = \mathbf{390.86\text{ km}^2}$.
+- **No Area Inflation:** Rectangular grid cells ($5 \times 225 = 1,125\text{ km}^2$) are **not** credited. Coastal tiles contribute strictly their clipped terrestrial area ($7.58\text{ km}^2$ for `MH-R06-C03`).
+- **Incomplete Sector Handling:** Sector `MH-R09-C15` tripped the $> 35\%$ cloud occlusion threshold ($53.5\%$). Per policy, candidate changes were withheld from publication, the sector was flagged as `incomplete_data_missing`, and its $22.57\text{ km}^2$ was **excluded** from monitored area metrics.
+- **Durable State Updated:** Successfully recorded in `data/public/monitoring_state.json` and mirrored to `web/public/data/monitoring_state.json`.
+
+
 
 
 

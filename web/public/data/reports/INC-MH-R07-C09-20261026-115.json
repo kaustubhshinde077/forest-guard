@@ -1,0 +1,259 @@
+{
+  "incident_id": "INC-MH-R07-C09-20261026-115",
+  "report_title": "Forest Loss Investigation: MH-R07-C09 \u2014 Kolhapur (Western Ghats)",
+  "report_date": "2026-10-26",
+  "event_category": "forest_loss",
+  "investigation_status": "concluded_with_evidence",
+  "is_synthetic_test": false,
+  "investigation_mode": "live_web_research",
+  "geographic_coordinates": [
+    74.13857,
+    16.4924
+  ],
+  "geographic_bounding_box": [
+    74.13652,
+    16.4921,
+    74.14089,
+    16.49273
+  ],
+  "affected_area_hectares": 1.067,
+  "measurement_uncertainty_hectares": 0.309,
+  "observation_dates": [
+    "2026-10-20",
+    "2026-10-25"
+  ],
+  "visual_geometry": "linear_corridor",
+  "aspect_ratio": 4.17,
+  "heuristic_score": 0.78,
+  "confidence_score": 0.78,
+  "summary": "Autonomous vision analysis identified a linear_corridor of 1.07 ha (+/- 0.31 ha) at coordinates 16.4924 N, 74.1386 E between 2026-10-20 and 2026-10-25. Investigation mode: live_web_research. Public records research linked the event to Linear Transportation / Road Infrastructure Expansion. Investigation status: concluded_with_evidence.",
+  "detailed_findings": "OpenCV 5 classical computer vision detected a significant forest loss candidate covering 105 raster pixels (1.07 ha). The candidate region exhibited a major-to-minor aspect ratio of 4.17 and a compactness of 0.344. Investigation of public registries retrieved 6 records (Execution: live_web_research). Estimated tree impact ranges from None to None trees, based on None available.",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Linear Transportation / Road Infrastructure Expansion",
+      "supporting_evidence": "Visual linear geometry (Aspect Ratio > 3.0) strongly indicates corridor development. Public records searches in the Koyna sanctuary buffer reflect periodic road repair and diversion scrutiny, though specific statutory clearances must be confirmed via live Parivesh queries."
+    }
+  ],
+  "relevant_jurisdictional_authorities": [],
+  "linked_entities_or_projects": [
+    {
+      "entity_name": "Public Works Department (PWD) / Regional Road Authority",
+      "role": "Subject to formal verification in state clearance gazettes."
+    }
+  ],
+  "conflicting_accounts": [
+    "Environmental groups frequently raise concerns regarding tree felling along Koyna sanctuary buffer roads, while local administration maintains the necessity of village connectivity and emergency access."
+  ],
+  "unresolved_questions_and_unknowns": [
+    "Specific contractor identities and exact tree felling permissions for this segment remain unverified."
+  ],
+  "tree_count_estimate": {
+    "is_supported": false,
+    "forest_type": "Unclassified Forest Stratum",
+    "estimation_status": "provisional",
+    "diameter_threshold": "DBH >= 10 cm",
+    "canopy_density_trees_per_ha_min": null,
+    "canopy_density_trees_per_ha_max": null,
+    "estimated_affected_trees_min": null,
+    "estimated_affected_trees_max": null,
+    "density_source": "None available",
+    "source_url": null,
+    "doi": null,
+    "forest_stratum": null,
+    "calculation_basis": "Area measured, but no defensible regional stem density publication found.",
+    "limitations": "Tree-count estimates are omitted to prevent unsupported speculation."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "Welcome to PARIVESH",
+      "url": "https://cpc.parivesh.nic.in",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way."
+      ],
+      "conflicts_with": null,
+      "snippet": "IVESH is a web based, role based workflow \u30fb seeking Environment, Forest, Wildlife and CRZ Clearances \u30fb held on Nov 04, 2026. CLEARANCE FOREST CLEARANCE"
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Kolhapur NH-48 6-Lane Elevated Corridor Project Starts 8 June 2026",
+      "url": "https://www.facebook.com/61575122763585/videos/national-highways-authority-of-india-nhaiproject-detailsproject-nameconstruction/1304206095262067",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way."
+      ],
+      "conflicts_with": null,
+      "snippet": "National Highways Authority of India (NHAI) Project Details Project Name: Construction of a 6-Lane Elevated Corridor and Service Road in the"
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "Building Through Forests: The Story of a Road Widening Project In The Western Ghats | Pulitzer Center",
+      "url": "https://pulitzercenter.org/stories/building-through-forests-story-road-widening-project-western-ghats",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way."
+      ],
+      "conflicts_with": null,
+      "snippet": "Spotting a deer, while driving through this last 13.2 km section of the road, or even a leopard, is not uncommon. There\u2019s a cacophony of sounds--wild animals, rare birds and then, some insects. It takes a trained ear to distinguish the calls and identify the species it is coming from. This is a road through a jungle at its best. Motorists here narrate encounters with tigers, sprawled in the middle of the road after sundown, just as one would at one\u2019s home.\n\nGiven that NH-4A passes through the Western Ghats, the widening project required environment, forest and wildlife clearances. The NH-4A widening had been undertaken earlier too, and the Karnataka government had sought a forest clearance\\ for the same in 2012. The widening work at the time had stalled. [...] The Western Ghats is an ecologically fragile region. India\u2019s Ministry of Environment, Forest and Climate Change (MoEFCC) has granted environment clearances (EC)\\ to 76 projects in the Western Ghats since July 2014, according to an IndiaSpend analysis of proposed projects granted approvals or expedited from July 2014 to March 2020. Of the 76 approved projects, one is within a Protected Area (PA)\\ [Karnala Sanctuary in Panvel, Maharashtra] and 18 are within 10 km of a PA.\n\nThis is the story of the widening of NH-4A. In this story, we will also explore how seemingly small-scale disturbances in ecologically sensitive areas are likely to have a compounding impact on wildlife, endanger public health and exacerbate natural disasters. [...] \u201cThe forests [of the Western Ghats] provide several critical ecosystem services,\u201d Mahesh Sankaran, an ecosystem and community ecologist at the National Centre for Biological Sciences (NCBS), Bengaluru, told IndiaSpend. \u201cThey are important for hydrological services, provisioning services and carbon sequestration\\ services, amongst others.\u201d\n\nPublic health fallouts of infrastructure projects in the Western Ghats are also beginning to become visible. PAs are hotbeds of zoonotic pathogens\\, and deforestation is an important factor that contributes to increased interactions at wildlife-human interface, according to studies."
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "FINAL PROJECT COMPLETION REPORT",
+      "url": "https://www.cepf.net/resources/final-project-report/final-project-report-207",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Search regional news reporting on infrastructure construction in the corridor timeframe."
+      ],
+      "conflicts_with": null,
+      "snippet": "This information was shared with management agencies, such as the Maharashtra State Forest Department and National Tiger Conservation Authority"
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "Western Ghats: In dire straits again",
+      "url": "https://theprobe.in/amp/stories/western-ghats-in-dire-straits-again",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Search regional news reporting on infrastructure construction in the corridor timeframe."
+      ],
+      "conflicts_with": null,
+      "snippet": "Title: Western Ghats: In dire straits again\nBut this time, the threat is massive: It is feared that the proposed felling of an estimated 2.2 lakh trees for a controversial railway project and the exemption of rural areas from the Karnataka Land Grabbing Prohibition Act could accelerate the devastation of this eco-sensitive region. Precariously perched after decades of wanton encroachments and unregulated development, Western Ghats has already lost a substantial part of its evergreen forest cover. Spatiotemporal analyses of land use, done as part of the study, indicated a significant loss in the forest cover areas across Maharashtra, Eastern parts of Tamilnadu, and Western sections of Kerala and Goa. One of the world's 36 biodiversity hotspots, the Western Ghats extends from Gujarat to Kerala, spanning an area of 1.6 lakh sq km | Courtesy: Indian Institute of Science (IISc), Centre for Ecological Studies. Landslides such as these have intensified across the Western Ghats regions of Kerala and Karnataka | Photo courtesy: Rasheed Kappan. As Shankar Sharma, a power and climate policy analyst, reminded Karnataka Chief Minister S R Bommai in a letter, \u201cThere are more than 20 linear projects, all in thick forests of Western Ghats of Karnataka, in various stages of planning and implementation.\u201d. A projection of the alarming fragmentation and increasing spread of non-forest areas in the Kodagu district of Karnataka | Courtesy: Indian Institute of Science (IISc), Centre for Ecological Studies. The government has identified 2.04 lakh acres of forest land as encroached in the state, and almost 77% of these are in the Western Ghats regions in Shivamogga, Chikkamagaluru and Uttara Kannada districts. A look at the Ecologically Sensitive Regions (ESRs) of Western Ghats under four categories, with ESR-1 being the most sensitive and ESR-4 the least | Courtesy: Indian Institute of Science (IISc), Centre for Ecological Studies. The eco-fragility has reached alarming proportions in Kerala, where 163 of the 841 villages under the Western Ghats are categorised under Ecologically Sensitive Regions (ESR-1) | Courtesy: Indian Institute of Science (IISc), Centre for Ecological Studies. But enforcement could lag since the Karnataka government has issues with the MoEF&CC draft notification, demarcating 20,668 sq km in the state\u2019s Western Ghats zone under Ecologically Sensitive Area (ESA)."
+    },
+    {
+      "source_id": "SRC-06",
+      "title": "Report of the Western Ghats Ecology Expert Panel Part I - CPPR",
+      "url": "https://www.cppr.in/wp-content/uploads/2013/03/Gadgil-report.pdf",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Search regional news reporting on infrastructure construction in the corridor timeframe."
+      ],
+      "conflicts_with": null,
+      "snippet": "(650\u20131400 m). However, these tree species are not characteristic of the areas that would be directly affected by the project (submergence and construction). Vateria indica and Elaeocarpus tuberculatus are the two most common and dominant trees in terms of abundance and basal area (Sukumar and Shanker 2010). Much of the forest in the basin is secondary growth with some patches of primary evergreen forest remaining. Large extent of grassland, characteristic of degraded vegetation, is also seen in this basin. This region is representative of the biodiversity of the moist western tract of the Western Ghats. Of the plant species found in the basin nearly 36% are endemic to the Western Ghats, while 87% of amphibians and 41% of fishes of this basin are similarly endemic to Western Ghats. Several"
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 geometric and spatial measurements to establish investigative leads.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Vision telemetry intake for Region 115: Type=forest_loss_candidate, Area=1.067ha (+/-0.309), Geometry=linear_corridor (Aspect=4.17, Compactness=0.344), Coordinates=[74.13857, 16.4924], Dates=['2026-10-20', '2026-10-25']."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "lead_formulation",
+      "decision_rationale": "Adaptive lead generation driven directly by detected geometry and change classification.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Lead 'LEAD-01-INFRA': Query='Parivesh forest clearance road highway corridor widening MH-R07-C09 \u2014 Kolhapur (Western Ghats) 2026' (High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way.)",
+        "Lead 'LEAD-02-NEWS': Query='Western Ghats forest buffer tree felling road project MH-R07-C09 \u2014 Kolhapur (Western Ghats) 2026' (Search regional news reporting on infrastructure construction in the corridor timeframe.)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for official_clearance",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Parivesh forest clearance road highway corridor widening MH-R07-C09 \u2014 Kolhapur (Western Ghats) 2026",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] Welcome to PARIVESH (https://cpc.parivesh.nic.in): IVESH is a web based, role based workflow \u30fb seeking Environment, Forest, Wildlife and CRZ Clearances \u30fb held on Nov 04, 2...",
+        "[LIVE] Kolhapur NH-48 6-Lane Elevated Corridor Project Starts 8 June 2026 (https://www.facebook.com/61575122763585/videos/national-highways-authority-of-india-nhaiproject-detailsproject-nameconstruction/1304206095262067): National Highways Authority of India (NHAI) Project Details Project Name: Construction of a 6-Lane Elevated Corridor and...",
+        "[LIVE] Building Through Forests: The Story of a Road Widening Project In The Western Ghats | Pulitzer Center (https://pulitzercenter.org/stories/building-through-forests-story-road-widening-project-western-ghats): Spotting a deer, while driving through this last 13.2 km section of the road, or even a leopard, is not uncommon. There\u2019..."
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for news_report",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Western Ghats forest buffer tree felling road project MH-R07-C09 \u2014 Kolhapur (Western Ghats) 2026",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] FINAL PROJECT COMPLETION REPORT (https://www.cepf.net/resources/final-project-report/final-project-report-207): This information was shared with management agencies, such as the Maharashtra State Forest Department and National Tiger...",
+        "[LIVE] Western Ghats: In dire straits again (https://theprobe.in/amp/stories/western-ghats-in-dire-straits-again): Title: Western Ghats: In dire straits again\nBut this time, the threat is massive: It is feared that the proposed felling...",
+        "[LIVE] Report of the Western Ghats Ecology Expert Panel Part I - CPPR (https://www.cppr.in/wp-content/uploads/2013/03/Gadgil-report.pdf): (650\u20131400 m). However, these tree species are not characteristic of the areas that would be directly affected by the pro..."
+      ]
+    },
+    {
+      "step_number": 5,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate defensible tree count estimate range from documented forestry density stratum.",
+      "execution_mode": "live_web_research",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "region_context": "MH-R07-C09 \u2014 Kolhapur (Western Ghats)"
+      },
+      "tool_outputs_summary": "Area measured, but no defensible regional stem density publication found.",
+      "findings_extracted": [
+        "Forest Type: Unclassified Forest Stratum",
+        "Density Source: None available (None)",
+        "Tree estimate limitation: Unsupported by documented data"
+      ]
+    },
+    {
+      "step_number": 6,
+      "step_type": "report_generation",
+      "decision_rationale": "Final synthesis of visual telemetry, citations, uncertainty, and unknowns.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Report INC-MH-R07-C09-20261026-115 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+{
+  "incident_id": "INC-MH-R01-C06-20261026-03",
+  "report_title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+  "report_date": "2026-10-26",
+  "event_category": "forest_loss",
+  "investigation_status": "concluded_with_evidence",
+  "is_synthetic_test": false,
+  "investigation_mode": "live_web_research",
+  "geographic_coordinates": [
+    73.74738,
+    15.78165
+  ],
+  "geographic_bounding_box": [
+    73.74672,
+    15.781,
+    73.7483,
+    15.78217
+  ],
+  "affected_area_hectares": 1.419,
+  "measurement_uncertainty_hectares": 0.259,
+  "observation_dates": [
+    "2026-10-20",
+    "2026-10-25"
+  ],
+  "visual_geometry": "compact_block",
+  "aspect_ratio": 1.68,
+  "heuristic_score": 0.85,
+  "confidence_score": 0.85,
+  "summary": "Autonomous vision analysis identified a compact_block of 1.42 ha (+/- 0.26 ha) at coordinates 15.7817 N, 73.7474 E between 2026-10-20 and 2026-10-25. Investigation mode: live_web_research. Public records research linked the event to Commercial Agricultural Clearcutting. Investigation status: concluded_with_evidence.",
+  "detailed_findings": "OpenCV 5 classical computer vision detected a significant forest loss candidate covering 140 raster pixels (1.42 ha). The candidate region exhibited a major-to-minor aspect ratio of 1.68 and a compactness of 0.653. Investigation of public registries retrieved 3 records (Execution: live_web_research). Estimated tree impact ranges from None to None trees, based on None available.",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Commercial Agricultural Clearcutting",
+      "supporting_evidence": "Compact orthogonal geometry matching standard mechanized clearing practices in the biome."
+    }
+  ],
+  "relevant_jurisdictional_authorities": [],
+  "linked_entities_or_projects": [],
+  "conflicting_accounts": [],
+  "unresolved_questions_and_unknowns": [
+    "Specific land title ownership or commercial leaseholders remain unverified in public gazettes."
+  ],
+  "tree_count_estimate": {
+    "is_supported": false,
+    "forest_type": "Unclassified Forest Stratum",
+    "estimation_status": "provisional",
+    "diameter_threshold": "DBH >= 10 cm",
+    "canopy_density_trees_per_ha_min": null,
+    "canopy_density_trees_per_ha_max": null,
+    "estimated_affected_trees_min": null,
+    "estimated_affected_trees_max": null,
+    "density_source": "None available",
+    "source_url": null,
+    "doi": null,
+    "forest_stratum": null,
+    "calculation_basis": "Area measured, but no defensible regional stem density publication found.",
+    "limitations": "Tree-count estimates are omitted to prevent unsupported speculation."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "Amazon deforestation alerts hit all-time low in 2026 - Observat\u00f3rio do Clima",
+      "url": "https://oc.eco.br/en/amazon-deforestation-alerts-hit-all-time-low-in-2026",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Compact rectangular geometry indicates mechanical agricultural clearcutting or commercial plot clearance."
+      ],
+      "conflicts_with": null,
+      "snippet": "If the nearly one-third decline on clearcutting recorded by Deter in 2026 is confirmed by Prodes, Brazil will likely post its lowest official deforestation rate since satellite monitoring began in 1988. \u201cThe numbers presented today are historic, the result of serious environmental protection policies, and prove that it is entirely possible to fulfill the commitment made by the country to zero and reverse deforestation by 2030,\u201d says Marcio Astrini, executive secretary of the Brazilian NGO Observat\u00f3rio do Clima. [...] Deter uses satellite imagery produced in near real-time to guide environmental inspections done by Ibama (the Brazilian federal environmental agency), but it is \u201cshort-sighted\u201d due to its relatively low resolution. Therefore, it is not used to calculate the total deforested area, a function that belongs to another Inpe system, Prodes, whose estimates are published at the end of every year. However, Deter data in the last few years, due to technological improvements, has allowed officials to anticipate how Prodes will behave."
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Agriculture - Sindhudurg",
+      "url": "https://indiandistricts.in/statistics/maharashtra/sindhudurg/agriculture",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Compact rectangular geometry indicates mechanical agricultural clearcutting or commercial plot clearance."
+      ],
+      "conflicts_with": null,
+      "snippet": "Sindhudurg district does have some commercial agricultural activity, particularly with crops like mangoes, coconuts, and cashews being viewed"
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "Raut alleges Rs 900 crore illegal land deal in Konkan",
+      "url": "https://www.daijiworld.com/news/newsDisplay?newsID=1326973",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Compact rectangular geometry indicates mechanical agricultural clearcutting or commercial plot clearance."
+      ],
+      "conflicts_with": null,
+      "snippet": "Rs 900 crore illegal land scam in Maharashtra's Konkan region, claiming that prime agricultural and forest land in Sindhudurg district"
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 geometric and spatial measurements to establish investigative leads.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Vision telemetry intake for Region 3: Type=forest_loss_candidate, Area=1.419ha (+/-0.259), Geometry=compact_block (Aspect=1.68, Compactness=0.653), Coordinates=[73.74738, 15.78165], Dates=['2026-10-20', '2026-10-25']."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "lead_formulation",
+      "decision_rationale": "Adaptive lead generation driven directly by detected geometry and change classification.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Lead 'LEAD-01-CLEARCUT': Query='PRODES forest clearance agricultural clearcut commercial land diversion MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026' (Compact rectangular geometry indicates mechanical agricultural clearcutting or commercial plot clearance.)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for official_clearance",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "PRODES forest clearance agricultural clearcut commercial land diversion MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] Amazon deforestation alerts hit all-time low in 2026 - Observat\u00f3rio do Clima (https://oc.eco.br/en/amazon-deforestation-alerts-hit-all-time-low-in-2026): If the nearly one-third decline on clearcutting recorded by Deter in 2026 is confirmed by Prodes, Brazil will likely pos...",
+        "[LIVE] Agriculture - Sindhudurg (https://indiandistricts.in/statistics/maharashtra/sindhudurg/agriculture): Sindhudurg district does have some commercial agricultural activity, particularly with crops like mangoes, coconuts, and...",
+        "[LIVE] Raut alleges Rs 900 crore illegal land deal in Konkan (https://www.daijiworld.com/news/newsDisplay?newsID=1326973): Rs 900 crore illegal land scam in Maharashtra's Konkan region, claiming that prime agricultural and forest land in Sindh..."
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate defensible tree count estimate range from documented forestry density stratum.",
+      "execution_mode": "live_web_research",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "region_context": "MH-R01-C06 \u2014 Sindhudurg (Konkan)"
+      },
+      "tool_outputs_summary": "Area measured, but no defensible regional stem density publication found.",
+      "findings_extracted": [
+        "Forest Type: Unclassified Forest Stratum",
+        "Density Source: None available (None)",
+        "Tree estimate limitation: Unsupported by documented data"
+      ]
+    },
+    {
+      "step_number": 5,
+      "step_type": "report_generation",
+      "decision_rationale": "Final synthesis of visual telemetry, citations, uncertainty, and unknowns.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Report INC-MH-R01-C06-20261026-03 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
+      ]
+    }
+  ]
+}

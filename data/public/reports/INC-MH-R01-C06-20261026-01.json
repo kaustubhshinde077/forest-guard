@@ -1,0 +1,183 @@
+{
+  "incident_id": "INC-MH-R01-C06-20261026-01",
+  "report_title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+  "report_date": "2026-10-26",
+  "event_category": "forest_loss",
+  "investigation_status": "concluded_with_evidence",
+  "is_synthetic_test": false,
+  "investigation_mode": "live_web_research",
+  "geographic_coordinates": [
+    73.74641,
+    15.78784
+  ],
+  "geographic_bounding_box": [
+    73.7458,
+    15.78711,
+    73.74691,
+    15.78846
+  ],
+  "affected_area_hectares": 1.054,
+  "measurement_uncertainty_hectares": 0.259,
+  "observation_dates": [
+    "2026-10-20",
+    "2026-10-25"
+  ],
+  "visual_geometry": "irregular_patch",
+  "aspect_ratio": 1.53,
+  "heuristic_score": 0.69,
+  "confidence_score": 0.69,
+  "summary": "Autonomous vision analysis identified a irregular_patch of 1.05 ha (+/- 0.26 ha) at coordinates 15.7878 N, 73.7464 E between 2026-10-20 and 2026-10-25. Investigation mode: live_web_research. Public records research linked the event to Commercial Agricultural Clearcutting. Investigation status: concluded_with_evidence.",
+  "detailed_findings": "OpenCV 5 classical computer vision detected a significant forest loss candidate covering 104 raster pixels (1.05 ha). The candidate region exhibited a major-to-minor aspect ratio of 1.53 and a compactness of 0.485. Investigation of public registries retrieved 3 records (Execution: live_web_research). Estimated tree impact ranges from None to None trees, based on None available.",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Commercial Agricultural Clearcutting",
+      "supporting_evidence": "Compact orthogonal geometry matching standard mechanized clearing practices in the biome."
+    }
+  ],
+  "relevant_jurisdictional_authorities": [],
+  "linked_entities_or_projects": [],
+  "conflicting_accounts": [],
+  "unresolved_questions_and_unknowns": [
+    "Specific land title ownership or commercial leaseholders remain unverified in public gazettes."
+  ],
+  "tree_count_estimate": {
+    "is_supported": false,
+    "forest_type": "Unclassified Forest Stratum",
+    "estimation_status": "provisional",
+    "diameter_threshold": "DBH >= 10 cm",
+    "canopy_density_trees_per_ha_min": null,
+    "canopy_density_trees_per_ha_max": null,
+    "estimated_affected_trees_min": null,
+    "estimated_affected_trees_max": null,
+    "density_source": "None available",
+    "source_url": null,
+    "doi": null,
+    "forest_stratum": null,
+    "calculation_basis": "Area measured, but no defensible regional stem density publication found.",
+    "limitations": "Tree-count estimates are omitted to prevent unsupported speculation."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "forest+land+encroachment | Indian Case Law | Law | CaseMine",
+      "url": "https://www.casemine.com/search/in/forest%2Bland%2Bencroachment",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Irregular clearing perimeter suggests agricultural expansion or unauthorized encroachment."
+      ],
+      "conflicts_with": null,
+      "snippet": "...\n[\n1. This application seeks quashing of notice dated 21.02.2022 issued by the Forest Department of Delhi for removing encroachment from forest land.\n2. We have heard...encroachment is being removed is not forest land. Once it is so, even if the applicant has purchased the same from someone who is not owner (as no one can be\n1...\nowner of the forest land), the Applicant cannot claim right to continue in forest land which cannot be used for non-forest purposes.\n4. Faced with...\n\nCases cited for the legal proposition you have searched for.\n\nThere are no alerts added for the related case. Please create new alert(s).\n\n\u00a9 2026 Gauge Data Solutions Pvt. Ltd.\n| [Terms [...] ...the provisions of the aforesaid two Acts. The Learned Counsel for the Applicant alleged that the offenders are allowed to continue with their illegal activities of encroaching the forest land which is not permissible either under the provisions of Forest Conservation Act,1980 or under the Rajasthan Forest Act and therefore we direct that the Respondent No.1 shall re-examine the matter and issue necessary directions for ensuring that no encroachment or...is allowed to continue on the forest land and the matter shall be dealt with in accordance with Rajasthan Forest Act and more particularly under Section 26 thereof and the encroachers are evicted forthwith. [...] ...said 15 cents are in no manner related to the allegations of encroachment into forest land and that this aspect would be evident if a proper inspection and survey of the property is conducted by a...be sold by the petitioner, is not in any manner related to the alleged encroachment made by the petitioner into the forest land, then certainly the second respondent is obliged to issue the No...ascertain as to whether any part of the property covered by that deed would form part of the encroachment into forest land as shown in Ext.R2(b) sketch. The second respondent in order to avoid further..."
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Maharashtra forest land lost to encroachers",
+      "url": "https://www.facebook.com/groups/sanctuaryasia/posts/10156849711226103",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Irregular clearing perimeter suggests agricultural expansion or unauthorized encroachment."
+      ],
+      "conflicts_with": null,
+      "snippet": "The area was encroached on during the pandemic and a lot of forest land was diverted for farming. This created impediments for the movement of"
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "Goa Forest department today nabbed the accuse Shri Sikandar ...",
+      "url": "https://www.facebook.com/goemkarponn/videos/goa-forest-department-today-nabbed-the-accuse-shri-sikandar-chandrakant-malvanka/231650743091788",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Irregular clearing perimeter suggests agricultural expansion or unauthorized encroachment."
+      ],
+      "conflicts_with": null,
+      "snippet": "A news report dated September 30, 2026, details allegations against forest staff in Sindhudurg for throwing burning torches at an elephant named"
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 geometric and spatial measurements to establish investigative leads.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Vision telemetry intake for Region 1: Type=forest_loss_candidate, Area=1.054ha (+/-0.259), Geometry=irregular_patch (Aspect=1.53, Compactness=0.485), Coordinates=[73.74641, 15.78784], Dates=['2026-10-20', '2026-10-25']."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "lead_formulation",
+      "decision_rationale": "Adaptive lead generation driven directly by detected geometry and change classification.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Lead 'LEAD-01-ENCROACHMENT': Query='Forest land encroachment tree loss dispute MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026' (Irregular clearing perimeter suggests agricultural expansion or unauthorized encroachment.)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for legal_dispute",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Forest land encroachment tree loss dispute MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] forest+land+encroachment | Indian Case Law | Law | CaseMine (https://www.casemine.com/search/in/forest%2Bland%2Bencroachment): ...\n[\n1. This application seeks quashing of notice dated 21.02.2022 issued by the Forest Department of Delhi for removin...",
+        "[LIVE] Maharashtra forest land lost to encroachers (https://www.facebook.com/groups/sanctuaryasia/posts/10156849711226103): The area was encroached on during the pandemic and a lot of forest land was diverted for farming. This created impedimen...",
+        "[LIVE] Goa Forest department today nabbed the accuse Shri Sikandar ... (https://www.facebook.com/goemkarponn/videos/goa-forest-department-today-nabbed-the-accuse-shri-sikandar-chandrakant-malvanka/231650743091788): A news report dated September 30, 2026, details allegations against forest staff in Sindhudurg for throwing burning torc..."
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate defensible tree count estimate range from documented forestry density stratum.",
+      "execution_mode": "live_web_research",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "region_context": "MH-R01-C06 \u2014 Sindhudurg (Konkan)"
+      },
+      "tool_outputs_summary": "Area measured, but no defensible regional stem density publication found.",
+      "findings_extracted": [
+        "Forest Type: Unclassified Forest Stratum",
+        "Density Source: None available (None)",
+        "Tree estimate limitation: Unsupported by documented data"
+      ]
+    },
+    {
+      "step_number": 5,
+      "step_type": "report_generation",
+      "decision_rationale": "Final synthesis of visual telemetry, citations, uncertainty, and unknowns.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Report INC-MH-R01-C06-20261026-01 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
+      ]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 import cv2
 import numpy as np
 
@@ -32,16 +32,25 @@ class QualityAndMaskEngine:
         return warnings
 
     @staticmethod
-    def reinhard_color_transfer(source: np.ndarray, target: np.ndarray) -> np.ndarray:
+    def reinhard_color_transfer(source: np.ndarray, target: np.ndarray, mask: Optional[np.ndarray] = None) -> np.ndarray:
         """
         Transfers the color characteristics (mean & standard deviation in CIE Lab)
         from target (before) to source (after) to normalize atmospheric/seasonal shifts.
+        When mask is provided (e.g. terrestrial land mask), statistics are computed
+        exclusively over valid unmasked pixels to prevent ocean/cloud bias.
         """
         src_lab = cv2.cvtColor(source, cv2.COLOR_BGR2Lab).astype(np.float32)
         tgt_lab = cv2.cvtColor(target, cv2.COLOR_BGR2Lab).astype(np.float32)
 
-        src_mean, src_std = np.mean(src_lab, axis=(0, 1)), np.std(src_lab, axis=(0, 1))
-        tgt_mean, tgt_std = np.mean(tgt_lab, axis=(0, 1)), np.std(tgt_lab, axis=(0, 1))
+        if mask is not None and np.count_nonzero(mask) > 100:
+            valid_idx = (mask > 0)
+            src_pixels = src_lab[valid_idx]
+            tgt_pixels = tgt_lab[valid_idx]
+            src_mean, src_std = np.mean(src_pixels, axis=0), np.std(src_pixels, axis=0)
+            tgt_mean, tgt_std = np.mean(tgt_pixels, axis=0), np.std(tgt_pixels, axis=0)
+        else:
+            src_mean, src_std = np.mean(src_lab, axis=(0, 1)), np.std(src_lab, axis=(0, 1))
+            tgt_mean, tgt_std = np.mean(tgt_lab, axis=(0, 1)), np.std(tgt_lab, axis=(0, 1))
 
         # Avoid zero division
         src_std = np.where(src_std == 0, 1e-5, src_std)

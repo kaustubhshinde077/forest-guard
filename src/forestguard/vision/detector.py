@@ -93,10 +93,14 @@ class NonNDVIChangeDetector:
         img_before: np.ndarray,
         img_after: np.ndarray,
         geo_bbox: Optional[List[float]] = None,
-        acquisition_dates: Optional[Tuple[str, str]] = None
+        acquisition_dates: Optional[Tuple[str, str]] = None,
+        land_mask: Optional[np.ndarray] = None
     ) -> DetectionResult:
         """
         Execute substantive OpenCV 5 change detection without vegetation indices.
+        When land_mask is provided (255 = terrestrial land, 0 = sea / ocean / outside),
+        all calculations (alignment, Reinhard color transfer, differencing, morphology,
+        and area quantification) strictly exclude sea/ocean pixels.
         """
         # Safeguard: Reject same-date observation pairs (e.g. adjacent MGRS granules on same day)
         if acquisition_dates and len(acquisition_dates) >= 2:
@@ -126,20 +130,32 @@ class NonNDVIChangeDetector:
         quality_warnings.extend(QualityAndMaskEngine.assess_quality(img_before))
         quality_warnings.extend(QualityAndMaskEngine.assess_quality(img_after))
 
-        # 1. Coregistration
-        aligned_after, align_method, align_metric = self.aligner.align(img_before, img_after)
+        # 1. Coregistration (strictly masked to land when land_mask is provided)
+        aligned_after, align_method, align_metric = self.aligner.align(img_before, img_after, mask=land_mask)
 
-        # 2. Cloud and shadow mask
+        # 2. Cloud, shadow, and marine exclusion mask
         mask_before = QualityAndMaskEngine.segment_clouds_and_shadows(img_before)
         mask_after = QualityAndMaskEngine.segment_clouds_and_shadows(aligned_after)
         exclusion_mask = cv2.bitwise_or(mask_before, mask_after)
-        cloud_pct = float(np.sum(exclusion_mask > 0) / exclusion_mask.size) * 100.0
+
+        if land_mask is not None:
+            # Exclude all sea / ocean pixels from terrestrial change analysis
+            sea_mask = (land_mask == 0).astype(np.uint8) * 255
+            exclusion_mask = cv2.bitwise_or(exclusion_mask, sea_mask)
+            land_px = int(np.count_nonzero(land_mask))
+            cloud_land_px = int(np.count_nonzero(((mask_before > 0) | (mask_after > 0)) & (land_mask > 0)))
+            cloud_pct = float(cloud_land_px / max(1, land_px)) * 100.0
+            land_pct = float(land_px / land_mask.size) * 100.0
+        else:
+            cloud_pct = float(np.sum(exclusion_mask > 0) / exclusion_mask.size) * 100.0
+            land_pct = 100.0
 
         if cloud_pct > 35.0:
             quality_warnings.append(f"High cloud/shadow occlusion: {cloud_pct:.1f}% of scene masked.")
 
-        # 3. Reinhard color-transfer normalization in CIE Lab space
-        norm_after = QualityAndMaskEngine.reinhard_color_transfer(aligned_after, img_before)
+        # 3. Reinhard color-transfer normalization in CIE Lab space (computed only over valid land)
+        valid_reinhard_mask = (exclusion_mask == 0).astype(np.uint8) * 255
+        norm_after = QualityAndMaskEngine.reinhard_color_transfer(aligned_after, img_before, mask=valid_reinhard_mask)
 
         # 4. Direct CIE Lab Color Space Differencing (Zero Vegetation Indices)
         # Convert both images to float32 Lab space
@@ -163,7 +179,7 @@ class NonNDVIChangeDetector:
         tex_var_before = self.compute_local_texture_variance(gray_before)
         tex_var_after = self.compute_local_texture_variance(gray_after_norm)
 
-        # Mask exclusion zones (clouds/shadows)
+        # Mask exclusion zones (clouds/shadows/sea)
         delta_a_loss[exclusion_mask > 0] = 0
         delta_a_recovery[exclusion_mask > 0] = 0
         color_diff[exclusion_mask > 0] = 0
@@ -173,13 +189,27 @@ class NonNDVIChangeDetector:
         loss_signal = np.clip(delta_a_loss * (color_diff / 10.0), 0, None)
         recovery_signal = np.clip(delta_a_recovery * (color_diff / 10.0), 0, None)
 
-        # Dynamic statistical thresholding based on scene noise
-        loss_thresh = np.mean(loss_signal) + 2.5 * np.std(loss_signal)
-        recovery_thresh = np.mean(recovery_signal) + 2.5 * np.std(recovery_signal)
+        # Dynamic statistical thresholding based on scene noise across valid land
+        if land_mask is not None:
+            valid_idx = (land_mask > 0) & (exclusion_mask == 0)
+            if np.count_nonzero(valid_idx) > 100:
+                loss_thresh = np.mean(loss_signal[valid_idx]) + 2.5 * np.std(loss_signal[valid_idx])
+                recovery_thresh = np.mean(recovery_signal[valid_idx]) + 2.5 * np.std(recovery_signal[valid_idx])
+            else:
+                loss_thresh = 50.0
+                recovery_thresh = 50.0
+        else:
+            loss_thresh = np.mean(loss_signal) + 2.5 * np.std(loss_signal)
+            recovery_thresh = np.mean(recovery_signal) + 2.5 * np.std(recovery_signal)
 
         # Threshold to binary masks
         loss_bin = (loss_signal > max(5.0, loss_thresh)).astype(np.uint8) * 255
         recovery_bin = (recovery_signal > max(5.0, recovery_thresh)).astype(np.uint8) * 255
+
+        # Strictly zero out non-terrestrial pixels
+        if land_mask is not None:
+            loss_bin[land_mask == 0] = 0
+            recovery_bin[land_mask == 0] = 0
 
         # Morphological opening to eliminate isolated 1-2 pixel noise
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -188,6 +218,10 @@ class NonNDVIChangeDetector:
 
         rec_clean = cv2.morphologyEx(recovery_bin, cv2.MORPH_OPEN, kernel, iterations=1)
         rec_clean = cv2.morphologyEx(rec_clean, cv2.MORPH_CLOSE, kernel, iterations=1)
+
+        if land_mask is not None:
+            loss_clean[land_mask == 0] = 0
+            rec_clean[land_mask == 0] = 0
 
         candidate_regions: List[DetectedRegion] = []
         region_id_seq = 1
@@ -214,7 +248,9 @@ class NonNDVIChangeDetector:
             "resolution_m_per_pixel": self.resolution_m_per_pixel,
             "significance_threshold_ha": self.significance_threshold_ha,
             "num_loss_candidates": len(loss_regions),
-            "num_recovery_candidates": len(rec_regions)
+            "num_recovery_candidates": len(rec_regions),
+            "land_mask_applied": land_mask is not None,
+            "terrestrial_land_fraction_pct": round(land_pct, 2)
         }
 
         if align_method == "orb_homography":

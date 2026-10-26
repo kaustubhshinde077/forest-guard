@@ -1,0 +1,257 @@
+{
+  "incident_id": "INC-MH-R01-C06-20261026-49",
+  "report_title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+  "report_date": "2026-10-26",
+  "event_category": "forest_recovery",
+  "investigation_status": "concluded_with_evidence",
+  "is_synthetic_test": false,
+  "investigation_mode": "live_web_research",
+  "geographic_coordinates": [
+    73.79061,
+    15.73474
+  ],
+  "geographic_bounding_box": [
+    73.78939,
+    15.73383,
+    73.7919,
+    15.73545
+  ],
+  "affected_area_hectares": 1.612,
+  "measurement_uncertainty_hectares": 0.366,
+  "observation_dates": [
+    "2026-10-20",
+    "2026-10-25"
+  ],
+  "visual_geometry": "linear_corridor",
+  "aspect_ratio": 3.64,
+  "heuristic_score": 0.89,
+  "confidence_score": 0.89,
+  "summary": "Autonomous vision analysis identified a linear_corridor of 1.61 ha (+/- 0.37 ha) at coordinates 15.7347 N, 73.7906 E between 2026-10-20 and 2026-10-25. Investigation mode: live_web_research. Public records research linked the event to Compensatory Ecological Afforestation / Corridor Protection. Investigation status: concluded_with_evidence.",
+  "detailed_findings": "OpenCV 5 classical computer vision detected a significant forest recovery candidate covering 159 raster pixels (1.61 ha). The candidate region exhibited a major-to-minor aspect ratio of 3.64 and a compactness of 0.374. Investigation of public registries retrieved 6 records (Execution: live_web_research). Estimated tree impact ranges from None to None trees, based on None available.",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Compensatory Ecological Afforestation / Corridor Protection",
+      "supporting_evidence": "Canopy roughness gain observed within the Tillari Conservation Reserve landscape (declared 2020), where forest department and conservation trusts focus on corridor connectivity."
+    }
+  ],
+  "relevant_jurisdictional_authorities": [],
+  "linked_entities_or_projects": [
+    {
+      "entity_name": "Maharashtra Forest Department (Sawantwadi/Dodamarg Divisions)",
+      "role": "Custodial authority for the Tillari Conservation Reserve."
+    }
+  ],
+  "conflicting_accounts": [],
+  "unresolved_questions_and_unknowns": [
+    "Whether regeneration is natural secondary succession or planted nursery saplings is not distinguished by satellite imagery alone."
+  ],
+  "tree_count_estimate": {
+    "is_supported": false,
+    "forest_type": "Unclassified Forest Stratum",
+    "estimation_status": "provisional",
+    "diameter_threshold": "DBH >= 10 cm",
+    "canopy_density_trees_per_ha_min": null,
+    "canopy_density_trees_per_ha_max": null,
+    "estimated_affected_trees_min": null,
+    "estimated_affected_trees_max": null,
+    "density_source": "None available",
+    "source_url": null,
+    "doi": null,
+    "forest_stratum": null,
+    "calculation_basis": "Area measured, but no defensible regional stem density publication found.",
+    "limitations": "Tree-count estimates are omitted to prevent unsupported speculation."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "maharashtra compensatory afforestation fund management",
+      "url": "https://nationalcampa.nic.in/dashboard/APOPDF//689435ebb56b5.pdf",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative."
+      ],
+      "conflicts_with": null,
+      "snippet": "10000 1 JFMC s 1500000 15.00 Digras Digras Digras 803 N-20.088792 E-077.709986 --Total 15.00 Yavatmal Pusad 5 1 72 972000 48.60 Digras Digras Digras 803 N -20.11.54.68 E-77.41.24.58 Forest & Non Forest -Yavatmal Pusad 5 1 72 972000 48.60 Digras Digras Rohana 773A N-20.72960 E-77413842 Yavatmal Pusad 5 1 72 972000 48.60 Digras Digras Sakhara 769 N-20.11170 E-77.41.1567 Total Total 15 3 216 -145.80 (Letter No/F.No . FC-I/MH-279/202 2-NGP/11 854 Date 10/07/20 23) (Cond.N o. ix) Distribution to villagers; ix. State Forest Department shall undertake avenue plantation of 8 feet tall plants as per IRC norms at the cost of User Agency. 51 Diversion of 2.427 ha. Reserve forest in favour of National Highway Division Akola for up gradation of two lanes with paved shoulder / Four land Configuration [...] 12454 Reginal APCCF of G.O.I. FC-I/MH-36/2016-NGP/2609 25-09-2017 Annual Plan of Operation 2025-26 121 Project sanctioning authority (MoEF/ Regional APCCF of G.O.I./State Govt.) Order no.\nDate Range Round Beat Compartme nt no.\nLati-tude Longi -tude Whether forest land or non -forest land Whether tribal /remote area or non-tribal area 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 Rate/ha (Rs) Amount (Rs. Lakhs) Details of Area under treatment Year of Operatio n (i.e. SYO, TYO etc.) Projectwise total area of SYO, TYO etc. Total No of sites Area of maintenance of plantation at each site Plantation model being used (no. of plants per ha.) Sr. No. [...] Date Range Round Beat Compartme nt no.\nLati-tude Longi -tude Whether forest land or non -forest land Whether tribal /remote area or non-tribal area 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 Rate/ha (Rs) Amount (Rs. Lakhs) Details of Area under treatment Year of Operatio n (i.e. SYO, TYO etc.) Projectwise total area of SYO, TYO etc. Total No of sites Area of maintenance of plantation at each site Plantation model being used (no. of plants per ha.) Sr. No.\nCircle Division Name of the Project Project ID Final sanction Area of the Project (ha) 25 Thane Alibag Diversion of 0.7284 ha. Mangrove area for Upgradation/ Modernishation/ Expansion of Existing Shipyard at Village Kurul, Tal. Alibag Dist. Raigad Konkan Barge Builders Pvt. Ltd."
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Compensatory Afforestation: Myths And Reality | Countercurrents",
+      "url": "https://countercurrents.org/2017/09/compensatory-afforestation-myths-and-reality",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative."
+      ],
+      "conflicts_with": null,
+      "snippet": "A recent newspaper report from Maharashtra, citing a report compiled by the state forest department, shows that only 32% plantations done in 2010 were found successful, whereas 68% either failed or are on the verge of failure. In case of plantations under compensatory afforestation scheme, success rate is only 11% with 89% plantations either failed or on the verge of failure(#_edn30).\n\nMisutilization and lack of accountability"
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "Maharashtra did not comply with compensatory afforestation rules: CAG",
+      "url": "https://www.downtoearth.org.in/forests/maharashtra-did-not-comply-with-compensatory-afforestation-rules-cag-65858",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative."
+      ],
+      "conflicts_with": null,
+      "snippet": "The state diverted 65,363 hectares of forest land for 1,671 projects as on March 2018. But, \u201cthe information of non-forest land (NFL) or degraded forest land provided for compensatory afforestation was neither compiled by additional principal chief conservatory of forests (APCCF) nor was the same available with chief conservator of forests,\u201d observed the report, tabled in the state legislature.\n\nNo information was shared between the APCCF-cum-nodal officer, responsible for processing forest land diversion cases, and APCCF (CAMPA), responsible for taking up afforestation on alternate lands identified during approval, the report added. [...] \u201cAgainst the Rs 4.97 crore remitted by NHAI, amount released during the period 2015-2019 was only Rs 59.50 lakh (11.97 per cent) and the expenditure incurred was only Rs 42.49 lakh (nine percent)\u201d, which defeated the purpose of conservation of wilflife, it added.\n\nIn its reply, the CCF and FD of Pench Tiger Reserve stated, in June 2018, that \u201cdue to time constraint, the funds could not be utilised during 2016-17 and 2017-18\u201d.\n\n\u201cIn future, action would be taken to utilise the funds in the same financial year,\u201d they added.\n\nThis audit finding leaves one wondering about the role played by the regional office of the MoEF in ensuring compliance of the conditions inserted while granting forest clearances.\n\nCompliance with other conditions [...] But the CAG auditors found that \u201cthe work was neither undertaken by the user agency nor was enforced by the state forest department\u201d.\n\nThe performance audit clearly shows that conditions inserted at the time of granting stage-II approval were not complied with and the auditors also didn\u2019t find any records to suggest that state forest department and regional office had done their duty in order to ensure the compliance.\n\nIndia\n\nForests\n\n## Related Stories\n\n###### How \u00a32 a day is helping Indigenous communities protect Peru\u2019s Amazon rainforest\n\nHimanshu Nitnaware\n\n21 Oct 2026\n\n###### Bulldozers raze tribal homes in Madhya Pradesh amid allegations of forest-rights violations\n\nSatyam Shrivastava\n\n19 Oct 2026"
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "Canopy cover and ecological restoration increase natural ...",
+      "url": "https://era-india.org/wp-content/uploads/2022/05/Osuri_et-al_2021_canopy-cover_restoration_RestEcol_onlineearly-Arjun-Singh.pdf",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Identify published ecological research on corridor canopy recovery."
+      ],
+      "conflicts_with": null,
+      "snippet": "Discussion Our study from a human-modi\ufb01ed landscape in the Western Ghats in India showed greater tree regeneration in mature rain-forests and 10\u201315-year-old ecologically restored rainforests compared to DRs left to recover naturally, and MPs. While active ER increased densities of early-successional species and shifted community composition toward that of mature rainfor-ests, it was less effective in recovering late-successional species. [...] planted and natural overstories to guide this mis-sion. We conducted a \ufb01eld study (65 plots of 25 m2) to examine the in\ufb02uence of overstory type and canopy cover on naturally regenerating tree seedlings across degraded rainforests (DRs), mixed-native species ecological restoration (ER) sites, monocul-ture eucalypt plantations (MP), and mature \u201cbenchmark\u201d rainforests (BR) in the Western Ghats mountains of peninsular India. ER had higher native tree seedling densities and recovered community composition toward BR levels compared to DR, while communities in MP shifted in the opposite direction. Densities of native late-successional species increased with can-opy cover (particularly in ER), but greater canopy cover was also associated with increases in alien species, a few of which are [...] E C O S Y S T E M R E S T O R A T I O N I N I N D I A : S T A T U S Q U O A N D T H E W A Y F O R W A R D T O A C H I E V E L A N D D E G R A D A T I O N N E U T R A L I T Y R E S E A R C H A R T I C L E Canopy cover and ecological restoration increase natural regeneration of rainforest trees in the Western Ghats, India Anand M. Osuri1,2 , Divya Mudappa1 , Srinivasan Kasinathan1 , T. R. Shankar Raman1 Restoration of canopy cover through tree planting can assist in overcoming barriers to natural regeneration and catalyze recov-ery of degraded tropical forests. India has made international pledges to restore millions of hectares of degraded forests by 2030, but lacks empirical research on regeneration under different types of planted and natural overstories to guide this mis-sion. We"
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "Umbrella-biodiversity-konkan-division-MH-IN's Journal \u00b7 iNaturalist",
+      "url": "https://www.inaturalist.org/projects/umbrella-biodiversity-konkan-division-mh-in/journal",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Identify published ecological research on corridor canopy recovery."
+      ],
+      "conflicts_with": null,
+      "snippet": "Log In or Sign Up. Back to Umbrella-biodiversity-konkan-division-MH-IN. # Umbrella-biodiversity-konkan-division-MH-IN's Journal. ## September 12, 2023. ### Analyzing the data. (date-12-09-2023) edited on 16-09-2023. This project was launched on August 8, 2020. Geographical area - India-Maharashtra state-Konkan region (westernmost part of the state). Konkan division contains, Mumbai city, Mumbai suburb, Palghar, Thane, Ratnagiri and SIndhudurg districts. This region is coastal region of Maharashtra and lies between Sahyadri Mountain range on east and Arabian sea on west. This region has highest rainfall in whole state of Maharashtra. * Districts included - 7 From north to south - Palghar, Mumbai city, Mumbai suburb-Thane-Raigad-Ratnagiri-Sindhudurg. * Total observations - 141139 - research grade 47.6%, Needs ID 46-62%, Casual - 5.78% Comment - We need experts to provide ID to the observations, which have no BN yet. Observations per district in descending order - Mumbai suburb - 36080 Thane - 31672 Raigad - 20092 Palghar - 19615 Mumbai city - 14036 Sindhudurg - 11356 Ratnagiri - 8291 Comment - This picture could be because of the difference in the number of observers documenting on iNat. We had appealed many a times to the nature enthusiasts of the Ratnagiri district to upload their observations on this portal. Max records uploaded by Yuvraj Gurjar. + 13516, species - 1210 Maximum comments and faves - Genus Creobroter - Praying Mantis. ### Archives."
+    },
+    {
+      "source_id": "SRC-06",
+      "title": "Maharashtra government declares 29.53-sq-km area in Konkan a conservation reserve | Hindustan Times",
+      "url": "https://www.hindustantimes.com/cities/maharashtra-government-declares-29-53-sq-km-area-in-konkan-a-conservation-reserve/story-OpmsdlK6dyR55at5JBntCL.html",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Identify published ecological research on corridor canopy recovery."
+      ],
+      "conflicts_with": null,
+      "snippet": "Title: Maharashtra government declares 29.53-sq-km area in Konkan a conservation reserve | Hindustan Times\n# Maharashtra government declares 29.53-sq-km area in Konkan a conservation reserve. ## The Maharashtra government on Tuesday declared 29.53 square kilometre (sq km) area, comprising 10 villages in Dodamarg taluka, Sindhudurg district, as the Tillari. The Maharashtra government on Tuesday declared 29.53 square kilometre (sq km) area, comprising 10 villages in Dodamarg taluka, Sindhudurg district, as the Tillari Conservation Reserve. This is the first notified conservation reserve along the Konkan coast and the seventh in the state. With this decision, a certain section of the Dodamarg-Sawantwadi corridor, which has been under threat from mining, receives protection under the Wildlife Protection Act, 1972. Conservation reserves are protected areas that act as buffer zones or migration corridors between established national parks, wildlife sanctuaries, reserved and protected forests of India. The notification published on Tuesday by the revenue and forest department shows the area was protected based on the presence of tigers, elephants, and leopards. \u201cTillari Conservation Reserve is a source of perennial water bodies, and an integral part of the Sahyadri-Konkan wildlife corridor. With this declaration, development activities are restricted, while mining is prohibited across 29.53 sq km areas, safeguarding the rich biodiversity of the tropical semi-evergreen and moist deciduous forests. We will be setting up a committee to look after management and conservation of the reserve,\u201d said Nitin Kakodkar, principal chief conservator of forest (wildlife), Maharashtra. This will be the 13th protected area along the Western Ghats in Maharashtra and 62nd across the state (including sanctuaries, national parks and tiger reserves). \u201cThe reserve will act as a connector through the Western Ghat ridges, connecting the Mhadei Wildlife Sanctuary in north Goa and the Bhimgad Wildlife Sanctuary in Karnataka\u2019s Belgaum district in the south to the Radhanagari Wildlife Sanctuary in Kolhapur district which lies in the north,\u201d said Kakodkar. In 2016, the Maharashtra forest department had proposed to declare 57 sq km area of Tillari as a wildlife sanctuary across 25 villages, but after stiff opposition from locals, the proposed protected area was reduced to 29.53 sq km. According to the Union environment ministry, conservation reserves are protected areas that act as buffer zones or connectors and migration corridors between established national parks, wildlife sanctuaries and reserved and protected forests of India."
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 geometric and spatial measurements to establish investigative leads.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Vision telemetry intake for Region 49: Type=forest_recovery_candidate, Area=1.612ha (+/-0.366), Geometry=linear_corridor (Aspect=3.64, Compactness=0.374), Coordinates=[73.79061, 15.73474], Dates=['2026-10-20', '2026-10-25']."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "lead_formulation",
+      "decision_rationale": "Adaptive lead generation driven directly by detected geometry and change classification.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Lead 'LEAD-01-AFFORESTATION': Query='Maharashtra Forest Department compensatory afforestation plantation restoration MH-R01-C06 \u2014 Sindhudurg (Konkan)' (Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative.)",
+        "Lead 'LEAD-02-ECOLOGY': Query='Western Ghats wildlife corridor regeneration canopy study MH-R01-C06 \u2014 Sindhudurg (Konkan)' (Identify published ecological research on corridor canopy recovery.)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for official_clearance",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Maharashtra Forest Department compensatory afforestation plantation restoration MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] maharashtra compensatory afforestation fund management (https://nationalcampa.nic.in/dashboard/APOPDF//689435ebb56b5.pdf): 10000 1 JFMC s 1500000 15.00 Digras Digras Digras 803 N-20.088792 E-077.709986 --Total 15.00 Yavatmal Pusad 5 1 72 97200...",
+        "[LIVE] Compensatory Afforestation: Myths And Reality | Countercurrents (https://countercurrents.org/2017/09/compensatory-afforestation-myths-and-reality): A recent newspaper report from Maharashtra, citing a report compiled by the state forest department, shows that only 32%...",
+        "[LIVE] Maharashtra did not comply with compensatory afforestation rules: CAG (https://www.downtoearth.org.in/forests/maharashtra-did-not-comply-with-compensatory-afforestation-rules-cag-65858): The state diverted 65,363 hectares of forest land for 1,671 projects as on March 2018. But, \u201cthe information of non-fore..."
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for scientific_context",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Western Ghats wildlife corridor regeneration canopy study MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] Canopy cover and ecological restoration increase natural ... (https://era-india.org/wp-content/uploads/2022/05/Osuri_et-al_2021_canopy-cover_restoration_RestEcol_onlineearly-Arjun-Singh.pdf): Discussion Our study from a human-modi\ufb01ed landscape in the Western Ghats in India showed greater tree regeneration in ma...",
+        "[LIVE] Umbrella-biodiversity-konkan-division-MH-IN's Journal \u00b7 iNaturalist (https://www.inaturalist.org/projects/umbrella-biodiversity-konkan-division-mh-in/journal): Log In or Sign Up. Back to Umbrella-biodiversity-konkan-division-MH-IN. # Umbrella-biodiversity-konkan-division-MH-IN's ...",
+        "[LIVE] Maharashtra government declares 29.53-sq-km area in Konkan a conservation reserve | Hindustan Times (https://www.hindustantimes.com/cities/maharashtra-government-declares-29-53-sq-km-area-in-konkan-a-conservation-reserve/story-OpmsdlK6dyR55at5JBntCL.html): Title: Maharashtra government declares 29.53-sq-km area in Konkan a conservation reserve | Hindustan Times\n# Maharashtra..."
+      ]
+    },
+    {
+      "step_number": 5,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate defensible tree count estimate range from documented forestry density stratum.",
+      "execution_mode": "live_web_research",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "region_context": "MH-R01-C06 \u2014 Sindhudurg (Konkan)"
+      },
+      "tool_outputs_summary": "Area measured, but no defensible regional stem density publication found.",
+      "findings_extracted": [
+        "Forest Type: Unclassified Forest Stratum",
+        "Density Source: None available (None)",
+        "Tree estimate limitation: Unsupported by documented data"
+      ]
+    },
+    {
+      "step_number": 6,
+      "step_type": "report_generation",
+      "decision_rationale": "Final synthesis of visual telemetry, citations, uncertainty, and unknowns.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Report INC-MH-R01-C06-20261026-49 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
+      ]
+    }
+  ]
+}

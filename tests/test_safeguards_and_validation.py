@@ -16,6 +16,7 @@ import numpy as np
 import cv2
 
 from forestguard.vision.detector import NonNDVIChangeDetector, get_epsg7755_scale_factor
+from forestguard.data.land_mask import LandMaskEngine
 from forestguard.data.mosaic import (
     reproject_and_mosaic_granules,
     validate_temporal_pair,
@@ -335,3 +336,164 @@ def test_durable_tile_state_transitions():
         if t["status"] not in ("monitored_no_change", "monitored_candidate_detected")
     )
     assert excluded_area == 220.0 + 195.0 + 225.0  # 640.0 km²
+
+
+# ============================================================================
+# 6. COASTAL MARINE MASKING & OBSERVATION DATE POLICY REGRESSION TESTS
+# ============================================================================
+
+def test_synthetic_coastal_ocean_turbidity_zero_loss():
+    """
+    CRITICAL COASTAL REGRESSION TEST (SYNTHETIC UNIT TEST):
+    Validates that large ocean color and luminance shifts (e.g. tidal currents,
+    breaking surf, sediment plumes, or sun glint on water) produce ZERO false
+    forest loss or recovery candidates when the terrestrial land mask is applied.
+    
+    Setup:
+    - West half of tile (columns 0..300): Arabian Sea
+    - East half of tile (columns 300..600): Stable Maharashtra terrestrial forest canopy
+    - Before -> After: Land remains stable, while ocean shifts dramatically in color and brightness.
+    """
+    detector = NonNDVIChangeDetector(significance_threshold_ha=1.0)
+
+    h, w = 600, 600
+    land_mask = np.zeros((h, w), dtype=np.uint8)
+    land_mask[:, 300:] = 255  # East 50% is valid terrestrial land
+
+    np.random.seed(42)
+    # Before image: Stable forest on East [24, 94, 44], deep blue calm sea on West [90, 60, 25]
+    img_before = np.zeros((h, w, 3), dtype=np.uint8)
+    img_before[:, 300:] = np.clip([24, 94, 44] + np.random.randint(-8, 9, (h, 300, 3)), 0, 255)
+    img_before[:, :300] = np.clip([90, 60, 25] + np.random.randint(-6, 7, (h, 300, 3)), 0, 255)
+
+    # After image: Stable forest on East, but ocean has a localized 5.0 ha sediment/wave plume [45, 115, 165]
+    img_after = img_before.copy()
+    img_after[150:200, 100:110] = np.clip([45, 115, 165] + np.random.randint(-4, 5, (50, 10, 3)), 0, 255)
+
+    # Without land mask: The ocean shift creates massive false candidate detections!
+    res_no_mask = detector.detect_changes(
+        img_before, img_after,
+        geo_bbox=[73.4, 16.0, 73.5, 16.1],
+        acquisition_dates=("2026-10-15T05:30:00Z", "2026-10-25T05:30:00Z"),
+        land_mask=None
+    )
+    assert res_no_mask.total_candidate_loss_ha >= 4.0 or len(res_no_mask.candidate_regions) >= 1, \
+        "Expected unmasked ocean shift to trigger false positives"
+
+    # WITH land mask: Ocean shift is strictly excluded, yielding 0.0 ha loss and 0 regions
+    res_with_mask = detector.detect_changes(
+        img_before, img_after,
+        geo_bbox=[73.4, 16.0, 73.5, 16.1],
+        acquisition_dates=("2026-10-15T05:30:00Z", "2026-10-25T05:30:00Z"),
+        land_mask=land_mask
+    )
+    assert res_with_mask.total_candidate_loss_ha == 0.0, \
+        f"Expected 0.0 ha loss with land mask, got {res_with_mask.total_candidate_loss_ha} ha"
+    assert len(res_with_mask.candidate_regions) == 0, \
+        f"Expected 0 regions with land mask, got {len(res_with_mask.candidate_regions)}"
+    assert res_with_mask.metadata_summary["land_mask_applied"] is True
+    assert res_with_mask.metadata_summary["terrestrial_land_fraction_pct"] == 50.0
+
+
+def test_synthetic_coastal_land_clearing_detected_alongside_turbid_sea():
+    """
+    CRITICAL COASTAL REGRESSION TEST (SYNTHETIC UNIT TEST):
+    Validates that a genuine clearing on valid terrestrial land is accurately detected
+    even when the adjacent ocean experiences severe wave / turbidity noise.
+    """
+    detector = NonNDVIChangeDetector(significance_threshold_ha=1.0)
+    np.random.seed(42)
+
+    h, w = 600, 600
+    land_mask = np.zeros((h, w), dtype=np.uint8)
+    land_mask[:, 300:] = 255  # East 50% is land
+
+    img_before = np.zeros((h, w, 3), dtype=np.uint8)
+    img_before[:, 300:] = np.clip([24, 94, 44] + np.random.randint(-8, 9, (h, 300, 3)), 0, 255)  # Canopy with texture
+    img_before[:, :300] = np.clip([80, 45, 15] + np.random.randint(-5, 6, (h, 300, 3)), 0, 255)  # Calm Sea
+
+    img_after = img_before.copy()
+    img_after[:, :300] = np.clip([135, 115, 75] + np.random.randint(-5, 6, (h, 300, 3)), 0, 255)  # Turbid sea
+
+    # Add 2.5 ha clearing strictly on terrestrial land (25 x 10 = 250 pixels = 2.5 ha at 10m/px)
+    # Location: y: 200..225, x: 400..410 (strictly within land_mask)
+    img_after[200:225, 400:410] = [55, 120, 175]  # Exposed soil
+
+    res = detector.detect_changes(
+        img_before, img_after,
+        geo_bbox=[73.4, 16.0, 73.5, 16.1],
+        acquisition_dates=("2026-10-15T05:30:00Z", "2026-10-25T05:30:00Z"),
+        land_mask=land_mask
+    )
+
+    assert res.total_candidate_loss_ha >= 2.0, \
+        f"Expected >= 2.0 ha loss on land, got {res.total_candidate_loss_ha} ha"
+    loss_regions = [r for r in res.candidate_regions if r.change_type == "forest_loss_candidate"]
+    assert len(loss_regions) == 1, f"Expected exactly 1 land loss region, got {len(loss_regions)}"
+    # Verify that the detected region's bounding box lies strictly on terrestrial land (x >= 300)
+    assert loss_regions[0].bounding_box_pixels[0] >= 390
+    assert loss_regions[0].centroid_pixels[0] >= 400
+
+
+def test_synthetic_narrow_coastal_sliver_handling():
+    """
+    COASTAL SLIVER REGRESSION TEST (SYNTHETIC UNIT TEST):
+    Tests handling of boundary tiles with very narrow terrestrial land fractions
+    (e.g. 5% land, 95% sea, similar to MH-R06-C03).
+    Validates that:
+    - Statistics do not crash or produce NaN.
+    - Sea changes are masked out.
+    - Reported land percentage matches the actual fraction.
+    """
+    detector = NonNDVIChangeDetector(significance_threshold_ha=0.5)
+
+    h, w = 400, 400
+    land_mask = np.zeros((h, w), dtype=np.uint8)
+    land_mask[:, 380:] = 255  # Only 20 columns out of 400 = 5.0% land sliver
+
+    img_before = np.full((h, w, 3), [70, 40, 10], dtype=np.uint8)
+    img_before[:, 380:] = [24, 94, 44]  # Land sliver
+
+    img_after = np.full((h, w, 3), [120, 100, 60], dtype=np.uint8)  # Ocean shifts
+    img_after[:, 380:] = [24, 94, 44]  # Land remains unchanged
+
+    res = detector.detect_changes(
+        img_before, img_after,
+        geo_bbox=[73.2, 16.3, 73.3, 16.4],
+        acquisition_dates=("2026-10-15T05:30:00Z", "2026-10-25T05:30:00Z"),
+        land_mask=land_mask
+    )
+
+    assert res.total_candidate_loss_ha == 0.0
+    assert len(res.candidate_regions) == 0
+    assert res.metadata_summary["terrestrial_land_fraction_pct"] == 5.0
+
+
+def test_land_mask_engine_rasterization():
+    """
+    Validates LandMaskEngine rasterization against authoritative GIS boundary:
+    1. Interior tile (e.g. Kolhapur interior MH-R07-C09): land_fraction == 1.0 (100% land).
+    2. Coastal tile (e.g. Sindhudurg coast MH-R01-C06): land_fraction between 35% and 45% (matches catalogue ~39.7%).
+    3. Offshore open ocean box: land_fraction == 0.0.
+    """
+    engine = LandMaskEngine()
+
+    # 1. Interior tile (Kolhapur)
+    interior_bbox = [3375000.0, 3195000.0, 3390000.0, 3210000.0]
+    mask_int, frac_int = engine.get_sector_land_mask(interior_bbox, out_shape=(100, 100))
+    assert frac_int == 1.0
+    assert np.all(mask_int == 255)
+
+    # 2. Coastal tile (MH-R01-C06 Sindhudurg)
+    coastal_bbox = [3330000.0, 3105000.0, 3345000.0, 3120000.0]
+    mask_coast, frac_coast = engine.get_sector_land_mask(coastal_bbox, out_shape=(100, 100))
+    assert 0.35 <= frac_coast <= 0.45
+    assert np.count_nonzero(mask_coast == 0) > 0  # Sea pixels present
+
+    # 3. Completely offshore ocean (Arabian Sea, 50 km west of coast)
+    ocean_bbox = [3100000.0, 3105000.0, 3115000.0, 3120000.0]
+    mask_ocean, frac_ocean = engine.get_sector_land_mask(ocean_bbox, out_shape=(100, 100))
+    assert frac_ocean == 0.0
+    assert np.all(mask_ocean == 0)
+
+

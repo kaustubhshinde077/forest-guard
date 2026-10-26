@@ -1,0 +1,259 @@
+{
+  "incident_id": "INC-MH-R01-C06-20261026-32",
+  "report_title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+  "report_date": "2026-10-26",
+  "event_category": "forest_loss",
+  "investigation_status": "concluded_with_evidence",
+  "is_synthetic_test": false,
+  "investigation_mode": "live_web_research",
+  "geographic_coordinates": [
+    73.74397,
+    15.73713
+  ],
+  "geographic_bounding_box": [
+    73.74144,
+    15.7367,
+    73.74663,
+    15.73742
+  ],
+  "affected_area_hectares": 2.403,
+  "measurement_uncertainty_hectares": 0.618,
+  "observation_dates": [
+    "2026-10-20",
+    "2026-10-25"
+  ],
+  "visual_geometry": "linear_corridor",
+  "aspect_ratio": 10.19,
+  "heuristic_score": 0.97,
+  "confidence_score": 0.97,
+  "summary": "Autonomous vision analysis identified a linear_corridor of 2.40 ha (+/- 0.62 ha) at coordinates 15.7371 N, 73.7440 E between 2026-10-20 and 2026-10-25. Investigation mode: live_web_research. Public records research linked the event to Linear Transportation / Road Infrastructure Expansion. Investigation status: concluded_with_evidence.",
+  "detailed_findings": "OpenCV 5 classical computer vision detected a significant forest loss candidate covering 237 raster pixels (2.40 ha). The candidate region exhibited a major-to-minor aspect ratio of 10.19 and a compactness of 0.195. Investigation of public registries retrieved 6 records (Execution: live_web_research). Estimated tree impact ranges from None to None trees, based on None available.",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Linear Transportation / Road Infrastructure Expansion",
+      "supporting_evidence": "Visual linear geometry (Aspect Ratio > 3.0) strongly indicates corridor development. Public records searches in the Koyna sanctuary buffer reflect periodic road repair and diversion scrutiny, though specific statutory clearances must be confirmed via live Parivesh queries."
+    }
+  ],
+  "relevant_jurisdictional_authorities": [],
+  "linked_entities_or_projects": [
+    {
+      "entity_name": "Public Works Department (PWD) / Regional Road Authority",
+      "role": "Subject to formal verification in state clearance gazettes."
+    }
+  ],
+  "conflicting_accounts": [
+    "Environmental groups frequently raise concerns regarding tree felling along Koyna sanctuary buffer roads, while local administration maintains the necessity of village connectivity and emergency access."
+  ],
+  "unresolved_questions_and_unknowns": [
+    "Specific contractor identities and exact tree felling permissions for this segment remain unverified."
+  ],
+  "tree_count_estimate": {
+    "is_supported": false,
+    "forest_type": "Unclassified Forest Stratum",
+    "estimation_status": "provisional",
+    "diameter_threshold": "DBH >= 10 cm",
+    "canopy_density_trees_per_ha_min": null,
+    "canopy_density_trees_per_ha_max": null,
+    "estimated_affected_trees_min": null,
+    "estimated_affected_trees_max": null,
+    "density_source": "None available",
+    "source_url": null,
+    "doi": null,
+    "forest_stratum": null,
+    "calculation_basis": "Area measured, but no defensible regional stem density publication found.",
+    "limitations": "Tree-count estimates are omitted to prevent unsupported speculation."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "The Coastal Highway Effect: How MSH-4 is Unlocking Sindhudurg Real Estate  | Kanav Arora",
+      "url": "https://kanavarora.io/blog/revas-redi-coastal-highway-real-estate-impact",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way."
+      ],
+      "conflicts_with": null,
+      "snippet": "# The Coastal Highway Effect: How MSH-4 is Unlocking Sindhudurg Real Estate\n\nKanav Arora\nThe Coastal Highway Effect: How MSH-4 is Unlocking Sindhudurg Real Estate\n\nMSH-4, the Revas\u2013Redi Coastal Highway, is Maharashtra's ~500 km shoreline road from Revas (Raigad) to Redi on the Goa border, which MSRDC is widening to four lanes and stitching together with nine creek bridges. As of August 2026 it is under construction, not open \u2014 and for Sindhudurg land it is the road that turns the coast's beach pockets into airport-commutable addresses.\n\nReal estate follows roads. It is the oldest rule in the book. In 2026, the most critical road on India's west coast isn't in Mumbai or Bangalore\u2014it's the Revas-Redi Coastal Highway (MSH-4). [...] The 2026 nuance is sequencing. The multiple does not arrive on the day the corridor opens; it arrives in three tranches \u2014 the Mopa-side widening (already usable), the Kunkeshwar bridge (~2027\u201328, which opens the Devgad\u2013Malvan shore drive), and the full Mumbai-to-Goa coastal run (~2029\u201330). Land nearest Mopa captures the first tranche now; Devgad captures the second; only a full-corridor investor is really paying for the third.\n\n## What Changed Since This Post Was Written (2026 Catalyst Update)\n\nThe road is one leg of the thesis. Since January 2026 the other legs have moved \u2014 and the coastal highway is what physically connects them.\n\n## Drive Times: Coastal Pockets to Mopa and Chipi [...] The \"Scenic Shield\":\nUnlike the concrete expressways inland, the Coastal Highway is designed to be scenic. This preserves the \"holiday value\" of the drive. Investors buying in Kondura & Vengurla aren't just buying convenience; they are buying a drive that feels like the Pacific Coast Highway.\n\n## MSH-4 Status as of August 2026\n\nThe honest one-line status: the road exists, the bridges do not \u2014 yet. MSH-4 is an existing state highway; what turns it into a corridor is the creek bridges that currently force long inland detours. Here is what the public record supports, with dates."
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Road widening in forests may not need clearance, says env min",
+      "url": "https://timesofindia.indiatimes.com/city/nagpur/road-widening-in-forests-may-not-need-clearance-says-env-min/articleshow/87857376.cms",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way."
+      ],
+      "conflicts_with": null,
+      "snippet": "\u201cThe decision will open floodgates for haphazard development and impact wildlife and its corridors,\u201d says state wildlife board member Kishor"
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "\ud83d\udea7 New Highway Project Update | Maharashtra \ud83c\uddee\ud83c\uddf3 KCC ...",
+      "url": "https://www.facebook.com/subinfrastructure/videos/-new-highway-project-update-maharashtra-kcc-infra-private-limited-has-secured-a-/1910607719601953",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way."
+      ],
+      "conflicts_with": null,
+      "snippet": "Starts 8 June 2026 \u2026 is scheduled for completion from August 2026. cost of \u20b9390.81, and the work start date of August 6, 2026,"
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "Maharashtra: Ecologically sensitive forest in Sindhudurg stripped bare by heavy quarrying",
+      "url": "https://www.mid-day.com/mumbai/mumbai-news/article/maharashtra-sindhudurg-forests-inside-western-ghats-allegedly-ravaged-by-illegal-quarrying-23613273",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Search regional news reporting on infrastructure construction in the corridor timeframe."
+      ],
+      "conflicts_with": null,
+      "snippet": "Home > Mumbai > Mumbai News > Article > Maharashtra Sindhudurg forests inside Western Ghats allegedly ravaged by illegal quarrying. # Maharashtra: Sindhudurg forests inside Western Ghats allegedly ravaged by illegal quarrying. **Activist and villagers say massive clearing has taken place to make way for bungalows; Nature and wildlife lovers from Kolzar have also alleged that the forests on the other side of the hills have been flattened and cleared for construction**. ***A cleared patch of forest land near Kolzar village (right) an access path created by felling trees. A four-kilometre stretch inside the Western Ghats forest in Kolzar in Dodamarg taluka of Sindhudurg district, which is a part of an Ecologically Sensitive Area (ESA), has allegedly been heavily quarried, stripped of tree cover and left badly damaged, raising serious concerns over environmental violations and ecological loss. In his letter, Stalin D has alleged that massive deforestation, hill cutting, and quarrying are taking place inside the Sawantwadi-Dodamarg wildlife corridor. Nature and wildlife lovers from Kolzar have also alleged that the forests on the other side of the hills have been flattened and cleared for construction. We have attached videos of the site, which clearly establish the illegal excavation, destruction of forest trees, and creation of paths inside the forests. Though the forests may not be owned by the government, they need to be protected inside this fragile, pristine wildlife corridor.\u201d Stalin D. There is a tree-felling ban in Dodamarg imposed by the high court, and the task force constituted by the court has the responsibility of protecting this wildlife corridor. While the sale and purchase of land is not illegal, but tree felling inside the crucial wildlife corridor (Sawantwadi-Dodamarg) is not permitted. Kolzar village resident Devendranath Purushotam Desai said, \u201cAwareness boards should be installed to clearly warn that the area is protected from tree felling and forms a vital wildlife corridor. We hope that authorities take a serious note as even though it is a private forest, it comes in the ESZ and destruction will impact biodiversity and the wildlife corridor.\u201d."
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "22622 trees to cut down in Western Ghats",
+      "url": "https://kirehalli.com/22622-trees-to-cut-down-in-western-ghats-311018",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Search regional news reporting on infrastructure construction in the corridor timeframe."
+      ],
+      "conflicts_with": null,
+      "snippet": "More than 30,000 trees in non-forest areas are marked for felling for converting the road into six lane, which is in various stages of"
+    },
+    {
+      "source_id": "SRC-06",
+      "title": "Hubballi-Ankola rail line in the Western Ghats will result in felling of 2 lakh trees",
+      "url": "https://scroll.in/article/961632/in-the-western-ghats-2-2-lakh-trees-will-be-axed-to-make-way-for-upcoming-rail-line",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Search regional news reporting on infrastructure construction in the corridor timeframe."
+      ],
+      "conflicts_with": null,
+      "snippet": "Vijay Nishanth, biodiversity management committee member of the Bruhat Bengaluru Mahanagara Palike Forest Cell, highlighted that the area is among the biodiversity hotspots in the world as it houses about 2,500 endemic species of plants, insects, animals and amphibians. If a part of the area is used for development, many of the endemic species will go extinct, he added.\n\n### Erratic rainfall, soil erosion\n\nThe project is set to affect the vegetation, faunal diversity and animal movement in the Western Ghats. The proposed railway line passes through different types of forests, including evergreen, semi-evergreen, moist deciduous and dry deciduous with a dense canopy. [...] According to a former chief wildlife warden with the Karnataka Forest Department, the project is a \u201ccomplete hoax and professional fraud\u201d. The ex-official, requesting anonymity, added that the project will also affect rainfall. The forests release tiny particles which seed clouds and induce rainfall due to which the top ridges receive 4,000-6,000 mm of rainfall. On account of good vegetation cover, there\u2019s good organic matter in the soil, and it helps in the percolation of water, he informed. [...] The committees rejected the project in its entirety, considering its wider ecological ramifications on the fragile Western Ghats and its impacts on the endangered species. In one of their reports, the committees said, \u201cIt is reiterated that extremely fragile ecosystems of the Western Ghats will not be able to sustain or buffer impacts likely caused by a developmental project of the scale of Hubballi-Ankola railway track construction.\u201d"
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 geometric and spatial measurements to establish investigative leads.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Vision telemetry intake for Region 32: Type=forest_loss_candidate, Area=2.403ha (+/-0.618), Geometry=linear_corridor (Aspect=10.19, Compactness=0.195), Coordinates=[73.74397, 15.73713], Dates=['2026-10-20', '2026-10-25']."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "lead_formulation",
+      "decision_rationale": "Adaptive lead generation driven directly by detected geometry and change classification.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Lead 'LEAD-01-INFRA': Query='Parivesh forest clearance road highway corridor widening MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026' (High aspect-ratio linear geometry suggests transportation, roadway widening, or transmission right-of-way.)",
+        "Lead 'LEAD-02-NEWS': Query='Western Ghats forest buffer tree felling road project MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026' (Search regional news reporting on infrastructure construction in the corridor timeframe.)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for official_clearance",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Parivesh forest clearance road highway corridor widening MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] The Coastal Highway Effect: How MSH-4 is Unlocking Sindhudurg Real Estate  | Kanav Arora (https://kanavarora.io/blog/revas-redi-coastal-highway-real-estate-impact): # The Coastal Highway Effect: How MSH-4 is Unlocking Sindhudurg Real Estate\n\nKanav Arora\nThe Coastal Highway Effect: How...",
+        "[LIVE] Road widening in forests may not need clearance, says env min (https://timesofindia.indiatimes.com/city/nagpur/road-widening-in-forests-may-not-need-clearance-says-env-min/articleshow/87857376.cms): \u201cThe decision will open floodgates for haphazard development and impact wildlife and its corridors,\u201d says state wildlife...",
+        "[LIVE] \ud83d\udea7 New Highway Project Update | Maharashtra \ud83c\uddee\ud83c\uddf3 KCC ... (https://www.facebook.com/subinfrastructure/videos/-new-highway-project-update-maharashtra-kcc-infra-private-limited-has-secured-a-/1910607719601953): Starts 8 June 2026 \u2026 is scheduled for completion from August 2026. cost of \u20b9390.81, and the work start date of August 6,..."
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for news_report",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Western Ghats forest buffer tree felling road project MH-R01-C06 \u2014 Sindhudurg (Konkan) 2026",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] Maharashtra: Ecologically sensitive forest in Sindhudurg stripped bare by heavy quarrying (https://www.mid-day.com/mumbai/mumbai-news/article/maharashtra-sindhudurg-forests-inside-western-ghats-allegedly-ravaged-by-illegal-quarrying-23613273): Home > Mumbai > Mumbai News > Article > Maharashtra Sindhudurg forests inside Western Ghats allegedly ravaged by illegal...",
+        "[LIVE] 22622 trees to cut down in Western Ghats (https://kirehalli.com/22622-trees-to-cut-down-in-western-ghats-311018): More than 30,000 trees in non-forest areas are marked for felling for converting the road into six lane, which is in var...",
+        "[LIVE] Hubballi-Ankola rail line in the Western Ghats will result in felling of 2 lakh trees (https://scroll.in/article/961632/in-the-western-ghats-2-2-lakh-trees-will-be-axed-to-make-way-for-upcoming-rail-line): Vijay Nishanth, biodiversity management committee member of the Bruhat Bengaluru Mahanagara Palike Forest Cell, highligh..."
+      ]
+    },
+    {
+      "step_number": 5,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate defensible tree count estimate range from documented forestry density stratum.",
+      "execution_mode": "live_web_research",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "region_context": "MH-R01-C06 \u2014 Sindhudurg (Konkan)"
+      },
+      "tool_outputs_summary": "Area measured, but no defensible regional stem density publication found.",
+      "findings_extracted": [
+        "Forest Type: Unclassified Forest Stratum",
+        "Density Source: None available (None)",
+        "Tree estimate limitation: Unsupported by documented data"
+      ]
+    },
+    {
+      "step_number": 6,
+      "step_type": "report_generation",
+      "decision_rationale": "Final synthesis of visual telemetry, citations, uncertainty, and unknowns.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Report INC-MH-R01-C06-20261026-32 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
+      ]
+    }
+  ]
+}

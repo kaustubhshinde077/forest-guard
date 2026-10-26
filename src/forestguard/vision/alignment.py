@@ -16,9 +16,16 @@ class ImageAligner:
         self.ecc_iterations = ecc_iterations
         self.ecc_eps = ecc_eps
 
-    def align(self, img_before: np.ndarray, img_after: np.ndarray) -> Tuple[np.ndarray, str, float]:
+    def align(
+        self,
+        img_before: np.ndarray,
+        img_after: np.ndarray,
+        mask: Optional[np.ndarray] = None
+    ) -> Tuple[np.ndarray, str, float]:
         """
         Warp img_after to align with img_before.
+        When mask is provided (e.g. terrestrial land mask), feature detection
+        is constrained to valid pixels (mask > 0) to avoid false matches on water/clouds.
         Returns:
             aligned_after (np.ndarray): Geometrically warped image.
             method_used (str): 'orb_homography', 'ecc_euclidean', or 'identity_fallback'.
@@ -34,8 +41,8 @@ class ImageAligner:
         # 1. Feature-based matching (ORB)
         try:
             orb = cv2.ORB_create(self.max_orb_features)
-            kp1, des1 = orb.detectAndCompute(gray_before, None)
-            kp2, des2 = orb.detectAndCompute(gray_after, None)
+            kp1, des1 = orb.detectAndCompute(gray_before, mask)
+            kp2, des2 = orb.detectAndCompute(gray_after, mask)
 
             if des1 is not None and des2 is not None and len(kp1) >= 8 and len(kp2) >= 8:
                 matcher = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
@@ -63,7 +70,7 @@ class ImageAligner:
             warp_matrix = np.eye(2, 3, dtype=np.float32)
             criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, self.ecc_iterations, self.ecc_eps)
             (cc, warp_matrix) = cv2.findTransformECC(
-                gray_before, gray_after, warp_matrix, cv2.MOTION_EUCLIDEAN, criteria, None, 5
+                gray_before, gray_after, warp_matrix, cv2.MOTION_EUCLIDEAN, criteria, mask, 5
             )
             h, w = gray_before.shape
             aligned_after = cv2.warpAffine(img_after, warp_matrix, (w, h), flags=cv2.INTER_LINEAR + cv2.WARP_INVERSE_MAP, borderMode=cv2.BORDER_REFLECT)

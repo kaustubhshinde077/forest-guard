@@ -1,0 +1,257 @@
+{
+  "incident_id": "INC-MH-R01-C10-20261026-77",
+  "report_title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+  "report_date": "2026-10-26",
+  "event_category": "forest_recovery",
+  "investigation_status": "concluded_with_evidence",
+  "is_synthetic_test": false,
+  "investigation_mode": "live_web_research",
+  "geographic_coordinates": [
+    74.25527,
+    15.7894
+  ],
+  "geographic_bounding_box": [
+    74.25404,
+    15.78846,
+    74.25637,
+    15.79008
+  ],
+  "affected_area_hectares": 2.038,
+  "measurement_uncertainty_hectares": 0.4,
+  "observation_dates": [
+    "2026-10-10",
+    "2026-10-25"
+  ],
+  "visual_geometry": "irregular_patch",
+  "aspect_ratio": 2.28,
+  "heuristic_score": 0.88,
+  "confidence_score": 0.88,
+  "summary": "Autonomous vision analysis identified a irregular_patch of 2.04 ha (+/- 0.40 ha) at coordinates 15.7894 N, 74.2553 E between 2026-10-10 and 2026-10-25. Investigation mode: live_web_research. Public records research linked the event to Compensatory Ecological Afforestation / Corridor Protection. Investigation status: concluded_with_evidence.",
+  "detailed_findings": "OpenCV 5 classical computer vision detected a significant forest recovery candidate covering 201 raster pixels (2.04 ha). The candidate region exhibited a major-to-minor aspect ratio of 2.28 and a compactness of 0.394. Investigation of public registries retrieved 6 records (Execution: live_web_research). Estimated tree impact ranges from None to None trees, based on None available.",
+  "likely_causes_hypotheses": [
+    {
+      "hypothesis": "Compensatory Ecological Afforestation / Corridor Protection",
+      "supporting_evidence": "Canopy roughness gain observed within the Tillari Conservation Reserve landscape (declared 2020), where forest department and conservation trusts focus on corridor connectivity."
+    }
+  ],
+  "relevant_jurisdictional_authorities": [],
+  "linked_entities_or_projects": [
+    {
+      "entity_name": "Maharashtra Forest Department (Sawantwadi/Dodamarg Divisions)",
+      "role": "Custodial authority for the Tillari Conservation Reserve."
+    }
+  ],
+  "conflicting_accounts": [],
+  "unresolved_questions_and_unknowns": [
+    "Whether regeneration is natural secondary succession or planted nursery saplings is not distinguished by satellite imagery alone."
+  ],
+  "tree_count_estimate": {
+    "is_supported": false,
+    "forest_type": "Unclassified Forest Stratum",
+    "estimation_status": "provisional",
+    "diameter_threshold": "DBH >= 10 cm",
+    "canopy_density_trees_per_ha_min": null,
+    "canopy_density_trees_per_ha_max": null,
+    "estimated_affected_trees_min": null,
+    "estimated_affected_trees_max": null,
+    "density_source": "None available",
+    "source_url": null,
+    "doi": null,
+    "forest_stratum": null,
+    "calculation_basis": "Area measured, but no defensible regional stem density publication found.",
+    "limitations": "Tree-count estimates are omitted to prevent unsupported speculation."
+  },
+  "citations": [
+    {
+      "source_id": "SRC-01",
+      "title": "Mangroves",
+      "url": "https://www.mahamangroveafforestation.com",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative."
+      ],
+      "conflicts_with": null,
+      "snippet": "About us\n\nLogo \n\n Home\n About Us\n\n##### This free, accessible, and user-friendly platform is designed to disseminate information on various Compensatory Afforestation plantations undertaken by the Mangrove Cell and the State Forest Department in lieu of various diversion projects in mangrove forest areas across Maharashtra.\n\nPARIVESH  e-Green Watch\n\nshape shape shape shape\n\n## Mangrove Diversion Projects User Agencies\n\nshape\n\n##### MMRDA\n\n###\n\n###### Projects\n\n##### BMC\n\n###\n\n###### Projects\n\n##### NHAI/MSRDC/MORTH\n\n###\n\n###### Projects\n\n##### CIDCO\n\n###\n\n###### Projects\n\n##### Railways\n\n###\n\n###### Projects\n\n##### OTHER\n\n###\n\n###### Projects\n\nthumb\n\n## Empowering Transparency in Mangrove Conservation Projects.\n\n##### About Us"
+    },
+    {
+      "source_id": "SRC-02",
+      "title": "Project Details - NHAI",
+      "url": "https://datalakeg.nhai.gov.in/nhai/MISC/ProjectDetailsAdvance?key=U2FsdGVkX1%2FqEa209htDxbo%2F9CqWycj2A9VblGbzl4ge0rhwSlU5yRCcOZySctbT",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative."
+      ],
+      "conflicts_with": null,
+      "snippet": "N/08011/06002/MH, Current Status : Under Construction (AD issued), Division : Maharashtra. State Name : Maharashtra, RO Name : RO-Mumbai, PIU : Kolhapur."
+    },
+    {
+      "source_id": "SRC-03",
+      "title": "354734717$Guidelines%20on%20Accredited%20Compensatory%20Afforestation.pdf",
+      "url": "https://forestsclearance.nic.in/writereaddata/public_display/schemes/354734717$Guidelines%20on%20Accredited%20Compensatory%20Afforestation.pdf",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative."
+      ],
+      "conflicts_with": null,
+      "snippet": "The Forest Department shall give priority to such proposals and on receipt of \u2018In-principle\u2019 approval said land parcel shall be transferred and mutated in favour of the State Forest Department and declared as Protected Forest under Section 29 of the Indian Forest Act, 1927 or any other law; However, in exceptional cases as decided by the Government of India on case to case basis, Government owned lands, where transfer of ownership of land to the Forest Department is not possible due to legal impediments, such lands, without changing their ownership, will be notified as Protected Forest under the Indian Forest Act, 1927 or any other local Act for the management by the Forest Department concerned as per the prescriptions of the Working Plan. Provisions of the Forest (Conservation) Act, [...] > vi.\n\nExisting afforestation or afforestation raised afresh shall be eligible for ACA after attaining the age of 5 years, provided such plantation meet the preconditions specified hereinabove including predetermined success/survival criteria. Preconditions and criterion of a particular afforestation/plantation shall be evaluated by the local Forest Department by undertaking a visit to such site;  \n\n> vii. [...] > v.\n\nIn case of established ACAs, no cost of raising compensatory afforestation shall be charged from the user agency by the State Forest Department;  \n\n> vi.\n\nACA raised in one State/UT can be swapped in lieu of diversion of forest land in other States/UTs subject to the provisions contained under sub rule 1 of rule 11 of Forest (Conservation) Rules, 2022; vii. As the afforestation so raised may be utilized in parts, therefore, until a patch of minimum size of 5 ha is transferred in lieu of diversion of forest land, the concerned agency, at the cost of user agency may manage the area till such time as required or till 11-91/2012-FC(Pt.) \n\nFC-11/159/2022-FC \n\n> I/37746/2023\n\nI/36495/2022 the entire patch is transferred to the Forest Department;  \n\n> vii."
+    },
+    {
+      "source_id": "SRC-04",
+      "title": "Study shows presence of 10 tigers and 46 leopards in Western Ghats | Goa News - The Times of India",
+      "url": "https://timesofindia.indiatimes.com/city/goa/study-shows-presence-of-10-tigers-and-46-leopards-in-western-ghats/articleshow/112504497.cms",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Identify published ecological research on corridor canopy recovery."
+      ],
+      "conflicts_with": null,
+      "snippet": "Title: Study shows presence of 10 tigers and 46 leopards in Western Ghats | Goa News - The Times of India\n* Study shows presence of 10 tigers and 46 leopards in Western Ghats. Keri: A study conducted by the Wildlife Conservation Trust (WCT), in association with the Sahyadri Tiger Reserve and the forest of territorial circle of Kolhapur, has shown the presence of eight adult tigers, two cubs, 46 leopards and nine dhole packs in the Western Ghats. The corridor between the Sahyadri Tiger Reserve and newly declared Conservation Reserves of Maharashtra to the Kali Tiger Reserve of Karnataka, shares borders with the Mhadei, Mahavir, Netravali and Cotigao Wildlife Sanctuaries and the Mollem National Park of Goa, and the Bhimgad Wildlife Sanctuary. The study also assessed the first ever density estimates for tigers and leopards in the Conservation Reserves of Maharashtra and the relative abundance indices for wild prey species of gaur and sambar. The study has identified bottlenecks, crossing points and gaps for wild mammals along with the state and national highways passing through the conservation reserves and adjoining forests. It has also set a baseline, which is vital to assess the impact of management actions or landscape change. \u201cThe corridor from the Sahyadri Tiger Reserve to the Kali Tiger Reserve is the only corridor that can allow movement of wildlife, including tigers to cross the landscape and plays key role in repopulating tigers in the Sahyadri Tiger Reserve,\u201d said R M Ramanujan, principal conservation of forests (territory), Kolhapur, in the report. WCT president Anish Andhera said, \u201cProtecting and monitoring the tiger corridor between Sahyadri and Kali Tiger Reserves are pivotal in improving the status of the tigers and other large mammals in this vast, multiple use landscape.\u201d. With nearly 10 tigers in the Maharashtra corridor, and the connected tiger population of the Kali Tiger Reserve and the protected areas in Goa, we should see gradual colonisation by tigers up to the Sahyadri Tiger Reserve, which is located further north.\u201d. In the case of sloth bears, there are almost no bears in the corridor between Radhanagari Wildlife Sanctuary and Chandoli National Park, despite both the protected areas having reasonable populations. * Donald Trump announces 26% 'discounted' reciprocal tariff on India: What will be the impact and is Indian economy relatively insulated?"
+    },
+    {
+      "source_id": "SRC-05",
+      "title": "Species diversity, regeneration and dominance as influenced by ...",
+      "url": "https://www.worldagroforestry.org/publication/species-diversity-regeneration-and-dominance-influenced-canopy-gaps-and-their",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Identify published ecological research on corridor canopy recovery."
+      ],
+      "conflicts_with": null,
+      "snippet": "This study was carried out in tropical evergreen forests of central Western Ghats in India to understand the influence of canopy gap size and the"
+    },
+    {
+      "source_id": "SRC-06",
+      "title": "Canopy cover and ecological restoration increase natural ...",
+      "url": "https://era-india.org/wp-content/uploads/2022/05/Osuri_et-al_2021_canopy-cover_restoration_RestEcol_onlineearly-Arjun-Singh.pdf",
+      "publisher": "Web Record",
+      "publication_date": null,
+      "access_date": "2026-10-26",
+      "evidence_tier": "credible_news_report",
+      "geographic_scope": "regional_context",
+      "source_type": "primary_official_record",
+      "is_live_retrieval": true,
+      "supports_claims": [
+        "Identify published ecological research on corridor canopy recovery."
+      ],
+      "conflicts_with": null,
+      "snippet": "Discussion Our study from a human-modi\ufb01ed landscape in the Western Ghats in India showed greater tree regeneration in mature rain-forests and 10\u201315-year-old ecologically restored rainforests compared to DRs left to recover naturally, and MPs. While active ER increased densities of early-successional species and shifted community composition toward that of mature rainfor-ests, it was less effective in recovering late-successional species. [...] planted and natural overstories to guide this mis-sion. We conducted a \ufb01eld study (65 plots of 25 m2) to examine the in\ufb02uence of overstory type and canopy cover on naturally regenerating tree seedlings across degraded rainforests (DRs), mixed-native species ecological restoration (ER) sites, monocul-ture eucalypt plantations (MP), and mature \u201cbenchmark\u201d rainforests (BR) in the Western Ghats mountains of peninsular India. ER had higher native tree seedling densities and recovered community composition toward BR levels compared to DR, while communities in MP shifted in the opposite direction. Densities of native late-successional species increased with can-opy cover (particularly in ER), but greater canopy cover was also associated with increases in alien species, a few of which are [...] E C O S Y S T E M R E S T O R A T I O N I N I N D I A : S T A T U S Q U O A N D T H E W A Y F O R W A R D T O A C H I E V E L A N D D E G R A D A T I O N N E U T R A L I T Y R E S E A R C H A R T I C L E Canopy cover and ecological restoration increase natural regeneration of rainforest trees in the Western Ghats, India Anand M. Osuri1,2 , Divya Mudappa1 , Srinivasan Kasinathan1 , T. R. Shankar Raman1 Restoration of canopy cover through tree planting can assist in overcoming barriers to natural regeneration and catalyze recov-ery of degraded tropical forests. India has made international pledges to restore millions of hectares of degraded forests by 2030, but lacks empirical research on regeneration under different types of planted and natural overstories to guide this mis-sion. We"
+    }
+  ],
+  "decision_trace": [
+    {
+      "step_number": 1,
+      "step_type": "vision_telemetry_intake",
+      "decision_rationale": "Ingest OpenCV 5 geometric and spatial measurements to establish investigative leads.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Vision telemetry intake for Region 77: Type=forest_recovery_candidate, Area=2.038ha (+/-0.4), Geometry=irregular_patch (Aspect=2.28, Compactness=0.394), Coordinates=[74.25527, 15.7894], Dates=['2026-10-10', '2026-10-25']."
+      ]
+    },
+    {
+      "step_number": 2,
+      "step_type": "lead_formulation",
+      "decision_rationale": "Adaptive lead generation driven directly by detected geometry and change classification.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Lead 'LEAD-01-AFFORESTATION': Query='Maharashtra Forest Department compensatory afforestation plantation restoration MH-R01-C10 \u2014 Kolhapur (Western Ghats)' (Canopy roughness gain suggests planned ecological corridor restoration or plantation initiative.)",
+        "Lead 'LEAD-02-ECOLOGY': Query='Western Ghats wildlife corridor regeneration canopy study MH-R01-C10 \u2014 Kolhapur (Western Ghats)' (Identify published ecological research on corridor canopy recovery.)"
+      ]
+    },
+    {
+      "step_number": 3,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for official_clearance",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Maharashtra Forest Department compensatory afforestation plantation restoration MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] Mangroves (https://www.mahamangroveafforestation.com): About us\n\nLogo \n\n Home\n About Us\n\n##### This free, accessible, and user-friendly platform is designed to disseminate inf...",
+        "[LIVE] Project Details - NHAI (https://datalakeg.nhai.gov.in/nhai/MISC/ProjectDetailsAdvance?key=U2FsdGVkX1%2FqEa209htDxbo%2F9CqWycj2A9VblGbzl4ge0rhwSlU5yRCcOZySctbT): N/08011/06002/MH, Current Status : Under Construction (AD issued), Division : Maharashtra. State Name : Maharashtra, RO ...",
+        "[LIVE] 354734717$Guidelines%20on%20Accredited%20Compensatory%20Afforestation.pdf (https://forestsclearance.nic.in/writereaddata/public_display/schemes/354734717$Guidelines%20on%20Accredited%20Compensatory%20Afforestation.pdf): The Forest Department shall give priority to such proposals and on receipt of \u2018In-principle\u2019 approval said land parcel s..."
+      ]
+    },
+    {
+      "step_number": 4,
+      "step_type": "tool_execution",
+      "decision_rationale": "Executed public records query for scientific_context",
+      "execution_mode": "live_web_research",
+      "tool_name": "search_public_records (tavily_live_search)",
+      "tool_inputs": {
+        "query": "Western Ghats wildlife corridor regeneration canopy study MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "max_results": 3
+      },
+      "tool_outputs_summary": "Retrieved 3 sources via tavily_live_search.",
+      "findings_extracted": [
+        "[LIVE] Study shows presence of 10 tigers and 46 leopards in Western Ghats | Goa News - The Times of India (https://timesofindia.indiatimes.com/city/goa/study-shows-presence-of-10-tigers-and-46-leopards-in-western-ghats/articleshow/112504497.cms): Title: Study shows presence of 10 tigers and 46 leopards in Western Ghats | Goa News - The Times of India\n* Study shows ...",
+        "[LIVE] Species diversity, regeneration and dominance as influenced by ... (https://www.worldagroforestry.org/publication/species-diversity-regeneration-and-dominance-influenced-canopy-gaps-and-their): This study was carried out in tropical evergreen forests of central Western Ghats in India to understand the influence o...",
+        "[LIVE] Canopy cover and ecological restoration increase natural ... (https://era-india.org/wp-content/uploads/2022/05/Osuri_et-al_2021_canopy-cover_restoration_RestEcol_onlineearly-Arjun-Singh.pdf): Discussion Our study from a human-modi\ufb01ed landscape in the Western Ghats in India showed greater tree regeneration in ma..."
+      ]
+    },
+    {
+      "step_number": 5,
+      "step_type": "evidence_analysis",
+      "decision_rationale": "Calculate defensible tree count estimate range from documented forestry density stratum.",
+      "execution_mode": "live_web_research",
+      "tool_name": "lookup_tree_density",
+      "tool_inputs": {
+        "region_context": "MH-R01-C10 \u2014 Kolhapur (Western Ghats)"
+      },
+      "tool_outputs_summary": "Area measured, but no defensible regional stem density publication found.",
+      "findings_extracted": [
+        "Forest Type: Unclassified Forest Stratum",
+        "Density Source: None available (None)",
+        "Tree estimate limitation: Unsupported by documented data"
+      ]
+    },
+    {
+      "step_number": 6,
+      "step_type": "report_generation",
+      "decision_rationale": "Final synthesis of visual telemetry, citations, uncertainty, and unknowns.",
+      "execution_mode": "live_web_research",
+      "tool_name": null,
+      "tool_inputs": null,
+      "tool_outputs_summary": null,
+      "findings_extracted": [
+        "Report INC-MH-R01-C10-20261026-77 compiled in 'live_web_research' mode with status 'concluded_with_evidence'."
+      ]
+    }
+  ]
+}

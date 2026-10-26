@@ -8,6 +8,7 @@ from forestguard.storage import BaseReportStore, FileReportStore, S3ReportStore
 from forestguard.data.fixtures import OfflineFixtureLoader
 from forestguard.data.cdse import CopernicusClient
 from forestguard.data.stac_cog import OpenSTACCogClient
+from forestguard.data.land_mask import LandMaskEngine
 from forestguard.vision.detector import NonNDVIChangeDetector
 from forestguard.agent.investigator import AutonomousInvestigator
 from forestguard.agent.models import InvestigationReport
@@ -79,6 +80,7 @@ class MonitoringOrchestrator:
                 )
         self.cdse_client = CopernicusClient()
         self.stac_client = OpenSTACCogClient()
+        self.land_mask_engine = LandMaskEngine()
         self.detector = NonNDVIChangeDetector(significance_threshold_ha=significance_threshold_ha)
         self.investigator = AutonomousInvestigator()
 
@@ -135,9 +137,24 @@ class MonitoringOrchestrator:
                 })
                 continue
 
-            # 2. OpenCV 5 Change Detection
+            # 2. Terrestrial Land Masking (Rasterized from authoritative boundary)
+            land_mask = None
+            if "bbox_epsg7755" in sector:
+                try:
+                    land_mask, land_frac = self.land_mask_engine.get_sector_land_mask(
+                        sector["bbox_epsg7755"],
+                        out_shape=(img_before.shape[0], img_before.shape[1]),
+                        cache_key=sector.get("sector_id")
+                    )
+                    logger.info(
+                        f"Sector '{sec_name}': Applied terrestrial land mask ({land_frac * 100.0:.1f}% land)."
+                    )
+                except Exception as e:
+                    logger.warning(f"Failed to generate land mask for {sec_name}: {e}")
+
+            # 3. OpenCV 5 Change Detection
             det_result = self.detector.detect_changes(
-                img_before, img_after, geo_bbox=sec_bbox, acquisition_dates=tuple(dates)
+                img_before, img_after, geo_bbox=sec_bbox, acquisition_dates=tuple(dates), land_mask=land_mask
             )
 
             if det_result.status != "CHANGES_DETECTED" or not det_result.candidate_regions:
@@ -195,6 +212,7 @@ class MonitoringOrchestrator:
 
                 cycle_summary["investigations_conducted_count"] += 1
                 cycle_summary["reports_published"].append({
+                    "sector_id": sector.get("sector_id", "UNKNOWN"),
                     "incident_id": report.incident_id,
                     "title": report.report_title,
                     "area_ha": report.affected_area_hectares,

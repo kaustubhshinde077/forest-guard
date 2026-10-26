@@ -1,45 +1,250 @@
 {
   "cadence_days": 21,
-  "last_successful_run": "2026-10-25T12:00:00Z",
-  "last_attempt_timestamp": "2026-10-25T20:30:00Z",
-  "total_runs_completed": 1,
+  "last_successful_run": "2026-10-26T13:38:26.417669+00:00",
+  "last_attempt_timestamp": "2026-10-26T13:38:26.417669+00:00",
+  "total_runs_completed": 2,
   "last_run_status": "completed_changes_detected",
   "last_run_summary": {
-    "cycle_start_time": "2026-10-25T12:00:00Z",
+    "cycle_start_time": "2026-10-26T13:38:27.025541+00:00",
     "cadence_days": 21,
     "significance_threshold_ha": 1.0,
-    "sectors_evaluated": 4,
-    "changes_detected_count": 3,
-    "investigations_conducted_count": 3,
+    "sectors_evaluated": 5,
+    "changes_detected_count": 349,
+    "investigations_conducted_count": 20,
     "reports_published": [
       {
-        "incident_id": "INC-TEST_PAIR_1_LO-01",
-        "title": "[SYNTHETIC TEST] Forest Loss Investigation: Koyna Corridor Forest Loss",
-        "area_ha": 4.16,
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-01",
+        "title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 1.054,
         "event_category": "forest_loss",
         "investigation_status": "concluded_with_evidence",
-        "is_synthetic_test": true
+        "is_synthetic_test": false
       },
       {
-        "incident_id": "INC-TEST_PAIR_2_RE-01",
-        "title": "[SYNTHETIC TEST] Forest Recovery Investigation: Tillari Buffer Canopy Regrowth",
-        "area_ha": 6.5,
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-03",
+        "title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 1.419,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-32",
+        "title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 2.403,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-37",
+        "title": "Forest Loss Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 1.024,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-47",
+        "title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 2.595,
         "event_category": "forest_recovery",
         "investigation_status": "concluded_with_evidence",
-        "is_synthetic_test": true
+        "is_synthetic_test": false
       },
       {
-        "incident_id": "INC-TEST_PAIR_4_GL-01",
-        "title": "[SYNTHETIC TEST] Global Benchmark Forest Loss: Rondonia Deforestation Corridor",
-        "area_ha": 18.4,
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-48",
+        "title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 5.82,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-49",
+        "title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 1.612,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C06",
+        "incident_id": "INC-MH-R01-C06-20261026-50",
+        "title": "Forest Recovery Investigation: MH-R01-C06 \u2014 Sindhudurg (Konkan)",
+        "area_ha": 29.747,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-23",
+        "title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 3.042,
         "event_category": "forest_loss",
         "investigation_status": "concluded_with_evidence",
-        "is_synthetic_test": true
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-26",
+        "title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 3.295,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-27",
+        "title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 5.1,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-30",
+        "title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 4.015,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-32",
+        "title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 1.136,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-38",
+        "title": "Forest Loss Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 1.024,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-59",
+        "title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 1.054,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-68",
+        "title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 1.582,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-76",
+        "title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 3.234,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R01-C10",
+        "incident_id": "INC-MH-R01-C10-20261026-77",
+        "title": "Forest Recovery Investigation: MH-R01-C10 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 2.038,
+        "event_category": "forest_recovery",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R07-C09",
+        "incident_id": "INC-MH-R07-C09-20261026-32",
+        "title": "Forest Loss Investigation: MH-R07-C09 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 1.707,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
+      },
+      {
+        "sector_id": "MH-R07-C09",
+        "incident_id": "INC-MH-R07-C09-20261026-115",
+        "title": "Forest Loss Investigation: MH-R07-C09 \u2014 Kolhapur (Western Ghats)",
+        "area_ha": 1.067,
+        "event_category": "forest_loss",
+        "investigation_status": "concluded_with_evidence",
+        "is_synthetic_test": false
       }
     ],
-    "failed_sectors": []
+    "failed_sectors": [
+      {
+        "sector_id": "MH-R09-C15",
+        "name": "MH-R09-C15 \u2014 Sangli (Western Ghats)",
+        "status": "incomplete_data_missing",
+        "published": false,
+        "reason": "High cloud occlusion (53.5%)"
+      }
+    ]
   },
   "history": [
+    {
+      "timestamp": "2026-10-26T13:38:26.417669+00:00",
+      "action": "batch_monitoring_cycle",
+      "batch_day": 1,
+      "forced": true,
+      "status": "completed_changes_detected",
+      "sectors_evaluated": 5,
+      "changes_detected": 349,
+      "investigations_conducted": 20,
+      "reports_published": [
+        "INC-MH-R01-C06-20261026-01",
+        "INC-MH-R01-C06-20261026-03",
+        "INC-MH-R01-C06-20261026-32",
+        "INC-MH-R01-C06-20261026-37",
+        "INC-MH-R01-C06-20261026-47",
+        "INC-MH-R01-C06-20261026-48",
+        "INC-MH-R01-C06-20261026-49",
+        "INC-MH-R01-C06-20261026-50",
+        "INC-MH-R01-C10-20261026-23",
+        "INC-MH-R01-C10-20261026-26",
+        "INC-MH-R01-C10-20261026-27",
+        "INC-MH-R01-C10-20261026-30",
+        "INC-MH-R01-C10-20261026-32",
+        "INC-MH-R01-C10-20261026-38",
+        "INC-MH-R01-C10-20261026-59",
+        "INC-MH-R01-C10-20261026-68",
+        "INC-MH-R01-C10-20261026-76",
+        "INC-MH-R01-C10-20261026-77",
+        "INC-MH-R07-C09-20261026-32",
+        "INC-MH-R07-C09-20261026-115"
+      ],
+      "failed_sectors": [
+        {
+          "sector_id": "MH-R09-C15",
+          "name": "MH-R09-C15 \u2014 Sangli (Western Ghats)",
+          "status": "incomplete_data_missing",
+          "published": false,
+          "reason": "High cloud occlusion (53.5%)"
+        }
+      ]
+    },
     {
       "timestamp": "2026-10-25T12:00:00Z",
       "action": "full_monitoring_cycle",
@@ -55,5 +260,36 @@
       ],
       "failed_sectors": []
     }
-  ]
+  ],
+  "tiles": {
+    "MH-R01-C06": {
+      "status": "monitored_candidate_detected",
+      "last_monitored": "2026-10-26T13:38:26.417669+00:00",
+      "terrestrial_area_km2": 89.42
+    },
+    "MH-R01-C10": {
+      "status": "monitored_candidate_detected",
+      "last_monitored": "2026-10-26T13:38:26.417669+00:00",
+      "terrestrial_area_km2": 68.86
+    },
+    "MH-R06-C03": {
+      "status": "monitored_no_change",
+      "last_monitored": "2026-10-26T13:38:26.417669+00:00",
+      "terrestrial_area_km2": 7.58
+    },
+    "MH-R07-C09": {
+      "status": "monitored_candidate_detected",
+      "last_monitored": "2026-10-26T13:38:26.417669+00:00",
+      "terrestrial_area_km2": 225.0
+    },
+    "MH-R09-C15": {
+      "status": "incomplete_data_missing",
+      "reason": "High cloud occlusion (53.5%)",
+      "last_attempt": "2026-10-26T13:38:26.417669+00:00",
+      "terrestrial_area_km2": 22.57
+    }
+  },
+  "monitored_terrestrial_area_km2": 390.86,
+  "total_catalogue_tiles_monitored": 4,
+  "current_batch_day": 1
 }

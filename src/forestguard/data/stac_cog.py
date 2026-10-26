@@ -37,15 +37,32 @@ class OpenSTACCogClient:
         self,
         bbox: List[float],
         max_cloud_cover_pct: float = 15.0,
-        datetime_range: str = "2023-01-01T00:00:00Z/2023-05-31T23:59:59Z",
-        days_interval: int = 21
+        datetime_range: Optional[str] = None,
+        lookback_days: int = 90,
+        min_interval_days: int = 5,
+        max_interval_days: int = 60
     ) -> Optional[Tuple[Dict[str, Any], Dict[str, Any]]]:
         """
-        Searches STAC for two distinct genuine Sentinel-2 Level-2A observations
-        with different calendar dates and low cloud cover.
-        Returns: (feature_before, feature_after) or None.
+        Searches STAC for the latest genuine Sentinel-2 Level-2A observation pair
+        relative to the current monitoring cycle, strictly on the SAME MGRS footprint.
+        
+        Policy:
+        1. Defaults to searching recent observations (past lookback_days from run date).
+        2. Filters for low cloud cover (< max_cloud_cover_pct).
+        3. Groups candidate scenes by MGRS tile identifier to avoid cross-MGRS projection seams.
+        4. Selects the most recent cloud-free observation as 'after'.
+        5. Selects a compatible earlier observation on the same MGRS footprint (interval >= min_interval_days) as 'before'.
+        6. Rejects same-calendar-date observations.
         """
-        # Query up to 10 recent low-cloud scenes within datetime partition
+        from datetime import datetime, timezone, timedelta
+
+        if datetime_range is None:
+            now = datetime.now(timezone.utc)
+            start_dt = (now - timedelta(days=lookback_days)).strftime("%Y-%m-%dT00:00:00Z")
+            end_dt = now.strftime("%Y-%m-%dT23:59:59Z")
+            datetime_range = f"{start_dt}/{end_dt}"
+
+        # Query up to 15 recent low-cloud scenes within the date window
         query = {
             "collections": ["sentinel-2-l2a"],
             "bbox": bbox,
@@ -54,7 +71,7 @@ class OpenSTACCogClient:
                 "eo:cloud_cover": {"lt": max_cloud_cover_pct}
             },
             "sortby": [{"field": "properties.datetime", "direction": "desc"}],
-            "limit": 10
+            "limit": 15
         }
 
         try:
@@ -74,28 +91,53 @@ class OpenSTACCogClient:
             logger.info(f"Insufficient low-cloud STAC scenes found ({len(features)} found, min 2 needed).")
             return None
 
-        # Select two features with strictly different calendar dates (avoid same-date adjacent MGRS)
-        after_feat = features[0]
-        after_date = after_feat["properties"]["datetime"][:10]
+        # Group scenes by MGRS tile identifier to preserve identical spatial footprint
+        by_mgrs: Dict[str, List[Dict[str, Any]]] = {}
+        for f in features:
+            f_id = f.get("id", "")
+            parts = f_id.split("_")
+            mgrs = parts[1] if len(parts) >= 2 and len(parts[1]) == 5 else "unknown"
+            by_mgrs.setdefault(mgrs, []).append(f)
 
-        before_feat = None
-        for cand in features[1:]:
-            cand_date = cand["properties"]["datetime"][:10]
-            if cand_date != after_date:
-                before_feat = cand
-                break
+        # Select the MGRS group containing the latest observation
+        sorted_mgrs = sorted(
+            by_mgrs.keys(),
+            key=lambda m: by_mgrs[m][0]["properties"]["datetime"],
+            reverse=True
+        )
 
-        if before_feat is None:
-            logger.warning("All available STAC scenes share the same calendar date. Rejecting as temporal pair.")
-            return None
+        for mgrs in sorted_mgrs:
+            mgrs_feats = by_mgrs[mgrs]
+            if len(mgrs_feats) < 2:
+                continue
 
-        # Return chronological order (before, after)
-        dt_b = before_feat["properties"]["datetime"]
-        dt_a = after_feat["properties"]["datetime"]
-        if dt_b > dt_a:
-            before_feat, after_feat = after_feat, before_feat
+            after_cand = mgrs_feats[0]
+            after_date_str = after_cand["properties"]["datetime"][:10]
+            try:
+                dt_after = datetime.fromisoformat(after_cand["properties"]["datetime"].replace("Z", "+00:00"))
+            except Exception:
+                continue
 
-        return before_feat, after_feat
+            for before_cand in mgrs_feats[1:]:
+                before_date_str = before_cand["properties"]["datetime"][:10]
+                if before_date_str == after_date_str:
+                    continue  # strictly reject same calendar date
+
+                try:
+                    dt_before = datetime.fromisoformat(before_cand["properties"]["datetime"].replace("Z", "+00:00"))
+                except Exception:
+                    continue
+
+                diff_days = abs((dt_after - dt_before).days)
+                if min_interval_days <= diff_days <= max_interval_days:
+                    # Found valid compatible temporal pair on the same MGRS footprint
+                    # Ensure chronological order (before, after)
+                    if dt_before > dt_after:
+                        before_cand, after_cand = after_cand, before_cand
+                    return before_cand, after_cand
+
+        logger.info("No compatible temporal pair meeting interval policy (5-60 days) on the same MGRS tile.")
+        return None
 
     def fetch_window(self, feature: Dict[str, Any], bbox_4326: List[float]) -> Tuple[Optional[np.ndarray], float, int]:
         """

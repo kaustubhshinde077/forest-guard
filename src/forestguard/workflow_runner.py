@@ -220,7 +220,7 @@ def run_pipeline(
                 "last_attempt": now_iso,
                 "terrestrial_area_km2": sec.get("terrestrial_area_km2", 225.0)
             }
-        elif sid in reported_ids or summary["changes_detected_count"] > 0:
+        elif sid in reported_ids:
             tile_states[sid] = {
                 "status": "monitored_candidate_detected",
                 "last_monitored": now_iso,
