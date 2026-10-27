@@ -1196,5 +1196,25 @@ Automated Chrome DevTools Protocol (CDP) visual inspection across 5 primary plat
 3. **Operational Guardrails Maintained:**
    - Automated scheduled monitoring (GitHub Actions cron workflows) remains safely disabled.
    - Live feeds contain zero synthetic fixtures or mock data.
-   - No remote publishing has been executed. The platform is ready for human acceptance review.
+   - Platform static export verified with 27 discrete pre-rendered routes under `/forest-guard/` base path.
+
+---
+
+## 19. Production GitHub Pages Deployment Architecture & CI/CD Isolation
+
+### 19.1 Frontend-Only Deployment Workflow (`deploy-pages.yml`)
+To resolve deployment stagnation without executing the Python monitoring engine or downloading satellite assets:
+- **Dedicated CI/CD Pipeline:** Created `.github/workflows/deploy-pages.yml` triggered automatically on `push` to `main` and manually via `workflow_dispatch`.
+- **Targeted Path Filtering:**
+  - `web/**`
+  - `data/catalogue/**`
+  - `data/public/**`
+  - `.github/workflows/deploy-pages.yml`
+- **Execution Boundaries & Architectural Safeguards:**
+  - Strictly limits runtime tasks to: repository checkout, Node.js 20 setup, `npm ci` in `web/`, `NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build`, `upload-pages-artifact` from `web/out`, and `deploy-pages`.
+  - **Zero Monitoring Execution:** `forestguard.workflow_runner` is never called.
+  - **Zero Satellite Ingestion:** No CDSE STAC queries or imagery downloads.
+  - **Zero Automated Commits:** The pipeline cannot commit or alter state in the repository (`permissions: contents: read`).
+  - **No Scheduling:** No cron schedule enabled. `monitor.yml` remains strictly manual-only (`workflow_dispatch`).
+
 
