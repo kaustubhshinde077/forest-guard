@@ -1211,7 +1211,8 @@ To resolve deployment stagnation without executing the Python monitoring engine 
   - `data/public/**`
   - `.github/workflows/deploy-pages.yml`
 - **Execution Boundaries & Architectural Safeguards:**
-  - Strictly limits runtime tasks to: repository checkout, Node.js 20 setup, `npm ci` in `web/`, `NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build`, `upload-pages-artifact` from `web/out`, and `deploy-pages`.
+  - Strictly limits runtime tasks to: repository checkout (`actions/checkout@v7`), Node.js 22 setup (`actions/setup-node@v7`), `npm ci` in `web/`, `NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build`, `configure-pages@v6`, `upload-pages-artifact@v5` from `web/out`, and `deploy-pages@v5`.
+  - **Node.js 22 Alignment:** Configured `node-version: '22'` matching local development runtime (`v22.23.4`) and Next.js 14 SSG compilation targets.
   - **Zero Monitoring Execution:** `forestguard.workflow_runner` is never called.
   - **Zero Satellite Ingestion:** No CDSE STAC queries or imagery downloads.
   - **Zero Automated Commits:** The pipeline cannot commit or alter state in the repository (`permissions: contents: read`).
