@@ -1,3 +1,6 @@
+@import '@fontsource-variable/sora';
+@import '@fontsource-variable/dm-sans';
+@import '@fontsource-variable/jetbrains-mono';
 @import 'maplibre-gl/dist/maplibre-gl.css';
 @tailwind base;
 @tailwind components;
@@ -5,20 +8,21 @@
 
 :root {
   /* Cinematic Earth-observation design tokens */
-  --bg-space: #05070a;
-  --bg-surface: #0a0e17;
-  --bg-panel: #0e1420;
-  --bg-card: #121927;
+  --bg-space: #05060F;
+  --bg-surface: #0a0e1a;
+  --bg-panel: #0e1424;
+  --bg-card: #12192c;
   
-  --text-main: #e8ecef;
-  --text-muted: #8a949c;
-  --text-dim: #5b6573;
-  --border-hairline: rgba(255, 255, 255, 0.10);
-  --border-subtle: rgba(255, 255, 255, 0.05);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --border-hairline: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.04);
 
   /* Status and indicator palette */
   --color-forest: #1f6f4a;
-  --color-emerald: #34d399;
+  --color-emerald: #10b981;
+  --color-bioteal: #3DFFB0;
   --color-lime: #b6f23a;
   --color-candidate: #f5a524;
   --color-cloud: #7c8aa5;
@@ -27,8 +31,9 @@
   --color-unassessed: rgba(255, 255, 255, 0.06);
 
   /* Font variables */
-  --font-sans: 'Inter Tight', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-heading: 'Sora Variable', 'Sora', system-ui, sans-serif;
+  --font-sans: 'DM Sans Variable', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
 body {
@@ -40,6 +45,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
 }
 
 /* Hairline technical grid overlay */

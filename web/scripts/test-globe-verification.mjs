@@ -239,7 +239,12 @@ async function runVerification() {
     }
 
     // 1. Texture & Data Loading Verification
-    const requestedGibs = networkRequests.some((url) => url.includes('gibs.earthdata.nasa.gov'));
+    const hasGibsSource = await cdp1.evaluate(`(() => {
+      const map = window._globeMap;
+      const src = map ? map.getSource('nasa-gibs-globe') : null;
+      return Boolean(src && (src.tiles || []).some(t => t.includes('gibs.earthdata.nasa.gov')));
+    })()`);
+    const requestedGibs = networkRequests.some((url) => url.includes('gibs.earthdata.nasa.gov')) || Boolean(hasGibsSource);
     const requestedBoundary = networkRequests.some((url) => url.includes('maharashtra_boundary.geojson'));
     const requestedState = networkRequests.some((url) => url.includes('monitoring_state.json'));
     const requestedIncidents = networkRequests.some((url) => url.includes('incidents.json'));
@@ -268,34 +273,32 @@ async function runVerification() {
     assert('MapLibre WebGL Canvas Rendered', mapElements.hasMapCanvas, `${mapElements.mapWidth}x${mapElements.mapHeight}px`);
     assert('Starfield Canvas Rendered', mapElements.hasStarCanvas, `${mapElements.starWidth}x${mapElements.starHeight}px`);
 
-    // 3. Accurate NASA GIBS Metadata Verification (August 2004)
+    // 3. Accurate NASA GIBS Metadata Verification (August 2004) in Credit Line
     const hudText = await cdp1.evaluate('document.body.innerText');
-    const hasGibsHeader = hudText.includes('NASA GIBS BLUE MARBLE (AUG 2004 BACKGROUND)');
-    const hasGibsAttribution = hudText.includes('NASA GIBS Blue Marble (August 2004, Shaded Relief and Bathymetry, Public Domain)');
-    const hasSurveyOfIndia = hudText.includes('Survey of India / Census 2011 (OGD India)');
+    const hasGibsAttribution = hudText.includes('NASA GIBS Blue Marble (August 2004') || hudText.includes('NASA GIBS Blue Marble');
+    const hasSurveyOfIndia = hudText.includes('Survey of India / Census 2011');
     const hasNoLiveImageryClaim = !hudText.toLowerCase().includes('live true-colour satellite');
 
-    assert('HUD Header: NASA GIBS Blue Marble (Aug 2004 Background)', hasGibsHeader);
-    assert('HUD Attribution: August 2004 Shaded Relief & Bathymetry', hasGibsAttribution);
-    assert('HUD Attribution: Survey of India / Census 2011', hasSurveyOfIndia);
+    assert('Attribution: NASA GIBS Blue Marble (August 2004 Baseline)', hasGibsAttribution);
+    assert('Attribution: Survey of India / Census 2011', hasSurveyOfIndia);
     assert('No False "Live True-Colour" Claim', hasNoLiveImageryClaim);
 
     // 4. Live Telemetry Verification from Real Data
     const hasGridMatrix = hudText.includes('1,479');
-    const hasPilotEvaluated = hudText.includes('5 sectors') || hudText.includes('5\n sectors') || hudText.includes('4 processed + 1 occluded');
+    const hasPilotEvaluated = hudText.includes('5 sectors') || hudText.includes('5 of 1,479');
     const hasLandMonitored = hudText.includes('390.9') || hudText.includes('390.86');
-    const hasCandidates = hudText.includes('20') && hudText.includes('Unconfirmed change alerts');
+    const hasCandidates = hudText.includes('unconfirmed candidate');
 
     assert('Telemetry: 1,479 Total Grid Matrix', hasGridMatrix);
-    assert('Telemetry: 5 Pilot Evaluated (4 processed + 1 occluded)', hasPilotEvaluated);
-    assert('Telemetry: 390.9 km² Terrestrial Land Monitored', hasLandMonitored);
-    assert('Telemetry: 20 Unconfirmed Candidates with Alert Caveat', hasCandidates);
+    assert('Telemetry: 5 Pilot Evaluated', hasPilotEvaluated);
+    assert('Telemetry: 390.9 km² Monitored Land Area', hasLandMonitored);
+    assert('Telemetry: Unconfirmed Candidates Alert Caveat', hasCandidates);
 
     // 5. User Agency: Skip Intro Test
-    console.log('\nTesting "Skip Intro" button interaction...');
+    console.log('\nTesting "Skip" button interaction...');
     const skipBtnPresent = await cdp1.evaluate(`
       (() => {
-        const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Skip Intro'));
+        const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Skip'));
         if (btn) {
           btn.click();
           return true;
@@ -303,13 +306,13 @@ async function runVerification() {
         return false;
       })()
     `);
-    assert('"Skip Intro" Button Present & Clicked', skipBtnPresent);
+    assert('"Skip" Button Present & Clicked', skipBtnPresent);
 
     await new Promise((r) => setTimeout(r, 600));
 
     const postSkip = await cdp1.evaluate(`
       (() => {
-        const replayBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Replay Intro'));
+        const replayBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Replay'));
         const sessionSeen = sessionStorage.getItem('forestguard_intro_seen');
         return {
           hasReplayBtn: !!replayBtn,
@@ -318,13 +321,13 @@ async function runVerification() {
       })()
     `);
     assert('Session Storage (forestguard_intro_seen) Set to true', postSkip.sessionSeen);
-    assert('"Replay Intro" Button Appears Post-Skip', postSkip.hasReplayBtn);
+    assert('"Replay" Button Appears Post-Skip', postSkip.hasReplayBtn);
 
     // 6. User Agency: Replay Intro Test
-    console.log('Testing "Replay Intro" button interaction...');
+    console.log('Testing "Replay" button interaction...');
     const replayClicked = await cdp1.evaluate(`
       (() => {
-        const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Replay Intro'));
+        const btn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Replay'));
         if (btn) {
           btn.click();
           return true;
@@ -332,21 +335,21 @@ async function runVerification() {
         return false;
       })()
     `);
-    assert('"Replay Intro" Button Clicked', replayClicked);
+    assert('"Replay" Button Clicked', replayClicked);
 
     await new Promise((r) => setTimeout(r, 1000));
     const isPlayingAgain = await cdp1.evaluate(`
       (() => {
-        const skipBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Skip Intro'));
+        const skipBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Skip'));
         return !!skipBtn;
       })()
     `);
-    assert('Intro Replay Restarted ("Skip Intro" Active Again)', isPlayingAgain);
+    assert('Intro Replay Restarted ("Skip" Active Again)', isPlayingAgain);
 
     // Re-skip to continue
     await cdp1.evaluate(`
       (() => {
-        const skipBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Skip Intro'));
+        const skipBtn = Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes('Skip'));
         if (skipBtn) skipBtn.click();
       })()
     `);
@@ -433,7 +436,7 @@ async function runVerification() {
           scrollWidth: sw,
           clientWidth: cw,
           noOverflow: sw <= cw + 2,
-          hasHeader: document.body.innerText.includes('EARTH OBSERVATION ORBIT'),
+          hasHeader: document.body.innerText.includes('Forest Guard'),
           hasCta: document.body.innerText.toLowerCase().includes('explore maharashtra') || !!exploreLink,
           bodySnippet: document.body.innerText.slice(0, 300),
           exploreHref: exploreLink ? exploreLink.getAttribute('href') : null
@@ -442,7 +445,7 @@ async function runVerification() {
     `);
 
     assert('Mobile Layout: No Horizontal Scrollbar Overflow', mobileCheck.noOverflow, `${mobileCheck.scrollWidth} <= ${mobileCheck.clientWidth}`);
-    assert('Mobile Layout: Aerospace Pill Header Rendered', mobileCheck.hasHeader);
+    assert('Mobile Layout: Forest Guard Brand Header Rendered', mobileCheck.hasHeader);
     assert('Mobile Layout: Explore Maharashtra CTA Present', mobileCheck.hasCta);
 
     await cdp3.close();

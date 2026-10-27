@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Shield, AlertTriangle } from 'lucide-react';
+import Navbar from '@/components/common/Navbar';
 
 export const metadata: Metadata = {
   title: 'Forest Guard — Satellite Forest-Loss Monitoring for Maharashtra',
@@ -16,120 +16,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
-      <body className="min-h-screen flex flex-col bg-[#030712] text-slate-100 antialiased font-sans selection:bg-emerald-950 selection:text-emerald-200">
-        {/* Global Navigation Header */}
-        <header className="border-b border-slate-800/70 bg-[#030712]/90 backdrop-blur-xl sticky top-0 z-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            {/* Brand / Wordmark */}
-            <div className="flex items-center space-x-3">
-              <Link href="/" className="flex items-center space-x-3 group">
-                <div className="w-9 h-9 bg-emerald-500/10 border border-emerald-500/30 rounded-xl flex items-center justify-center text-emerald-400 group-hover:border-emerald-400/60 group-hover:bg-emerald-500/20 transition-all shadow-[0_0_16px_rgba(16,185,129,0.15)]">
-                  <Shield className="w-5 h-5 text-emerald-400" />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="font-bold text-base tracking-wide text-white font-sans">FOREST GUARD</span>
-                </div>
-              </Link>
-            </div>
-
-            {/* Exactly Four Main Navigation Items */}
-            <nav className="hidden md:flex items-center space-x-1 text-sm font-medium">
-              <Link
-                href="/"
-                className="text-slate-300 hover:text-white px-3.5 py-2 rounded-lg hover:bg-white/5 transition-colors"
-              >
-                Overview
-              </Link>
-              <Link
-                href="/explore"
-                className="text-slate-300 hover:text-white px-3.5 py-2 rounded-lg hover:bg-white/5 transition-colors"
-              >
-                Explore Map
-              </Link>
-              <Link
-                href="/investigations"
-                className="text-slate-300 hover:text-white px-3.5 py-2 rounded-lg hover:bg-white/5 transition-colors"
-              >
-                Investigations
-              </Link>
-              <Link
-                href="/status"
-                className="text-slate-300 hover:text-white px-3.5 py-2 rounded-lg hover:bg-white/5 transition-colors"
-              >
-                Status & Methodology
-              </Link>
-            </nav>
-
-            {/* Right Side: Compact Pilot Indicator + Open Map CTA */}
-            <div className="flex items-center space-x-3 text-xs">
-              <div
-                className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-mono text-xs"
-                title="Staged pilot: 5 of 1,479 Maharashtra sectors assessed"
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                </span>
-                <span className="font-medium tracking-tight">Pilot: 5 Sectors Assessed</span>
-              </div>
-
-              <Link
-                href="/explore"
-                className="hidden sm:inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs shadow-md shadow-emerald-950/40 transition-all"
-              >
-                <span>Open Map</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Mobile Navigation Bar */}
-          <nav
-            aria-label="Mobile navigation"
-            className="flex md:hidden border-t border-slate-800/80 px-4 py-2 overflow-x-auto space-x-2 text-xs font-medium bg-[#050b16]"
-          >
-            <Link
-              href="/"
-              className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap"
-            >
-              Overview
-            </Link>
-            <Link
-              href="/explore"
-              className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap"
-            >
-              Explore Map
-            </Link>
-            <Link
-              href="/investigations"
-              className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap"
-            >
-              Investigations
-            </Link>
-            <Link
-              href="/status"
-              className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white whitespace-nowrap"
-            >
-              Status & Methodology
-            </Link>
-          </nav>
-        </header>
-
-        {/* Global Staged Pilot Verification Notice */}
-        <div className="bg-[#050b16] border-b border-slate-800/80 px-4 py-2 text-center text-xs text-slate-300 font-sans flex flex-wrap items-center justify-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium">
-            <AlertTriangle className="w-3 h-3" /> Staged Pilot
-          </span>
-          <span className="text-slate-300">
-            5 of 1,479 sectors assessed (390.86 km² terrestrial area) · All detections are unconfirmed satellite-change candidates requiring independent ground-truth verification.
-          </span>
-        </div>
+      <body className="min-h-screen flex flex-col bg-[#05060F] text-slate-100 antialiased font-sans selection:bg-teal-950 selection:text-teal-200">
+        {/* Transparent Slim Navigation Bar */}
+        <Navbar />
 
         {/* Main Content Area */}
         <main className="flex-1">
@@ -143,8 +34,21 @@ export default function RootLayout({
               {/* Col 1: Project Identity */}
               <div className="space-y-3 md:col-span-1">
                 <div className="flex items-center space-x-2">
-                  <Shield className="w-4 h-4 text-emerald-400" />
-                  <span className="font-bold text-slate-200 tracking-wider">FOREST GUARD</span>
+                  <svg
+                    className="w-4 h-4 text-[#3DFFB0]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M4.93 19.07 A10 10 0 0 1 19.07 4.93" />
+                    <path d="M19.07 19.07 A10 10 0 0 1 4.93 4.93" />
+                  </svg>
+                  <span className="font-heading font-semibold text-slate-200 tracking-wider">Forest Guard</span>
                 </div>
                 <p className="text-slate-400 text-xs leading-relaxed">
                   Open-source satellite canopy change verification for Maharashtra. Built for the OpenCV AI Competition 2026 Special Award Entry.

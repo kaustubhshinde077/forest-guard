@@ -45,10 +45,16 @@ module.exports = {
         pending: {
           DEFAULT: '#5b6573',
         },
+        bioteal: {
+          DEFAULT: '#3DFFB0',
+          glow: 'rgba(61, 255, 176, 0.25)',
+          dim: 'rgba(61, 255, 176, 0.12)',
+        },
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'Inter Tight', 'system-ui', '-apple-system', 'sans-serif'],
-        mono: ['var(--font-mono)', 'JetBrains Mono', 'ui-monospace', 'monospace'],
+        heading: ['var(--font-heading)', "'Sora Variable'", "'Sora'", 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', "'DM Sans Variable'", "'DM Sans'", 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['var(--font-mono)', "'JetBrains Mono Variable'", "'JetBrains Mono'", 'ui-monospace', 'monospace'],
       },
     },
   },

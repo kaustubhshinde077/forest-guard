@@ -1413,3 +1413,154 @@ All regression suites and automated browser audits completed with 100% pass rate
 - `overview-desktop_1440_maharashtra_flyin.png`: 642,233 visible Earth texture pixels (58.9% of viewport), 10,906 emerald boundary pixels.
 - `overview-desktop_1440_returning_session.png`: 562,884 visible Earth texture pixels (51.6% of viewport), 10,844 emerald boundary pixels.
 - `overview-mobile_375.png`: 491,133 visible Earth texture pixels (49.1% of mobile viewport), 21,305 emerald accent pixels.
+
+---
+
+## 21. Full-Screen Editorial Redesign & Final Acceptance Corrections
+
+### 21.1 Overview & Final Acceptance Corrections
+In accordance with user review, the full-screen editorial redesign was refined and verified under strict constraints (no git commits, no git pushes, and scheduled monitoring remaining disabled):
+
+1. **Homepage Methodology Statement Updated:**
+   - **Old text:** *"Copernicus Sentinel-2 L2A every 5 days over Maharashtra"*
+   - **Corrected text:** *"Retrieve suitable Sentinel-2 observations for monitored sectors. Satellite revisit opportunities and cloud-free availability vary; Forest Guard is currently operating in staged pilot mode."*
+   - Strictly enforces that automatic statewide monitoring is not implied.
+2. **Detection Candidate Provenance & Epistemic Honesty:**
+   - Replaced claims such as *"genuine, verified Sentinel-2 candidate detections"* with *"unconfirmed candidates derived from genuine Sentinel-2 observations"*.
+   - Acknowledges that while satellite imagery is genuinely retrieved and authenticated via STAC COGs, detected spectral/structural changes are unconfirmed candidates requiring independent ground-truth verification.
+3. **Typography & Zero-CDN Self-Hosted Font Architecture:**
+   - Integrated `@fontsource-variable/sora` (headings and prominent numerals), `@fontsource-variable/dm-sans` (body copy and interface UI), and `@fontsource-variable/jetbrains-mono` (coordinates, timestamps, scene IDs).
+   - Fully purged all Google Fonts CDN `<link>` elements from `web/src/app/layout.tsx`. All WOFF2 fonts are packaged and served locally under `_next/static/media/`.
+4. **Full-Bleed 45/55 Hero Composition & MapLibre Camera Offset:**
+   - Eliminated the centered card container, outer borders, and margins. Space background extends edge-to-edge at `88svh` (`min-h-[640px]`, `max-h-[960px]`).
+   - Desktop viewports ($\ge 1024$px) apply dynamic camera offset padding `left: Math.floor(w * 0.44)`, seating Earth in the right ~56% of the viewport with ~12% bleeding off the right horizon, keeping the left editorial headline and actions completely unoccluded.
+   - Mobile viewports apply `bottom: Math.floor(h * 0.42)` with a subtle bottom-to-top scrim, seating Earth in the upper ~35% above the text.
+   - Initial fresh session camera orbits at `[45.0, 18.0]`, `zoom: 2.15` and smoothly glides to `[76.8, 19.3]`, `zoom: 2.55` with Maharashtra illuminated in `#3DFFB0` bioluminescent teal. Returning sessions load directly at `[76.8, 19.3]`, `zoom: 2.55`.
+
+### 21.2 12-Screenshot Matrix & Layout Overflow Validation
+
+All 12 required combination screenshots across 4 viewports and 3 visitor states have been captured and verified:
+
+| Viewport | State | Screenshot File | Verification Result |
+|---|---|---|---|
+| **1600×780** | Fresh Intro | `overview-1600x780-fresh-intro.png` | **PASSED** (Visible 3D Earth, orbit phase) |
+| **1600×780** | Post Fly-In | `overview-1600x780-maharashtra-flyin.png` | **PASSED** (Maharashtra teal glow, 2-line headline) |
+| **1600×780** | Returning Visitor | `overview-1600x780-returning-session.png` | **PASSED** (Instant state boundary, no camera leap) |
+| **1440×900** | Fresh Intro | `overview-1440x900-fresh-intro.png` | **PASSED** (Dominant right-aligned Earth) |
+| **1440×900** | Post Fly-In | `overview-1440x900-maharashtra-flyin.png` | **PASSED** (Maharashtra centered on right 56%) |
+| **1440×900** | Returning Visitor | `overview-1440x900-returning-session.png` | **PASSED** (Immediate returning visitor view) |
+| **1024×768** | Fresh Intro | `overview-1024x768-fresh-intro.png` | **PASSED** (Tablet landscape layout, no clipping) |
+| **1024×768** | Post Fly-In | `overview-1024x768-maharashtra-flyin.png` | **PASSED** (Boundary visible, clean separation) |
+| **1024×768** | Returning Visitor | `overview-1024x768-returning-session.png` | **PASSED** (Returning session view) |
+| **390×667** | Fresh Intro | `overview-390x667-fresh-intro.png` | **PASSED** (Mobile upper-globe positioning) |
+| **390×667** | Post Fly-In | `overview-390x667-maharashtra-flyin.png` | **PASSED** (Readable text over scrim, CTA above fold) |
+| **390×667** | Returning Visitor | `overview-390x667-returning-session.png` | **PASSED** (Instant mobile state, zero horizontal scroll) |
+
+**Layout & Horizontal Overflow Checks:**
+- **1366×768 Viewport:**
+  - Document Scroll Width: `1361px` | Window Width: `1366px`
+  - Horizontal Overflow: **PASS (Zero horizontal overflow)**
+  - CTA Above Fold: **PASS** (Bottom Y: `597px` $\le$ Viewport Height: `625px` after header)
+- **375×667 Viewport (iPhone SE baseline):**
+  - Document Scroll Width: `375px` | Window Width: `375px`
+  - Horizontal Overflow: **PASS (Zero horizontal overflow)**
+  - CTA Above Fold: **PASS** (Bottom Y: `661px` $\le$ Viewport Height: `667px`)
+
+### 21.3 Local Git Diff & Environment Safety Audit
+- **Git Commit Audit:** 0 commits created. `HEAD` remains at `b2a583d4e28556113144102e09dd11779beedcb1` (`origin/main`).
+- **Remote Push Audit:** 0 pushes executed. Remote remains completely untouched.
+- **Scheduled Monitoring Audit:** `schedule: - cron: '0 6 * * *'` in `.github/workflows/monitor.yml` remains commented out and inactive.
+- **Modified Working Tree Files:** Strictly limited to frontend layout, typography, styling, and verification scripts:
+  - `web/package.json` & `web/package-lock.json`
+  - `web/src/app/globals.css`
+  - `web/src/app/layout.tsx`
+  - `web/src/app/page.tsx`
+  - `web/src/components/home/GlobeHero.tsx`
+  - `web/tailwind.config.js`
+  - `web/scripts/capture-redesign-shots.mjs`
+
+
+## 22. Phase 22 — Final Visual Refinement & Comprehensive Acceptance Package
+
+### 22.1 Architecture & Visual Polish Summary
+This phase finalized the comprehensive visual refinement pass for Forest Guard in accordance with the design instructions, operating strictly without commits, pushes, or monitoring activations:
+
+1. **Responsive Layout & Navigation System:**
+   - **Stacked Mobile & Tablet (< 1100px):** Implemented a deliberate vertical layout where the 3D globe occupies a dedicated top container (`h-[40svh] min-h-[260px] sm:min-h-[320px] max-h-[420px]`, `padding: 0`), and the editorial copy, statistics, and actions sit strictly below it. Eliminates text overlapping the globe on tablet and mobile viewports.
+   - **Desktop Editorial Split (≥ 1100px):** 45% editorial copy on left, 55% globe on right with dynamic MapLibre camera offset (`left: Math.floor(w * 0.44), top: 40`), leaving the headline and description completely unoccluded.
+   - **Slim Transparent Navbar:** 64px height over space background without permanent border or solid fill; transitions smoothly to `bg-[#05060F]/85 backdrop-blur-md border-b border-white/[0.06]` only on scroll.
+   - **Minimalist Orbit Wordmark:** "Forest Guard" in Sora 600 with clean 18px SVG orbit-ring mark (purged shield, boxed container, and heavy glow).
+   - **Four Desktop Links:** Exactly 4 navigation links on one line at 1024, 1366, 1440, and 1600px: `Overview`, `Map`, `Investigations`, `Methodology` (DM Sans 500, 14–15px with active teal underline).
+   - **Mobile Hamburger Menu:** Accessible toggle below 900px with slide-down overlay dialog, Escape key listener, background scroll lock, and link click auto-dismiss.
+
+2. **Making Maharashtra Unmistakable on the Globe:**
+   - **Oceanic Base Background Layer:** Added `#081426` deep oceanic layer behind NASA GIBS raster tiles, eliminating angular dark voids at polar caps and pending tiles.
+   - **Prominent Teal Boundary Styling:** Maharashtra boundary rendered with 2.5px solid stroke (`#3DFFB0`), 6px soft halo (blur 4px, opacity 0.75), and 0.22 area fill (`#3DFFB0`).
+   - **Calibrated Camera Zoom:** Target zoom calibrated to `zoom: 3.85`, center near `[76.800, 19.300]`. At this scale, the Indian subcontinent and peninsular coastline dominate the right hemisphere, and Maharashtra is visually prominent and unmistakable.
+   - **Camera Telemetry:** Exposed `window._globeMap` globally for automated verification and telemetry readout.
+
+3. **Minimal Telemetry Readout & Controls:**
+   - Monospace telemetry readout at bottom-right (`19.300° N · 76.800° E · zoom 3.8`) with inline text-only `Skip` / `Replay` button.
+   - **Primary CTA ("Explore Maharashtra"):** 48px height solid `#3DFFB0` button with `#05060F` text, arrow hover nudge (`+3px`), and 2px offset outline.
+   - **Secondary CTA ("View investigations"):** Plain white text link with 1px hover underline animation and 48px hit target.
+   - **Discreet Pilot Notice:** Replaced separate amber banner with a subtle notice at the bottom of the hero featuring a small amber dot: `"Staged pilot: 5 of 1,479 sectors assessed. All detections are unconfirmed candidates requiring ground-truth verification."`
+   - **Credit Line:** Clean credit line with clear separator between `(OGD India)` and `Pilot evaluation`, 12px high-contrast typography.
+
+4. **Build-Time Statistics Derivation:**
+   - Derives all 3 homepage statistics (`1,479` total sectors, `5` pilot sectors assessed, `390.86 km²` monitored land area) at build time via `web/scripts/derive-sectors.js` -> `web/src/data/statistics.json`.
+   - Shortened 3rd stat line: `0.13% of 307,492.71 km² state boundary area`.
+
+### 22.2 Candidate Provenance & Epistemic Honesty Schema
+All candidate detections in `incidents.json` and investigation dossiers adhere to honest epistemic provenance:
+- `source_scene_ids`: Explicit Copernicus Sentinel-2 L2A product identifiers (e.g., `S2A_MSIL2A_20230214...`).
+- `observation_dates`: Exact temporal pair acquisition dates for before/after analysis.
+- `is_synthetic_test`: Explicit boolean flag (`false` for genuine satellite observations).
+- `investigation_status`: `"unconfirmed_candidate"` reflecting that genuine satellite provenance indicates spectral/structural change but requires independent ground-truth verification.
+
+### 22.3 18-Screenshot Acceptance Matrix & Layout Verification
+
+The complete 18-combination matrix across 6 viewports and 3 visitor states was captured and verified:
+
+| Viewport | State | Screenshot File | Camera Center | Zoom | Result |
+|---|---|---|---|---|---|
+| **1600×780** | Fresh Intro | `overview-1600x780-fresh-intro.png` | [45.000, 18.000] | 2.15 | **PASS** (Visible 3D Earth, initial orbit) |
+| **1600×780** | Post Fly-In | `overview-1600x780-maharashtra-flyin.png` | [76.800, 19.300] | 3.85 | **PASS** (Teal boundary, peninsular India) |
+| **1600×780** | Returning Visitor | `overview-1600x780-returning-session.png` | [76.800, 19.300] | 3.85 | **PASS** (Instant Maharashtra view) |
+| **1440×900** | Fresh Intro | `overview-1440x900-fresh-intro.png` | [45.000, 18.000] | 2.15 | **PASS** (Dominant right-offset Earth) |
+| **1440×900** | Post Fly-In | `overview-1440x900-maharashtra-flyin.png` | [76.689, 19.294] | 3.82 | **PASS** (Clear separation from copy) |
+| **1440×900** | Returning Visitor | `overview-1440x900-returning-session.png` | [76.800, 19.300] | 3.85 | **PASS** (Settled returning session) |
+| **1366×768** | Fresh Intro | `overview-1366x768-fresh-intro.png` | [45.000, 18.000] | 2.15 | **PASS** (4-link nav, full-bleed space) |
+| **1366×768** | Post Fly-In | `overview-1366x768-maharashtra-flyin.png` | [76.800, 19.300] | 3.85 | **PASS** (Teal stroke + soft halo + fill) |
+| **1366×768** | Returning Visitor | `overview-1366x768-returning-session.png` | [76.800, 19.300] | 3.85 | **PASS** (Replay button ready) |
+| **1024×768** | Fresh Intro | `overview-1024x768-fresh-intro.png` | [45.000, 18.000] | 2.15 | **PASS** (Tablet landscape, 4-link nav) |
+| **1024×768** | Post Fly-In | `overview-1024x768-maharashtra-flyin.png` | [76.800, 19.300] | 3.85 | **PASS** (Zero copy occlusion) |
+| **1024×768** | Returning Visitor | `overview-1024x768-returning-session.png` | [76.800, 19.300] | 3.85 | **PASS** (Direct Maharashtra arrival) |
+| **768×1024** | Fresh Intro | `overview-768x1024-fresh-intro.png` | [45.000, 18.000] | 2.15 | **PASS** (Stacked layout: globe top 40svh) |
+| **768×1024** | Post Fly-In | `overview-768x1024-maharashtra-flyin.png` | [76.621, 19.293] | 3.80 | **PASS** (Copy cleanly below globe) |
+| **768×1024** | Returning Visitor | `overview-768x1024-returning-session.png` | [76.800, 19.300] | 3.85 | **PASS** (Zero text overlap) |
+| **390×667** | Fresh Intro | `overview-390x667-fresh-intro.png` | [45.000, 18.000] | 2.15 | **PASS** (Mobile top globe block) |
+| **390×667** | Post Fly-In | `overview-390x667-maharashtra-flyin.png` | [76.707, 19.295] | 3.81 | **PASS** (Maharashtra clearly framed) |
+| **390×667** | Returning Visitor | `overview-390x667-returning-session.png` | [76.800, 19.300] | 3.85 | **PASS** (Zero horizontal scroll) |
+
+**Full-Page Captures:**
+- `overview-1440px-full-page.png`: Desktop full-page capture verifying hero, mission metrics, methodology cards, and footer alignment.
+- `overview-390px-mobile-full-page.png`: Mobile full-page capture verifying responsive card stacking and padding.
+
+**Overflow & Interactive Controls Validation:**
+- **375×667 Viewport (iPhone SE baseline):**
+  - Document Scroll Width: `375px` | Window Width: `375px`
+  - Horizontal Overflow: **PASS (Zero horizontal overflow)**
+  - Primary CTA Above Fold: **PASS** (Bottom Y: `617px` $\le$ Viewport Height: `667px`)
+- **Mobile Hamburger Menu Interaction:**
+  - Open & Close Toggle: **PASS** (`{ success: true, menuOpened: true, menuClosed: true }`)
+
+### 22.4 Repository Integrity & Safety Compliance
+- **Commits Created:** `0` (Zero). `HEAD` remains strictly at `b2a583d4e28556113144102e09dd11779beedcb1` (`origin/main`).
+- **Pushes / Deployments:** `0` (Zero).
+- **Scheduled Monitoring:** Disabled (`.github/workflows/monitor.yml` cron schedule commented out).
+- **Test Suites:**
+  - Live Browser Globe Verification: **28 / 28 PASS**
+  - Next.js Static Export: **27 / 27 routes compiled successfully**
+  - Status & Methodology Page Suite: **25 / 25 PASS**
+  - Dossier & Split Slider Suite: **25 / 25 PASS**
+  - Investigations Feed Suite: **21 / 21 PASS**
