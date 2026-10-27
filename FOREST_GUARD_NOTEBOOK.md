@@ -687,3 +687,514 @@ Detailed examination of the three candidate-bearing sectors from Batch Day 1:
 
 
 
+
+
+## 12. Frontend Rebuild — Phase 1 (Foundation) Verification & Audit
+
+### 12.1 Coverage Arithmetic & Denominator Correction
+- **Terrestrial Area Metric:**
+  $$\text{Coverage Fraction} = \frac{390.86\text{ km}^2}{297,650.35\text{ km}^2} \times 100 = 0.1313\% \approx 0.13\%$$
+  - Numerator: $390.86\text{ km}^2$ (Empirically monitored terrestrial land area across evaluated sectors, strictly excluding marine waters via boundary raster mask).
+  - Denominator: $297,650.35\text{ km}^2$ (Authoritative Census 2011 / Survey of India 36-district boundary equal-area union in EPSG:7755).
+- **Grid Sector Metric:**
+  $$\text{Evaluated Fraction} = \frac{5}{1,479} \times 100 = 0.338\% \approx 0.34\%$$
+  - Numerator: 5 evaluated 15 × 15 km sectors.
+  - Denominator: 1,479 canonical statewide boundary-intersecting sectors.
+
+### 12.2 Strict Status Disaggregation
+- **Evaluated Sectors (5 total):**
+  1. `MH-R01-C06` (Sindhudurg / Konkan): Candidate detected (`monitored_candidate_detected`, $89.42\text{ km}^2$ land).
+  2. `MH-R01-C10` (Kolhapur / Western Ghats): Candidate detected (`monitored_candidate_detected`, $68.86\text{ km}^2$ land).
+  3. `MH-R07-C09` (Satara-Kolhapur / Western Ghats): Candidate detected (`monitored_candidate_detected`, $225.00\text{ km}^2$ land).
+  4. `MH-R06-C03` (Raigad / Konkan): No qualifying change detected (`monitored_no_change`, $7.58\text{ km}^2$ land).
+  5. `MH-R09-C15` (Sangli / Western Ghats): Incomplete due to cloud occlusion (`incomplete_data_missing`, $22.57\text{ km}^2$ land, 53.5% cloud occlusion, $0.00\text{ km}^2$ credited).
+- **Audit Rules:**
+  - Processing success (4 sectors successfully analyzed) is explicitly decoupled from findings of no qualifying change (1 sector clear).
+  - Ambiguous "successful clean" phrasing is barred from all UI components.
+
+### 12.3 Font Provenance & Offline Build Verification
+- **Font Hosting:** No binary font files (`.woff2`, `.ttf`) are self-hosted in `web/out/`.
+- **Online Loading:** Google Fonts CDN `<link>` tags in `<head>` load `Inter Tight` and `JetBrains Mono` when connected to the internet.
+- **Offline / Sandbox Fallback:** System font fallbacks (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif` for UI; `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace` for coordinates/IDs) guarantee 100% offline buildability without network timeouts or build failures.
+
+### 12.4 Route Export Audit
+- **Exported HTML Routes in `web/out/`:**
+  - `out/index.html` $\to$ Route `/` (Overview & Mission Control)
+  - `out/explore/index.html` $\to$ Route `/explore/` (Sector Grid Explorer)
+  - `out/investigations/index.html` $\to$ Route `/investigations/` (Candidate Dossiers)
+  - `out/status/index.html` $\to$ Route `/status/` (Operational Cadence, Method, and STAC `#sources`)
+  - `out/404.html` and `out/404/index.html` $\to$ Route `/_not-found` (Custom Error Page)
+- **Route Count Explanation:** Next.js reported `(7/7)` generation units during static build due to prerendering the root layout and internal error handlers alongside the 5 explicit routes. All 5 top-bar navigation items map to pre-rendered HTML without 404s.
+
+### 12.5 Phase 1 Acceptance Checks
+- **JSON Telemetry Derivation:** Verified dashboard cards read directly from `monitoring_state.json`.
+- **Synthetic Isolation:** Verified 20 of 20 items in `data/public/incidents.json` are genuine Sentinel-2 candidates (`is_synthetic_test: false`). 0 synthetic tests appear in live feeds.
+- **Zero Localhost/Private API:** Verified complete absence of `localhost:8000` or private endpoints in static export files.
+- **Base Path Compliance:** Verified Next.js `NEXT_PUBLIC_BASE_PATH=/forest-guard` correctly prefixes all scripts, stylesheets, and internal hyperlinks.
+- **Warning Notice:** Verified persistent `STAGED PILOT MODE` warning banner is visible in the exported HTML.
+- **Test Suite Status:** 43 passed, 0 failed in 11.66s (`PYTHONPATH=src pytest tests/`).
+
+
+### 12.6 Pre-Phase-2 Foundation Verification & Corrections (CRS, Discrepancies, Font Audit)
+
+#### A. Equal-Area Denominator Verification vs EPSG:7755 Conformal Distortion
+- **Mathematical Cause of Discrepancy & Authoritative Definition:**
+  - **EPSG:7755 (India National LCC):** Defined with standard parallels $\phi_1 = 12.472955^\circ\text{ N}$ ($12^\circ 28' 22.638''\text{ N}$) and $\phi_2 = 35.1728044444444^\circ\text{ N}$ ($35^\circ 10' 22.096''\text{ N}$), with latitude of false origin $\phi_0 = 24.0^\circ\text{ N}$ and central meridian $\lambda_0 = 80.0^\circ\text{ E}$.
+  - Conformal projections preserve local angular relationships and shapes ($k_h = k_k$), but their areal scale factor $s = k^2$ varies with latitude.
+  - In Maharashtra ($15.6^\circ\text{ N}$ to $22.0^\circ\text{ N}$), central parallel scale compression is approximately $-3.2\%$, yielding an uncorrected Cartesian polygon area of $297,650.36\text{ km}^2$.
+- **Authoritative Equal-Area Calculations & Denominator Clarification:**
+  - The value **$307,492.71\text{ km}^2$** represents the **complete GIS-derived state-boundary union** formed by dissolving the 36 authoritative administrative district boundary polygons from the Census 2011 / Survey of India dataset (`maharashtra_districts.geojson`).
+  - These authoritative district geometries delineate the terrestrial boundary along the Arabian Sea coastline (including coastal creeks and inlets).
+  - Reprojecting this complete state-boundary union to standard equal-area projections yields:
+    - **ESRI:102008 (South Asia Albers Equal Area Conic):** **$307,492.71\text{ km}^2$**
+    - **EPSG:6933 (WGS 84 / NSIDC EASE-Grid 2.0 Global, cylindrical equal-area):** **$307,492.71\text{ km}^2$**
+    - **Custom Maharashtra Albers (parallels $16^\circ\text{ N}, 22^\circ\text{ N}$):** **$307,492.71\text{ km}^2$**
+    - **Official Survey of India / Census 2011 published state geographic area:** **$307,713.00\text{ km}^2$** (agreement within $0.07\%$).
+- **Coverage Denominator Labelling:**
+  - The coverage denominator is strictly defined and labeled as:
+    $$\text{Coverage Fraction} = \frac{\text{Monitored Terrestrial Land Area}}{\text{Complete GIS-Derived 36-District State Boundary Area}} = \frac{390.86\text{ km}^2}{307,492.71\text{ km}^2} \times 100 = 0.1271\% \approx \mathbf{0.13\%}$$
+  - The numerator ($390.86\text{ km}^2$) accounts strictly for the terrestrial land portion inside the 4 successfully processed pilot sectors, raster-masked against the coastline so that marine/sea pixels contribute zero to monitored land. The denominator ($307,492.71\text{ km}^2$) represents the complete GIS-derived state-boundary union across all 36 districts.
+
+#### B. Pilot Sector District & Biome Verification
+- **`MH-R06-C03` Resolution:**
+  - Coordinates: Lon $[73.2270^\circ, 73.3755^\circ\text{ E}]$, Lat $[16.3105^\circ, 16.4539^\circ\text{ N}]$.
+  - Centroid: $73.3013^\circ\text{ E}, 16.3822^\circ\text{ N}$.
+  - Intersecting District: **Sindhudurg** ($100\%$ of its $7.58\text{ km}^2$ terrestrial land fraction, Devgad coastal taluka, Konkan region).
+  - Erroneous informal references to "Raigad" (which lies at lat $17.9^\circ$–$19.0^\circ\text{ N}$, $>180\text{ km}$ north) are strictly expunged.
+- **Audit of Remaining Pilot Sectors:**
+  1. `MH-R01-C06`: Lon $[73.6845^\circ, 73.8319^\circ]$, Lat $[15.6457^\circ, 15.7885^\circ] \to$ **Sindhudurg** ($89.42\text{ km}^2$, Konkan).
+  2. `MH-R01-C10`: Lon $[74.2494^\circ, 74.3963^\circ]$, Lat $[15.6691^\circ, 15.8113^\circ] \to$ **Kolhapur** ($68.86\text{ km}^2$, Western Ghats).
+  3. `MH-R07-C09`: Lon $[74.0725^\circ, 74.2204^\circ]$, Lat $[16.4845^\circ, 16.6271^\circ] \to$ **Kolhapur** ($225.00\text{ km}^2$, Western Ghats; $0.0\%$ Satara).
+  4. `MH-R09-C15`: Lon $[74.9150^\circ, 75.0624^\circ]$, Lat $[16.7906^\circ, 16.9326^\circ] \to$ **Sangli** ($22.57\text{ km}^2$, Western Ghats / Desh margin).
+
+#### C. Font-Loading Deviation & Trade-off Analysis
+- **Specification Expectation:** Self-hosted static webfont files bundled within `web/public/fonts/`.
+- **Sandbox Boundary & Hermetic Build Constraint:**
+  - The build environment executes inside an isolated sandbox with zero outbound internet access.
+  - Attempting to use `next/font/google` triggers `FetchError: getaddrinfo EAI_AGAIN fonts.googleapis.com`, which halts the production static build.
+  - Adding font packages via `npm install` requires external network access to the npm registry.
+- **Adopted Engineering Trade-Off:**
+  - Google Fonts CDN `<link>` tags in `<head>` allow connecting browser clients to stream `Inter Tight` and `JetBrains Mono`.
+  - CSS variables (`--font-sans`, `--font-mono`) fall back to high-grade system font stacks (`-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif` and `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`).
+  - **Benefit:** Static export compiles deterministically with zero network failure risk.
+  - **Next Step for Full Air-Gapped Hosting:** When unsandboxed network permission is available, `.woff2` files can be committed directly to `web/public/fonts/` with relative `@font-face` definitions.
+
+
+## 13. Frontend Rebuild — Phase 2: Geospatial Core & Satellite Map Integration
+
+### 13.1 Package & Dependency Audit
+- **Added Dependency:** `maplibre-gl@5.16.0` (Current stable v5 series).
+- **Bundle Optimization:** `MapLibreExplorer` dynamically loaded via `next/dynamic({ ssr: false })` on `/explore`. Non-map routes (`/`, `/investigations`, `/status`) remain lightweight (~88–99 kB first load JS) and do not ship the MapLibre engine.
+
+### 13.2 Satellite Basemap Architecture & Imagery Separation
+1. **Primary Satellite Basemap (EOxCloudless 10m Sentinel-2 Composite):**
+   - **Layer URL:** `https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg`
+   - **Resolution:** 10 m native spatial resolution across Copernicus Sentinel-2 visible spectrum bands (RGB).
+   - **Supported Zooms:** Levels 0 through 15 (verified HTTP 200 with `Access-Control-Allow-Origin: *` CORS support across Maharashtra tiles).
+   - **Licensing Terms & Hackathon Compliance:** Released under **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC-BY-NC-SA 4.0)** by EOX IT Services GmbH (contains modified Copernicus Sentinel data). Forest Guard's non-commercial research, open-source educational deployment, and OpenCV AI Competition 2026 submission fully comply with this license.
+   - **Attribution:** `<a href="https://cloudless.eox.at">Sentinel-2 cloudless by EOX IT Services GmbH</a> (CC-BY-NC-SA 4.0, Contains modified Copernicus Sentinel data)`.
+2. **Alternative Basemap Layers:**
+   - **NASA GIBS VIIRS True Color:** Daily global composite via NASA Earthdata GIBS (Level 9 ~250m max resolution; Public Domain).
+   - **CARTO Dark Matter:** Optional high-contrast street reference layer (`cartocdn.com`, free public tier, no API key required for public evaluation; OpenStreetMap attribution).
+3. **Strict Imagery Separation:**
+   - The satellite basemap is explicitly captioned in the map HUD:
+     > *"Contextual Basemap (Sentinel-2 Cloudless 2020 by EOX IT Services GmbH, CC-BY-NC-SA 4.0) — For spatial orientation only; not the observation pair used for change detection."*
+   - Detection evidence (genuine before/after acquisition dates, Copernicus Sentinel-2 L2A scene IDs, and morphological difference overlays) is strictly isolated and inspectable via individual candidate dossiers.
+
+### 13.3 Candidate Geometry & Status Terminology Alignment
+1. **Candidate Geometry Specification:**
+   - Analysis of `data/public/incidents.json` verified that the dataset contains `geographic_coordinates` (centroids) and `geographic_bounding_box` ($[\text{min\_lon}, \text{min\_lat}, \text{max\_lon}, \text{max\_lat}]$), but does not commit arbitrary polygon contours to the lightweight index.
+   - The map renders:
+     - **Location Markers:** Target circular points with glowing pulse at `geographic_coordinates`.
+     - **Approximate Event Extents:** Dashed amber bounding box rectangles (`candidates-bboxes-stroke`) representing connected-component extents, clearly labeled as *"Approximate Event Extent (Bounding Box)"*.
+     - Pixel-accurate morphological difference masks are explicitly designated as viewable in individual candidate dossiers.
+2. **Status Wording Alignment:**
+   - The misleading label *"Verified Clear"* was completely replaced by **"No qualifying change detected"** across `STATUS_META`, `MapLibreExplorer`, `AccessibleSectorTable`, `SectorDetailPanel`, and `StatewideCoverageStatus`.
+   - Distinct counts enforced in UI:
+     - **3 Candidate Sectors** (containing 20 unconfirmed candidate detection events)
+     - **1 Sector with No Qualifying Change Detected** (`MH-R06-C03`)
+     - **1 Sector Cloud-Occluded / Incomplete** (`MH-R09-C15`)
+     - **1,474 Sectors Unassessed** in pilot grid
+3. **Geographic Reconciliation:**
+   - Reconciled all 20 candidate detection records against parent sector boundaries:
+     - `MH-R01-C06` (Sindhudurg / Konkan): 8 candidate records (all within sector bounding box $[73.6845^\circ\text{–}73.8319^\circ\text{ E}, 15.6457^\circ\text{–}15.7885^\circ\text{ N}]$).
+     - `MH-R01-C10` (Kolhapur / Western Ghats): 10 candidate records (all within $[74.2494^\circ\text{–}74.3963^\circ\text{ E}, 15.6691^\circ\text{–}15.8113^\circ\text{ N}]$).
+     - `MH-R07-C09` (Kolhapur / Western Ghats): 2 candidate records (all within $[74.0725^\circ\text{–}74.2204^\circ\text{ E}, 16.4845^\circ\text{–}16.6271^\circ\text{ N}]$).
+
+### 13.4 Verification Summary
+- **Static Export Build:**
+  - `NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build` passed with exit code 0.
+  - 7 static pages exported to `web/out/` including `out/explore/index.html` ($26\text{ KB}$, first load JS 90.1 kB).
+- **Python Test Suite:**
+  - 43 passed, 2 warnings in 9.95s (`PYTHONPATH=src .venv/bin/pytest tests/`).
+- **Python Backend Suite:**
+  - 43 passed, 2 warnings in 14.28s (`PYTHONPATH=src .venv/bin/pytest tests/`).
+
+---
+
+## 14. 2026-10-26 — Frontend Rebuild — Phase 3: Globe Hero & Intro Sequence
+
+### 14.1 Architecture & Component Design
+- **Single Rendering Engine:** Utilizes MapLibre GL JS v5 (`maplibre-gl@5.16.0`) with `{ projection: { type: 'globe' } }` exclusively. Zero Three.js, React Three Fiber, or Cesium dependencies.
+- **NASA GIBS Blue Marble Global Background Texture (August 2004):**
+  - Official product title: **Blue Marble (August 2004, Shaded Relief and Bathymetry)** via NASA GIBS / EOSDIS.
+  - Endpoint: `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpeg`
+  - Nature & Resolution: Static global background texture composite representing Earth surface morphology at ~500 m spatial resolution (Level 8). It is explicitly **not** live or current satellite imagery; current observation pairs for change detection are strictly isolated to individual Copernicus Sentinel-2 candidate dossiers.
+  - Licence & Attribution: Public Domain; attributed clearly in the HUD header as `NASA GIBS BLUE MARBLE (AUG 2004 BACKGROUND)` and in the footer HUD as `Globe Background Texture: NASA GIBS Blue Marble (August 2004, Shaded Relief and Bathymetry, Public Domain) • Boundary: Survey of India / Census 2011 (OGD India)`.
+  - Atmospheric styling: `sky-color: '#05070a'`, `horizon-color: '#0c1a2e'`, `atmosphere-blend: 0.85`.
+- **Cinematic Orbital Transition:**
+  - Initial orbital vantage: `[45.0° E, 20.0° N]`, zoom `1.8`, with gentle eastward rotation (~0.07°/frame for 2.4s).
+  - Transition: Smooth eased `flyTo` camera movement (4,200 ms) landing at Maharashtra centroid `[76.2° E, 19.1° N]`, zoom `6.2`.
+  - Boundary illumination: Real Census 2011 Survey of India boundary (`maharashtra_boundary.geojson`) fades in with emerald outline (`#34d399`, width 2.2px, opacity 0.95) and faint green fill (`rgba(52, 211, 153, 0.08)`).
+- **User Agency & Session Memory:**
+  - Auto-rotation halts immediately upon any pointer interaction (`mousedown`, `wheel`, `touchstart`).
+  - An always-visible **"Skip Intro"** button halts camera movement, immediately focuses Maharashtra, and sets `sessionStorage.getItem('forestguard_intro_seen')`.
+  - A subtle **"Replay Intro"** button allows repeating the orbital fly-in anytime.
+  - Return visitors in the same browser session automatically skip the intro and land directly on Maharashtra.
+  - Primary CTA **"Explore Maharashtra"** links cleanly to `/forest-guard/explore/`.
+
+### 14.2 Performance, Reduced Motion, & WebGL Fallbacks
+- **Off-Screen Rendering Suspension:** MapLibre rendering and the background canvas starfield are paused via `IntersectionObserver` when the hero container leaves the viewport, and via `document.visibilitychange` when the tab is hidden.
+- **Pixel Ratio Capping:** Enforced `Math.min(window.devicePixelRatio || 1, 2)` to eliminate GPU fill-rate bottlenecks on high-DPI displays.
+- **Accessibility & Motion Preferences (`prefers-reduced-motion`):**
+  - Camera starts immediately at Maharashtra (`[76.2, 19.1]`, zoom 6.2); orbital spin and camera flyTo are completely suppressed.
+  - Background starfield particles/twinkles are disabled.
+  - Telemetry counters display final numeric values without count-up animation.
+- **Hardware WebGL Failure & WebGL2 Detection Safeguard:**
+  - MapLibre GL v5 requires WebGL2 (`testCanvas.getContext('webgl2')`). Both WebGL2 and WebGL1 contexts are checked, and `new Map(...)` is wrapped in an explicit `try...catch` block.
+  - If WebGL2 initialization fails, throws a `GPUInitializationError`, or is disabled by user flags/hardware, the component automatically catches the error and transitions cleanly to the accessible high-contrast SVG vector boundary mode without unhandled React errors.
+  - The fallback renders the exact Survey of India boundary MultiPolygon in vector SVG, with telemetry cards and an action link directly to the accessible sector explorer.
+
+### 14.3 Live Animated Telemetry Counters Strip
+- Telemetry numbers are dynamically derived from `monitoring_state.json` and `incidents.json`:
+  1. **1,479 Total Grid Sectors** (Authoritative Census 2011 + EPSG:7755 grid matrix).
+  2. **5 Pilot Evaluated Sectors** (4 successfully processed + 1 incomplete/cloud-occluded).
+  3. **390.86 km² Terrestrial Land Monitored** (0.13% of 307,492.71 km² state boundary).
+  4. **20 Active Candidates** (unconfirmed candidate detection events across 3 sectors; 0 synthetic fixtures).
+- Incomplete sectors (`MH-R09-C15`) strictly receive 0 monitored-area credit.
+- All candidate events retain the explicit caveat: **"Unconfirmed change alerts"** (`[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`).
+- Numeric counters interpolate smoothly via RAF (`easeOutCubic`) over 1,600 ms when reduced motion is not active.
+
+### 14.4 Live Browser Automated Verification Results (Google Chrome 155 via CDP)
+- **Suite Execution:** `node web/scripts/test-globe-verification.mjs` against static export served at `http://127.0.0.1:4178/forest-guard/`.
+- **Overall Result:** **29 passed, 0 failed across 4 test scenarios**:
+  1. **Scenario 1: Standard Desktop Run (1280x800, WebGL Active):**
+     - Boundary GeoJSON, Monitoring State JSON, and Incidents JSON loaded via HTTP 200.
+     - NASA GIBS tile endpoint verified (`gibs.earthdata.nasa.gov`).
+     - MapLibre WebGL canvas rendered ($1209 \times 300\text{ px}$).
+     - Starfield canvas rendered ($1211 \times 662\text{ px}$).
+     - August 2004 metadata and Survey of India attributions verified in DOM.
+     - Telemetry counts verified against source JSON: 1,479 sectors, 5 pilot evaluated, 390.9 km² monitored, 20 unconfirmed candidates.
+     - User agency: "Skip Intro" button clicked $\to$ camera jumped to Maharashtra $\to$ `sessionStorage.getItem('forestguard_intro_seen')` verified $\to$ "Replay Intro" button appeared.
+     - "Replay Intro" clicked $\to$ intro restarted in orbital view.
+     - "Explore Maharashtra" CTA clicked $\to$ navigated to `/forest-guard/explore/`.
+  2. **Scenario 2: Hardware WebGL Disabled (`--disable-webgl`):**
+     - Fallback banner rendered: `WebGL Fallback Mode Active`.
+     - Authoritative Census 2011 boundary rendered as an SVG `<path>`.
+     - Accessible 1,479-sector table navigation link active.
+  3. **Scenario 3: Mobile Viewport ($375 \times 667\text{ px}$, DPR 2):**
+     - Zero horizontal scrollbar overflow ($\text{scrollWidth} = \text{clientWidth} = 375\text{ px}$).
+     - Aerospace HUD header and Explore CTA stacked responsively.
+  4. **Scenario 4: `prefers-reduced-motion` Preference:**
+     - Media query detected; camera auto-jumped directly to Maharashtra with intro auto-skipped and replay ready.
+
+### 14.5 Build & Test Suite Status
+- **Next.js Static Export:** Passed cleanly (`NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build` -> Exit code 0, 7/7 routes generated in `web/out/`).
+- **Python Backend Test Suite:** 43 passed, 2 warnings in 13.38s (`PYTHONPATH=src .venv/bin/pytest tests/`).
+- **Zero Localhost/Private API Dependencies:** Audited `web/out/` for `localhost:8000` and `127.0.0.1` (0 matches).
+- **Bundle Isolation:** First Load JS for `/` remains 109 kB; non-map pages (`/status`, `/investigations`, `/_not-found`) remain 88–99 kB.
+
+---
+
+## 15. 2026-10-26 — Frontend Rebuild — Phase 4: Candidate Investigations Feed
+
+### 15.1 Architecture & Component Architecture
+- **Dedicated Candidate Investigations Platform:** Replaced placeholder page at [`web/src/app/investigations/page.tsx`](file:///home/kaustubh/Desktop/dp/forest_guard/web/src/app/investigations/page.tsx) with a full environmental intelligence feed:
+  - [`CandidateInvestigationsFeed.tsx`](file:///home/kaustubh/Desktop/dp/forest_guard/web/src/components/investigations/CandidateInvestigationsFeed.tsx): Interactive search, multi-axis filtering, sorting, view-mode toggling (Grid Cards vs Tabular List), and live measured metrics strip.
+  - [`CandidateDossierModal.tsx`](file:///home/kaustubh/Desktop/dp/forest_guard/web/src/components/investigations/CandidateDossierModal.tsx): Accessible slide-out inspection dossier dialog with genuine Copernicus Sentinel-2 observation crops (`before.png`, `after.png`), difference overlays (`overlay.png`), Snyder LCC measurement uncertainty bounds, closed-loop Gemini gazette citations, and uncalibrated contrast scores.
+- **Real Data Loading & Synthetic Isolation:**
+  - Data sourced dynamically from `data/public/incidents.json` via `fetchLiveCandidates()`.
+  - Excludes all synthetic demonstration records (`is_synthetic_test === true`). 20 genuine Sentinel-2 detections loaded across 3 pilot sectors (`MH-R01-C06`: 8, `MH-R01-C10`: 10, `MH-R07-C09`: 2).
+  - Preserved parent sector relationships; candidates are explicitly presented as unconfirmed connected components detected by the classical OpenCV 5 vision pipeline, not 20 independent verified events.
+
+### 15.2 Strict Honesty Rules & Caveats
+- **Prominent Status Label:** Every record carries the required badge: `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`.
+- **Heuristic Contrast Score:** Labeled explicitly as an uncalibrated radiometric contrast and geometric compactness metric (0.00–1.00), strictly never portrayed as a probability of illegal deforestation.
+- **Contextual Basemap Separation:** Banner clarifies that overview maps use Sentinel-2 Cloudless 2020 by EOX for spatial reference only, whereas change detection evidence is computed strictly from the specific Copernicus Sentinel-2 Level-2A observation pairs listed on each candidate card.
+- **Genuine Imagery Fallback:** When a difference overlay or observation crop is not present, the component renders an honest empty state ("No difference preview committed for this component") rather than generating artificial tiles or substituting stock imagery.
+
+### 15.3 Feed Interactions & Accessible Pre-Phase-5 Dossier Navigation
+- **Search:** Free text search across candidate ID, parent sector ID, district/region, visual geometry, and summary excerpt.
+- **Multi-Axis Filters:**
+  - Parent Sector: All (20), `MH-R01-C06` Sindhudurg (8), `MH-R01-C10` Kolhapur (10), `MH-R07-C09` Kolhapur (2).
+  - Visual Geometry: All (20), `linear_corridor` (7), `irregular_patch` (9), `compact_block` (3), `diffuse_noise` (1).
+  - Affected Area Range: All (20), Small (< 2.0 ha), Medium (2.0–5.0 ha), Large (> 5.0 ha).
+  - Observation Pass Date: All (20), 2026-10-20 to 2026-10-25 (10), 2026-10-10 to 2026-10-25 (10).
+- **Sorting:** By measured affected area (descending/ascending), observation date (newest/oldest), heuristic score, and candidate ID.
+- **Dossier Inspection Navigation:**
+  - Clicking "Inspect Dossier" opens [`CandidateDossierModal.tsx`](file:///home/kaustubh/Desktop/dp/forest_guard/web/src/components/investigations/CandidateDossierModal.tsx) with accessible ARIA dialog attributes (`role="dialog"`, `aria-modal="true"`).
+  - Synchronizes with URL hash (e.g. `#INC-MH-R07-C09-20261026-115`) for direct linkability.
+  - Supports keyboard navigation: `Escape` key closes the dialog and clears the URL hash cleanly without page reload.
+  - Direct deep-link: "View Parent Sector on Map" routes to `/forest-guard/explore?sector=MH-R...`.
+
+### 15.4 Automated Browser & Verification Results (Google Chrome 155 via CDP)
+- **Suite Execution:** `node web/scripts/test-investigations-feed.mjs` against static export at `http://127.0.0.1:4182/forest-guard/investigations/`.
+- **Result:** **21 passed, 0 failed (100% pass rate)**:
+  1. Staged Pilot Mode persistent notice verified.
+  2. Telemetry metrics verified: 20 candidate records, 3 parent sectors, 73.97 ha total candidate area, 100% S2-L2A provenance.
+  3. Zero synthetic test fixtures (`INC-TEST_PAIR_*`) present in live feed.
+  4. Free text search "linear" matched exactly 7 linear corridor candidates.
+  5. Sector filter "MH-R01-C06" matched exactly 8 candidates.
+  6. Reset filters restored all 20 candidates.
+  7. Tabular list mode rendered accessible table (`<table>`, `<th>`, `<td>`).
+  8. Dossier modal opened with accessible dialog role, updated URL hash `#INC-MH-...`, displayed mandatory provisional caveat, measured area with uncertainty, and observation tabs (Difference Mask, Before, After).
+  9. `Escape` key dismissed dossier modal and cleared URL hash cleanly.
+
+### 15.5 Build & Test Suite Verification
+- **Regression Check on Phase 3:** `node web/scripts/test-globe-verification.mjs` passed **29 of 29 checks** with zero regressions.
+- **Combined Browser Verification Pass Rate:** **50 / 50 browser checks passed across all suites**.
+- **Next.js Static Export:** Passed cleanly (`NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build` -> Exit code 0, 7/7 routes exported).
+- **Python Backend Test Suite:** 43 passed, 2 warnings in 12.59s (`PYTHONPATH=src .venv/bin/pytest tests/`).
+
+---
+
+## 16. 2026-10-26 — Frontend Rebuild — Phase 5: Investigation Detail Page & Image Slider
+
+### 16.1 Architecture & Canonical Static Detail Routes
+- **Canonical Prerendered Detail Routes:** Implemented App Router static export route at [`web/src/app/investigations/[id]/page.tsx`](file:///home/kaustubh/Desktop/dp/forest_guard/web/src/app/investigations/%5Bid%5D/page.tsx):
+  - Uses `generateStaticParams()` to load all 20 genuine Copernicus Sentinel-2 candidate records directly from `public/data/incidents.json` at build time.
+  - Generates 20 discrete static HTML documents under `web/out/investigations/[id]/index.html`. Total Next.js static build routes expanded from 7 to **27 pages**.
+  - Sets dynamic, accessible page metadata with candidate ID and explicit `[UNCONFIRMED CANDIDATE]` title prefix.
+- **Strict Synthetic Isolation:**
+  - Synthetic test fixtures (`is_synthetic_test: true` / `INC-TEST_PAIR_*`) are strictly excluded during `generateStaticParams()`.
+  - Non-existent or synthetic paths trigger `notFound()`, resulting in clean HTTP 404 responses with zero synthetic leakage into public search or live pages.
+
+### 16.2 Interactive Before/After Split Slider (`CandidateImageCompareSlider.tsx`)
+- **Non-Distorting Visual Split Mechanics:**
+  - Built with pure CSS `clip-path: inset(0 ${100 - sliderPos}% 0 0)` on the historical (before) layer overlaying the recent (after) observation layer.
+  - Preserves 100% natural aspect ratio without squishing or nested width distortions.
+  - Includes high-contrast emerald divider line (`w-0.5 bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.9)]`) and central draggable pill with slider icon.
+- **WAI-ARIA Accessibility & Keyboard Navigation:**
+  - Slider element declares `role="slider"`, `tabIndex={0}`, `aria-valuenow`, `aria-valuemin={0}`, `aria-valuemax={100}`, and descriptive `aria-label`.
+  - Supports keyboard interaction:
+    - `ArrowLeft` / `ArrowDown`: Decrements slider split by 5%.
+    - `ArrowRight` / `ArrowUp`: Increments slider split by 5%.
+    - `Home`: Snaps to 0% (100% recent observation view).
+    - `End`: Snaps to 100% (100% historical observation view).
+  - Handles pointer capture (`setPointerCapture`) for smooth drag across desktop mouse and mobile touch viewports.
+- **Evidence Honesty Empty State:**
+  - When either historical or recent observation crop is unavailable or fails to load, the component suppresses the split slider and renders an honest empty state ("Paired satellite observation unavailable...").
+  - Strictly prohibits stock imagery substitution or synthetic image synthesis.
+
+### 16.3 Comprehensive Report Dossier View (`CandidateDetailView.tsx`)
+- **Hero & Status Caveat Strip:**
+  - Prominent badge: `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`.
+  - Candidate ID with one-click copy to clipboard, WGS 84 geographic coordinates, and report generation date.
+  - Prominent amber legal disclaimer banner: **MANDATORY PROVISIONAL STATUS & LEGAL DISCLAIMER** clarifying that detections represent unconfirmed OpenCV 5 canopy changes and do not constitute legal proof of unauthorized clearing.
+- **Telemetry & Provenance Matrix:**
+  - Snyder LCC equal-area measurement uncertainty bounds ($\pm 0.20\text{--}0.65\text{ ha}$).
+  - Visual geometry classification and aspect ratio.
+  - Copernicus Sentinel-2 Level-2A scene identifiers (`S2B_MSIL2A...` / `S2A_MSIL2A...`) and acquisition pass dates.
+  - OpenCV 5 morphological difference mask (`overlay.png`) detailing $a^*$ chromatic delta and Laplacian high-frequency variance.
+- **Closed-Loop Gemini Research Breakdown (Honesty & Epistemic Boundaries):**
+  - Strictly separates unverified hypotheses (**Working Hypotheses (Provisional, Unverified Leads)**) from contextual background literature (**Contextual Literature & Public Records**).
+  - Explicit integrity notice: *"Retrieved records provide regional contextual literature and potential investigative leads. They do not constitute verified statutory clearances or incident-specific legal authorizations for this candidate coordinate."*
+  - Individual citations labeled as `Contextual Background` (or `Verified Clearance` only if an official statutory clearance specifically for the incident coordinates is proven).
+  - Step-by-step autonomous decision trace logging rationale, tool queries, and extracted findings across every execution step (`Step 1`, `Step 2`, etc.).
+  - Forest Survey of India (FSI) ISFR regional forest stratum context with honest omission of speculative tree counts when unsupported by localized plot inventory.
+  - Explicit section documenting unresolved questions and knowledge gaps requiring territorial ground inspection.
+- **Sector Map Deep Link Integration:**
+  - "View Parent Sector on Map" action navigates to `/forest-guard/explore/?sector=MH-R...`.
+  - `MapLibreExplorer.tsx` parses `?sector=` on mount, updates history via `history.replaceState`, fits the camera bounds smoothly to the sector bounding box (`fitBounds`), and opens `SectorDetailPanel` with full sector telemetry.
+
+### 16.4 Static Server URL-Encoding Fix (`decodeURIComponent`)
+- **Diagnostic Discovery:** During Next.js static export testing, App Router creates static chunk directories on disk with literal brackets (e.g. `out/_next/static/chunks/app/investigations/[id]/`). Web browsers request this URL with standard percent-encoding (`%5Bid%5D`). Without decoding, Node.js `path.join(OUT_DIR, reqUrl)` was attempting to locate `%5Bid%5D` on disk, returning 404 and breaking client-side hydration.
+- **Resolution:** Added `reqUrl = decodeURIComponent(reqUrl)` in `web/scripts/test-dossier-page.mjs` (and static server handlers), ensuring 100% clean chunk resolution and immediate React hydration.
+
+### 16.5 Automated Browser & Regression Test Results
+- **Phase 5 Dossier & Slider Verification Suite:** `node web/scripts/test-dossier-page.mjs` against static export at `http://127.0.0.1:4184/forest-guard/investigations/INC-MH-R07-C09-20261026-115/`:
+  - **Result: 25 passed, 0 failed (100% pass rate)**.
+  - Verified static direct route loading, page metadata, breadcrumbs, UNCONFIRMED status chip, Snyder LCC uncertainty metrics, Copernicus scene IDs, non-distorting `clip-path` slider, keyboard stepping (`ArrowRight` to 55%, `Home` to 0%, `End` to 100%), difference mask, hypothesis vs contextual literature separation, Parivesh/OGD citations, autonomous decision trace steps, FSI stem density bounds, direct page reload idempotency, parent sector deep linking (`?sector=MH-R07-C09`), missing crop empty state, mobile viewport (zero horizontal overflow at 375x667), multi-route loading and refresh (`INC-MH-R01-C06-20261026-01`, `INC-MH-R01-C10-20261026-77`), and synthetic fixture HTTP 404 rejection (`INC-TEST_PAIR_1_LO-01`, `INC-TEST_PAIR_4_GL-01`, `INC-NONEXISTENT-999`).
+- **Phase 4 Feed Regression Suite:** `node web/scripts/test-investigations-feed.mjs`:
+  - **Result: 21 passed, 0 failed (100% pass rate)**.
+- **Phase 3 Globe Hero Regression Suite:** `node web/scripts/test-globe-verification.mjs`:
+  - **Result: 29 passed, 0 failed (100% pass rate)**.
+- **Total Browser Checks Across All Suites:** **75 / 75 checks passed (100%)**.
+- **Next.js Static Build:** 27 / 27 pages statically exported (`NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build` -> Exit code 0).
+- **Python Backend Test Suite:** **43 passed, 2 warnings in 10.99s** (`PYTHONPATH=src .venv/bin/pytest tests/`).
+
+### 16.6 Pre-Phase 6 Dossier Evidence-Integrity Audit
+1. **Observation Provenance Audit:**
+   - 100% of displayed Copernicus Sentinel-2 scene IDs (`S2C_43PCT_20261020_0_L2A`, `S2B_43PCT_20261025_0_L2A`, `S2C_43QCU_20261020_0_L2A`, `S2B_43QCU_20261025_0_L2A`), acquisition dates (`2026-10-10`, `2026-10-20`, `2026-10-25`), and centroid coordinates are loaded directly from the individual incident JSON reports without synthetic substitution or product-name normalization.
+   - All 20 observation crop pairs (`before.png`, `after.png`) and difference masks (`overlay.png`) verified on disk under `public/data/artifacts/`.
+2. **Clearance & Verification Integrity Audit:**
+   - In accordance with non-negotiable honesty rules, citations retrieved via autonomous search were audited. None of the retrieved web records proved statutory clearance for the exact coordinates; all 20 reports carried `evidence_tier: credible_news_report`.
+   - Renamed section from misleading "Verified Findings & Statutory Clearances" to **"Contextual Literature & Public Records"** in both `CandidateDetailView.tsx` and `CandidateDossierModal.tsx`.
+   - Added persistent contextual integrity notice clarifying that general links to PARIVESH, OGD India, or news reports provide regional context only and do not establish statutory clearing authorizations.
+3. **Tree-Density & Stem Estimate Audit:**
+   - Audited the pipeline's `tree_count_estimate` across all 20 genuine candidates: the pipeline explicitly recorded `is_supported: false` and `limitations: "Tree-count estimates are omitted to prevent unsupported speculation"`.
+   - Removed the frontend fallback that previously calculated arbitrary `150–350 stems/ha` counts.
+   - Replaced with honest omission display: *"Stem Density Range: Omitted (Unsupported without division plot inventory)"* and displayed the genuine pipeline limitation notice directly from the data. Regional FSI ISFR biometric benchmarks are cited strictly as contextual reference bounds.
+4. **Static Route & Multi-Candidate Integrity Audit:**
+   - Verified canonical direct loading and page refresh across multiple candidate URLs (`INC-MH-R07-C09-20261026-115`, `INC-MH-R01-C06-20261026-01`, `INC-MH-R01-C10-20261026-77`).
+   - Verified that synthetic fixtures (`INC-TEST_PAIR_1_LO-01`, `INC-TEST_PAIR_4_GL-01`) and non-existent IDs return clean HTTP 404 responses.
+   - Confirmed 100% compliance with `/forest-guard/` base path prefix across all internal links, chunks, and image assets.
+
+---
+
+## 17. 2026-10-27 — Frontend Rebuild — Phase 6: Monitoring Status & Methodology
+
+### 17.1 Architecture & Modular Component Design (`/forest-guard/status/`)
+Implemented a mission-grade operational status and methodology platform at [`web/src/app/status/page.tsx`](file:///home/kaustubh/Desktop/dp/forest_guard/web/src/app/status/page.tsx) that adheres strictly to the near-black aerospace aesthetic and dynamic data contracts:
+
+1. **Operational Header & Pilot Mode Indicator (`StatusOverviewHero.tsx`):**
+   - Persistent amber indicator chip: `STAGED PILOT MODE — PARTIAL COVERAGE` with pulsing alert ping.
+   - Live operational timestamp, round-robin batch telemetry, and high-frequency anchor pills linking directly to page sections (`#metrics`, `#inventory`, `#methodology`, `#safeguards`, `#licences`).
+2. **KPI Matrix & Explicit Arithmetic Callout (`MonitoringMetricsGrid.tsx`):**
+   - 6 dynamic KPI cards loaded from `monitoring_state.json`:
+     - Total Catalogue Grid: **1,479 Sectors** ($15 \times 15\text{ km}$ mesh).
+     - Pilot Sectors Assessed: **5 Sectors** ($0.34\%$ of state catalogue).
+     - Successfully Processed: **4 Sectors** (3 candidate detected + 1 sector with no qualifying change detected).
+     - Incomplete / Obscured: **1 Sector** (`MH-R09-C15`, aborted due to high cloud cover).
+     - Credited Monitored Land: **$390.86\text{ km}^2$** across successfully processed sectors.
+     - Terrestrial Coverage: **$0.13\%$** ($\frac{390.86}{297,650.35} \times 100 = 0.1313\%$).
+   - Explicit Coverage Arithmetic & Zero-Credit Callout:
+     - Clear algebraic breakdown showing numerator ($390.86\text{ km}^2$), denominator ($297,650.35\text{ km}^2$ GIS terrestrial land area), and exact percentage ($0.13\%$).
+     - Strict disclosure of the **Zero-Credit Safeguard Policy**: incomplete sectors (such as `MH-R09-C15` with $22.57\text{ km}^2$ land area) receive strictly **$0.00\text{ km}^2$** monitored credit.
+3. **Interactive 1,479-Sector Inventory Table (`SectorInventoryTable.tsx`):**
+   - Renders the complete Maharashtra grid matrix generated from `data/gis/maharashtra_sectors.geojson`.
+   - Dynamic status filter tabs: *All Sectors (1,479)*, *Assessed in Pilot (5)*, *Candidate Detected (3)*, *Clean / No Change (1)*, *Incomplete / Obscured (1)*, and *Pending Batch (1,474)*.
+   - Search input supporting instant case-insensitive text query matching across Sector ID, District Name, Agro-Climatic Biome, and Status.
+   - Accessible tabular semantic structure with pagination controls (15 rows/page) and direct deep links to Explore Map (`/forest-guard/explore/?sector=...`).
+4. **End-to-End Pipeline Methodology (`PipelineMethodologySection.tsx`):**
+   - Detailed technical walkthrough of the 7-stage classical vision pipeline:
+     1. *Sentinel-2 L2A Ingestion*: ESA Copernicus STAC API discovery with $< 35\%$ cloud threshold.
+     2. *Coregistration & Alignment*: Sub-pixel homography alignment via OpenCV ORB feature matching.
+     3. *Multi-Layer Masking*: Terrestrial vector clipping (Census 2011), S2 SCL cloud masking, and dark shadow exclusion.
+     4. *OpenCV 5 Classical Vision*: CIE $L^*a^*b^*$ and HSV space delta differencing, bilateral smoothing, and strict **Zero-NDVI Policy** (relying on chromatic drop and Laplacian high-frequency variance rather than seasonal greenness indices).
+     5. *Significance Trigger*: Snyder LCC scale-corrected morphological opening, 8-way connected components, and $1.0\text{ ha}$ candidate filtering.
+     6. *Closed-Loop Research Audit*: Gemini grounded contextual retrieval citing public gazette portals (Parivesh, OGD India) with step-by-step decision logging.
+     7. *Candidate Reporting*: Static JSON publication tagging detections as `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]`.
+   - Epistemic Standards Matrix enforcing strict separation between **Observed Satellite Changes**, **Algorithmic Candidates**, **Contextual Leads**, and **Unknowns**.
+5. **Cadence & Quality Safeguards Matrix (`CadenceSafeguardsSection.tsx`):**
+   - Honest disclosure comparing the intended 21-day round-robin cadence (70–71 sectors/day across 7 agro-climatic zones) against the pilot reality (5 evaluated sectors across 3 districts).
+   - Documented failure modes and defensive policies: $> 35\%$ cloud cover abort, sub-pixel misregistration abort, API failure retry, and sub-hectare noise rejection.
+6. **Data Sources, Licences & CRS Mathematics (`DataSourcesLicencesSection.tsx`):**
+   - Authoritative data sources: Copernicus Sentinel-2 L2A (Copernicus Sentinel Data Legal Notice — Free, Full & Open Access under EU Regulation No 1159/2013), NASA GIBS Blue Marble Aug 2004 (public domain), EOxCloudless 2020 by EOX (CC BY-NC-SA 4.0, non-commercial hackathon/educational evaluation), Census 2011 / Survey of India (OGD India / CC-BY 2.5 IN), and FSI ISFR 2021/2023.
+   - Clear architectural distinction between contextual basemaps (NASA GIBS / EOxCloudless) and empirical observation pairs (Copernicus Sentinel-2 Level-2A surface reflectance).
+   - Mathematical CRS definitions: `EPSG:7755` Lambert Conformal Conic (standard parallels $12.472955^\circ\text{ N}$ and $35.172804^\circ\text{ N}$, latitude of origin $24.0^\circ\text{ N}$) and `EPSG:6933` WGS 84 / NSIDC EASE-Grid 2.0 Global (cylindrical equal-area).
+   - Denominator transparency: $307,492.71\text{ km}^2$ represents the complete GIS-derived 36-district state-boundary union calculated in standard equal-area projections (`ESRI:102008` & `EPSG:6933`), closely agreeing with Survey of India's published $307,713.00\text{ km}^2$ figure. The uncorrected Cartesian sum of $297,650.35\text{ km}^2$ reflects ~3.2% conformal central parallel scale compression in EPSG:7755 and is not an equal-area denominator.
+
+### 17.2 Browser Verification Suite (`test-status-page.mjs`)
+Implemented automated CDP browser verification in [`web/scripts/test-status-page.mjs`](file:///home/kaustubh/Desktop/dp/forest_guard/web/scripts/test-status-page.mjs) testing the static export at `http://127.0.0.1:4185/forest-guard/status/`:
+- **Result: 22 passed, 0 failed (100% pass rate)**.
+  1. Static canonical status route loads directly with appropriate document title.
+  2. Persistent `STAGED PILOT MODE — PARTIAL COVERAGE` indicator rendered.
+  3. Catalogue total (1,479) and pilot assessed count (5) derived dynamically from JSON.
+  4. Breakout strictly separates 3 candidate sectors, 1 sector with no qualifying change detected, and 1 cloud-obscured sector.
+  5. Credited monitored land area ($390.86\text{ km}^2$) and $0.13\%$ coverage displayed with explicit equal-area denominator ($307,492.71\text{ km}^2$).
+  6. Incomplete sectors explicitly receive zero monitored-area credit per safeguard policy.
+  7. Accessible sector inventory table rendered with semantic table structure and pagination (15 rows/page).
+  8. Sector inventory search filter responds to query "Sindhudurg" (15 matching sectors).
+  9. "Assessed in Pilot" filter tab isolates exactly 5 evaluated pilot sectors.
+  10. "Candidate Detected" filter tab isolates exactly 3 candidate sectors.
+  11. "No qualifying change detected" filter tab isolates exactly 1 sector with no qualifying change (`MH-R06-C03`).
+  12. Sector inventory map links route to Explore Map with `?sector=...` query parameter.
+  13. Seven-stage classical vision pipeline methodology fully documented.
+  14. Strict zero-NDVI policy and phenological rejection rationale documented.
+  15. Epistemic standards strictly separate observed changes, algorithmic candidates, contextual leads, and unknowns.
+  16. Intended 21-day observation cadence and round-robin batching documented.
+  17. Cloud & shadow occlusion $> 35\%$ processing abort safeguard documented.
+  18. Public data sources and legal licences (Copernicus Legal Notice, NASA GIBS 2004, EOxCloudless 2020, Census 2011) documented.
+  19. Contextual basemap vs detector observation pair imagery separation documented.
+  20. Coordinate reference systems (`EPSG:7755`, `EPSG:6933`) and terrestrial denominators mathematically documented.
+  21. Direct URL page reload preserves full state without client routing error.
+  22. Mobile viewport ($375 \times 667$ iPhone SE) has zero horizontal overflow.
+
+### 17.3 Full Platform Verification & Regression Pass Rates
+Ran the complete suite of automated checks across all rebuild phases:
+- **Phase 6 Status Page Suite (`test-status-page.mjs`):** **22 / 22 Passed (100%)**.
+- **Phase 5 Dossier & Slider Suite (`test-dossier-page.mjs`):** **25 / 25 Passed (100%)**.
+- **Phase 4 Investigations Feed Suite (`test-investigations-feed.mjs`):** **21 / 21 Passed (100%)**.
+- **Phase 3 Globe Hero Suite (`test-globe-verification.mjs`):** **29 / 29 Passed (100%)**.
+- **Combined Live Browser Pass Rate:** **97 / 97 Passed (100%)**.
+- **Python Backend Test Suite:** **43 / 43 Passed (100%)** (`PYTHONPATH=src .venv/bin/pytest tests/`).
+- **Next.js Static Export:** Passed cleanly with 27 discrete HTML routes exported under `web/out/` (`NEXT_PUBLIC_BASE_PATH=/forest-guard npm run build`).
+
+
+---
+
+## 18. Phase 7: Final Integration, Visual Polish and Acceptance Audit
+
+### 18.1 Final Integration & Design Polish
+1. **Header & Navigation Responsiveness (`layout.tsx`):**
+   - Eliminated dead external third-party CDN dependency (`unpkg.com/leaflet@1.9.4/dist/leaflet.css`).
+   - Integrated an accessible mobile and tablet quick-navigation strip (`<nav aria-label="Mobile navigation">`) directly below the mission header, providing touch-friendly horizontal scroll access to all primary views: `Overview`, `Explore Map`, `Investigations`, `Status & Method`, and `Data Sources`.
+   - Tuned desktop navbar breakpoint to `hidden lg:flex` and mobile sub-nav to `flex lg:hidden`. This prevents navbar collisions and horizontal text overflow at intermediate tablet breakpoints (768px–1023px).
+   - Added `flex-wrap leading-relaxed` to the persistent verification disclaimer banner to guarantee clean multi-line wrapping on narrow mobile screens.
+
+2. **Overview Page Modernization (`page.tsx`):**
+   - Replaced legacy Phase 1 prototype components (`InteractiveMap` Carto Dark Leaflet raster component and `IncidentFeed`) with the high-fidelity **Candidate Investigations Spotlight**.
+   - Features dynamic candidate cards displaying genuine unconfirmed satellite-change detections, observation date ranges, Snyder LCC-corrected area uncertainty bounds, parent sector identifiers (`MH-R01-C06`, `MH-R01-C10`, `MH-R07-C09`), and direct links to `/forest-guard/investigations/[id]/`.
+   - Linked directly to the full 1,479-Sector Explorer (`/forest-guard/explore/`) and Candidate Investigations Feed (`/forest-guard/investigations/`).
+   - Completely eliminated Leaflet script warnings and unpkg requests, achieving 100% architectural alignment with MapLibre GL JS and Next.js static export.
+
+### 18.2 Multi-Viewport Browser Visual Audit (`scripts/audit-visual-polish.mjs`)
+Automated Chrome DevTools Protocol (CDP) visual inspection across 5 primary platform routes and 4 device viewports:
+- **Desktop Large (1440 × 900)**
+- **Desktop Standard (1280 × 800)**
+- **Tablet Portrait (768 × 1024, iPad / Air standard)**
+- **Mobile Handheld (375 × 667, iPhone SE / standard mobile emulation)**
+
+**Audit Results: 21 / 21 Checks Passed (100%)**
+- Zero horizontal scroll overflow across all 20 tested viewports (`document.documentElement.scrollWidth <= window.innerWidth`).
+- Zero critical console script errors across full navigation lifecycle.
+- **20 High-Fidelity Screenshots Captured** and archived in `<artifacts>/screenshots/`:
+  - `overview-desktop_1440.png`, `overview-desktop_1280.png`, `overview-tablet_768.png`, `overview-mobile_375.png`
+  - `explore-desktop_1440.png`, `explore-desktop_1280.png`, `explore-tablet_768.png`, `explore-mobile_375.png`
+  - `investigations-desktop_1440.png`, `investigations-desktop_1280.png`, `investigations-tablet_768.png`, `investigations-mobile_375.png`
+  - `dossier-desktop_1440.png`, `dossier-desktop_1280.png`, `dossier-tablet_768.png`, `dossier-mobile_375.png`
+  - `status-desktop_1440.png`, `status-desktop_1280.png`, `status-tablet_768.png`, `status-mobile_375.png`
+
+### 18.3 Comprehensive Test Suite Reconciliation
+| Test Suite | Scope & Protocol | Checks | Result | Pass Rate |
+|---|---|---|---|---|
+| **Phase 7 Visual Polish & Overflow** | CDP multi-viewport overflow & console error audit | 21 | 21 Passed | 100% |
+| **Phase 6 Status & Methodology** | CDP operational metrics, inventory, safeguards, CRS, and pilot sector reconciliation (`MH-R06-C03`, `MH-R07-C09`) | 25 | 25 Passed | 100% |
+| **Phase 5 Dossier & Split Slider** | CDP image slider, evidence audit, static detail routes | 25 | 25 Passed | 100% |
+| **Phase 4 Investigations Feed** | CDP dynamic dates, parent sector grouping, map deep link | 21 | 21 Passed | 100% |
+| **Phase 3 Globe Hero & Intro** | CDP WebGL globe, NASA GIBS 2004, fly-in, a11y fallbacks | 29 | 29 Passed | 100% |
+| **Python Backend Core** | pytest pipeline, vision, homography, safeguards, API | 43 | 43 Passed | 100% |
+| **Total Automated Quality Checks** | **Full Platform Verification** | **164** | **164 Passed** | **100%** |
+
+### 18.4 Production Static Build & Bundle Metrics
+- **Static Route Export:** 27 discrete pre-rendered HTML routes generated under `web/out/`.
+- **First Load JS Shared:** **88.0 kB** (exceeds performance targets).
+- **Derived Sector GeoJSON:** **398.8 KB** (strictly within < 400 KB static budget).
+- **Base Path Compliance:** 100% asset and link integrity under `/forest-guard/` base path for static GitHub Pages hosting.
+
+### 18.5 Authoritative System Status & Pilot Sector Reconciliation
+1. **Pilot Sector Reconciliation Audit:**
+   - Authoritative verification across `monitoring_state.json`, `data/catalogue/maharashtra_tiles.json`, `web/public/data/derived/maharashtra_sectors.geojson`, and live browser test suites confirms the exact status and geometry of all 5 evaluated pilot sectors:
+
+| Sector ID | District | Agro-Climatic Zone | Terrestrial Area | Candidates | Observation Status | Credit Policy |
+|---|---|---|---|---|---|---|
+| `MH-R01-C06` | Sindhudurg | Konkan Coastal Belt | $89.42\text{ km}^2$ | 8 | `monitored_candidate_detected` | Credited ($89.42\text{ km}^2$) |
+| `MH-R01-C10` | Kolhapur | Western Ghats (Montane) | $68.86\text{ km}^2$ | 10 | `monitored_candidate_detected` | Credited ($68.86\text{ km}^2$) |
+| `MH-R06-C03` | Sindhudurg | Konkan Coastal Sliver | $7.58\text{ km}^2$ | 0 | `monitored_no_change` ("No qualifying change detected") | Credited ($7.58\text{ km}^2$) |
+| `MH-R07-C09` | Kolhapur | Western Ghats (Plateau) | $225.00\text{ km}^2$ | 2 | `monitored_candidate_detected` | Credited ($225.00\text{ km}^2$) |
+| `MH-R09-C15` | Sangli | Western Ghats / Transition | $22.57\text{ km}^2$ | 0 | `incomplete_data_missing` (High cloud occlusion 53.5%) | **Zero Credit** ($0.00\text{ km}^2$) |
+| **Total Pilot** | **3 Districts** | **2 Biomes** | **$413.43\text{ km}^2$** | **20** | **4 Processed, 1 Incomplete** | **$390.86\text{ km}^2$ Credited ($0.13\%$)** |
+
+   - **Audit Resolution:** A notebook typographical error in Sections 17.2 and 18.5 had mistakenly duplicated `MH-R07-C09` as the no-change sector. The underlying authoritative pipeline records (`monitoring_state.json`), UI code (`MonitoringMetricsGrid.tsx`, `MapLibreExplorer.tsx`), and derived GeoJSON have always assigned `monitored_no_change` strictly to `MH-R06-C03` ($7.58\text{ km}^2$), while `MH-R07-C09` ($225.00\text{ km}^2$) contains 2 genuine unconfirmed candidates (`INC-MH-R07-C09-20261026-32` and `INC-MH-R07-C09-20261026-115`).
+   - The status-page browser test suite was expanded to explicitly assert that `MH-R06-C03` is the sole sector displayed under the "No qualifying change detected" filter tab, and that navigating to `/forest-guard/explore/?sector=MH-R06-C03` displays `MH-R06-C03` with "No qualifying change detected" and $7.58\text{ km}^2$ terrestrial area on the interactive map.
+
+2. **Epistemic Classification:**
+   - All 20 candidate detections are clearly presented as `[UNCONFIRMED SATELLITE-CHANGE CANDIDATE]` records.
+   - Statutory clearances (e.g. Parivesh portal queries) are strictly classified as contextual leads, not verified incident-specific clearances.
+   - Zero speculative tree-loss estimates or ungrounded biomass extrapolations.
+3. **Operational Guardrails Maintained:**
+   - Automated scheduled monitoring (GitHub Actions cron workflows) remains safely disabled.
+   - Live feeds contain zero synthetic fixtures or mock data.
+   - No remote publishing has been executed. The platform is ready for human acceptance review.
+

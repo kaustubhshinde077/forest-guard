@@ -112,12 +112,12 @@ export default function IncidentFeed({
                       {inc.event_category.replace('_', ' ')}
                     </span>
                     {inc.is_synthetic_test ? (
-                      <span className="text-[10px] bg-amber-950/70 text-amber-300 px-1 rounded border border-amber-800/40 font-bold">
+                      <span className="text-[10px] bg-amber-950/70 text-amber-300 px-1.5 py-0.5 rounded border border-amber-800/40 font-bold">
                         [SYNTHETIC TEST]
                       </span>
                     ) : (
-                      <span className="text-[10px] bg-amber-950/80 text-amber-300 px-1 rounded border border-amber-800/50 font-bold">
-                        [UNCONFIRMED CANDIDATE]
+                      <span className="text-[10px] bg-amber-950/80 text-amber-300 px-1.5 py-0.5 rounded border border-amber-800/50 font-bold">
+                        [UNCONFIRMED SATELLITE-CHANGE CANDIDATE]
                       </span>
                     )}
                   </div>

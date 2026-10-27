@@ -3,49 +3,93 @@
 @tailwind utilities;
 
 :root {
-  --background: #090d14;
-  --foreground: #e2e8f0;
+  /* Cinematic Earth-observation design tokens */
+  --bg-space: #05070a;
+  --bg-surface: #0a0e17;
+  --bg-panel: #0e1420;
+  --bg-card: #121927;
+  
+  --text-main: #e8ecef;
+  --text-muted: #8a949c;
+  --text-dim: #5b6573;
+  --border-hairline: rgba(255, 255, 255, 0.10);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+
+  /* Status and indicator palette */
+  --color-forest: #1f6f4a;
+  --color-emerald: #34d399;
+  --color-lime: #b6f23a;
+  --color-candidate: #f5a524;
+  --color-cloud: #7c8aa5;
+  --color-failure: #e5484d;
+  --color-pending: #5b6573;
+  --color-unassessed: rgba(255, 255, 255, 0.06);
+
+  /* Font variables */
+  --font-sans: 'Inter Tight', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-main);
+  background-color: var(--bg-space);
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Custom crisp technical border style */
-.tech-border {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* Hairline technical grid overlay */
+.bg-graticule {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
+/* Glass panel strictly for floating UI overlay */
+.glass-panel {
+  background: rgba(10, 14, 23, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-hairline);
+}
+
+/* Flat technical panels (no gradient clutter) */
 .tech-panel {
-  background: #0e1520;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
 }
 
-.tech-card {
-  background: #121b28;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  transition: border-color 0.15s ease, transform 0.15s ease;
+/* Controlled emerald glow */
+.glow-emerald {
+  box-shadow: 0 0 24px -4px rgba(52, 211, 153, 0.25);
 }
 
-.tech-card:hover {
-  border-color: rgba(72, 179, 117, 0.4);
+.glow-candidate {
+  box-shadow: 0 0 24px -4px rgba(245, 165, 36, 0.25);
 }
 
-/* Custom scrollbars for technical tables */
+/* Focus outline conforming to WCAG AA */
+*:focus-visible {
+  outline: 2px solid var(--color-emerald);
+  outline-offset: 2px;
+}
+
+/* Technical scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #090d14;
+  background: var(--bg-space);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: rgba(255, 255, 255, 0.25);
 }
