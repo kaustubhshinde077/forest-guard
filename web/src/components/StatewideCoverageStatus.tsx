@@ -162,7 +162,7 @@ export default function StatewideCoverageStatus() {
                   <td className="py-2 px-3 text-right text-slate-300">{zone.totalTiles}</td>
                   <td className="py-2 px-3 text-right">
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400 text-[10px]">
-                      Scheduled in 21-day cycle
+                      Planned monitoring batch — automation disabled
                     </span>
                   </td>
                 </tr>

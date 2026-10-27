@@ -1,32 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { fetchLiveCandidates, fetchMonitoringState, assetUrl, MonitoringState } from '@/lib/data';
 import { InvestigationReport } from '@/types/incident';
-import StatewideCoverageStatus from '@/components/StatewideCoverageStatus';
 import {
-  Cpu,
-  CheckCircle,
+  Satellite,
   Eye,
+  FileText,
   ArrowRight,
   AlertTriangle,
-  Layers,
-  Terminal,
-  Shield,
-  Maximize2,
-  Calendar,
   MapPin,
-  ExternalLink
+  ExternalLink,
+  Shield,
+  Layers,
+  Sparkles
 } from 'lucide-react';
 
 const GlobeHero = dynamic(() => import('@/components/home/GlobeHero'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[660px] bg-[#05070a] border border-slate-800 rounded-2xl flex flex-col items-center justify-center text-xs font-mono text-slate-400 space-y-3">
-      <div className="w-8 h-8 rounded-full border-2 border-emerald-500/30 border-t-emerald-500 animate-spin" />
-      <span>INITIALIZING EARTH OBSERVATION ORBIT & MAHARASHTRA GRID...</span>
+    <div className="w-full h-[580px] sm:h-[640px] lg:h-[700px] bg-[#030712] border border-slate-800/80 rounded-3xl flex flex-col items-center justify-center text-xs font-mono text-slate-400 space-y-3">
+      <div className="w-9 h-9 rounded-full border-2 border-emerald-500/20 border-t-emerald-400 animate-spin" />
+      <span className="tracking-wider">INITIALIZING EARTH OBSERVATION ORBIT & MAHARASHTRA GRID...</span>
     </div>
   ),
 });
@@ -56,257 +53,301 @@ export default function Home() {
   }, []);
 
   // Filter genuine non-synthetic candidates only
-  const genuineCandidates = candidates.filter((c) => !c.is_synthetic_test);
-  const previewCandidates = genuineCandidates.slice(0, 6);
+  const genuineCandidates = useMemo(
+    () => candidates.filter((c) => !c.is_synthetic_test),
+    [candidates]
+  );
+
+  // Select 3 prominent candidates for the editorial preview
+  const previewCandidates = useMemo(() => {
+    return genuineCandidates.slice(0, 3);
+  }, [genuineCandidates]);
+
+  // Telemetry metrics derived strictly from authoritative JSON
+  const totalGridSectors = 1479;
+  const evaluatedSectors = monitoringState?.last_run_summary?.sectors_evaluated ?? 5;
+  const terrestrialLandKm2 = monitoringState?.monitored_terrestrial_area_km2 ?? 390.86;
+  const candidateCount = genuineCandidates.length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* 1. Cinematic Earth Observation Globe Hero */}
-      <GlobeHero
-        monitoringState={monitoringState}
-        candidates={genuineCandidates}
-      />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-16 sm:space-y-24">
+      {/* 1. Immersive 3D Earth Hero with Maharashtra Highlighted */}
+      <section aria-label="3D Earth Satellite Observation Hero">
+        <GlobeHero
+          monitoringState={monitoringState}
+          candidates={genuineCandidates}
+        />
+      </section>
 
-      {/* 2. Operational Architecture Badges */}
-      <div className="border border-slate-800 bg-[#0b121e] rounded-xl p-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 mb-4 border-b border-slate-800/80 gap-3">
-          <div className="inline-flex items-center space-x-2 px-2.5 py-1 rounded bg-forest-950 border border-forest-800 text-forest-300 text-xs font-mono">
-            <Cpu className="w-3.5 h-3.5 text-emerald-400" />
-            <span>OpenCV AI Competition 2026 — Agentic Vision Special Award Entry</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Link
-              href="/explore"
-              className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-950/70 hover:bg-emerald-900/80 border border-emerald-700/60 text-emerald-300 text-xs font-mono font-semibold transition"
-            >
-              <Eye className="w-3.5 h-3.5" />
-              <span>Explore 1,479-Sector Map</span>
-            </Link>
-            <Link
-              href="/status"
-              className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 hover:text-white text-xs font-mono transition"
-            >
-              <Layers className="w-3.5 h-3.5 text-slate-400" />
-              <span>Methodology & Cadence</span>
-            </Link>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
-          <div className="flex items-start space-x-2.5">
-            <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-            <div>
-              <span className="text-white font-semibold">OpenCV 5 Classical Vision</span>
-              <p className="text-slate-400 text-[11px] mt-0.5 leading-relaxed font-sans">
-                CIE L*a*b* directional chromatic delta + Laplacian canopy roughness variance. Strict zero-NDVI architecture eliminates false positives from seasonal green-up.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-2.5">
-            <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-            <div>
-              <span className="text-white font-semibold">Closed-Loop Agentic Research</span>
-              <p className="text-slate-400 text-[11px] mt-0.5 leading-relaxed font-sans">
-                Vision geometry dictates research targets (linear corridors trigger Parivesh infrastructure queries; clearing cores trigger gazette searches).
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start space-x-2.5">
-            <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-            <div>
-              <span className="text-white font-semibold">Evidence Integrity & Audit Trails</span>
-              <p className="text-slate-400 text-[11px] mt-0.5 leading-relaxed font-sans">
-                Every candidate is an unconfirmed satellite finding awaiting ground verification. Synthetic test fixtures strictly excluded from live telemetry.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Statewide Coverage & Pilot Status Matrix */}
-      <StatewideCoverageStatus />
-
-      {/* 4. Candidate Investigations Spotlight Section */}
-      <section id="candidates" className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#1e293b]">
+      {/* 2. Compact Real-Data Monitoring Summary */}
+      <section aria-label="Statewide Monitoring Summary" className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-2 border-b border-slate-800/60">
           <div>
-            <div className="flex items-center space-x-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
-              <h2 className="text-lg font-bold text-white font-mono uppercase tracking-wide">
-                Unconfirmed Satellite-Change Candidates (Pilot Feed)
-              </h2>
-            </div>
-            <p className="text-xs text-slate-400 font-sans mt-0.5">
-              Autonomous detections (&ge; 1.0 ha) across Western Ghats pilot sectors with Snyder LCC uncertainty metrics.
+            <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Statewide Monitoring Telemetry
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+              Authoritative pilot surveillance metrics derived directly from satellite passes and grid evaluation.
             </p>
           </div>
-
-          <Link
-            href="/investigations"
-            className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-lg bg-amber-950/70 hover:bg-amber-900 border border-amber-600/60 text-amber-300 font-mono text-xs font-semibold transition"
-          >
-            <span>View All {genuineCandidates.length} Candidates</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="text-xs font-mono text-slate-400 bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-1.5 self-start sm:self-auto">
+            <span>Planned monitoring batch — automation disabled</span>
+          </div>
         </div>
 
-        {/* Candidate Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {previewCandidates.map((candidate) => {
-            const [lon, lat] = candidate.geographic_coordinates;
-            const uncertainty = candidate.measurement_uncertainty_hectares || 0.25;
-            const lowerBound = Math.max(0, candidate.affected_area_hectares - uncertainty);
-            const upperBound = candidate.affected_area_hectares + uncertainty;
-            const parentSectorId = candidate.incident_id.match(/MH-R\d+-C\d+/)?.[0] || 'MH-R07-C09';
-            const district = parentSectorId === 'MH-R01-C06' ? 'Sindhudurg' : 'Kolhapur';
-            const beforeImg = assetUrl(`/data/artifacts/${candidate.incident_id}/before.png`);
-            const afterImg = assetUrl(`/data/artifacts/${candidate.incident_id}/after.png`);
-
-            return (
-              <div
-                key={candidate.incident_id}
-                className="rounded-xl border border-slate-800 bg-[#080d16] p-4 flex flex-col justify-between space-y-3 hover:border-slate-700 transition"
-              >
-                {/* Header Strip */}
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-800/60">
-                      [UNCONFIRMED CANDIDATE]
-                    </span>
-                    <span className="text-[10px] font-mono text-slate-500">
-                      {parentSectorId}
-                    </span>
-                  </div>
-
-                  <h3 className="text-xs font-bold font-mono text-white truncate" title={candidate.incident_id}>
-                    {candidate.incident_id}
-                  </h3>
-
-                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                    <span className="flex items-center space-x-1">
-                      <MapPin className="w-3 h-3 text-slate-500" />
-                      <span>{district}</span>
-                    </span>
-                    <span className="text-slate-500 capitalize">{candidate.visual_geometry.replace('_', ' ')}</span>
-                  </div>
-                </div>
-
-                {/* Satellite Observation Thumbnail Pair */}
-                <div className="grid grid-cols-2 gap-2 my-1">
-                  <div className="relative rounded overflow-hidden border border-slate-800 bg-slate-900 aspect-square">
-                    <img
-                      src={beforeImg}
-                      alt={`Historical observation for ${candidate.incident_id}`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                    <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/80 text-[9px] font-mono text-slate-300">
-                      Before
-                    </span>
-                  </div>
-
-                  <div className="relative rounded overflow-hidden border border-slate-800 bg-slate-900 aspect-square">
-                    <img
-                      src={afterImg}
-                      alt={`Recent observation for ${candidate.incident_id}`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                    <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-black/80 text-[9px] font-mono text-emerald-300">
-                      After
-                    </span>
-                  </div>
-                </div>
-
-                {/* Telemetry Strip */}
-                <div className="pt-2 border-t border-slate-800/80 space-y-1.5 font-mono text-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400 text-[10px] uppercase">Candidate Area:</span>
-                    <span className="text-amber-400 font-bold">
-                      {candidate.affected_area_hectares.toFixed(2)} ha
-                    </span>
-                  </div>
-                  <div className="text-[10px] text-slate-500 flex justify-between">
-                    <span>Uncertainty Bounds:</span>
-                    <span>{lowerBound.toFixed(2)}–{upperBound.toFixed(2)} ha</span>
-                  </div>
-                  <div className="text-[10px] text-slate-500 flex justify-between">
-                    <span>Coordinates:</span>
-                    <span>{lat.toFixed(4)}° N, {lon.toFixed(4)}° E</span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-2 text-xs font-mono">
-                  <Link
-                    href={`/explore?sector=${parentSectorId}`}
-                    className="text-[11px] text-slate-400 hover:text-emerald-300 transition"
-                  >
-                    View on Map
-                  </Link>
-
-                  <Link
-                    href={`/investigations/${candidate.incident_id}`}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-slate-900 hover:bg-slate-800 border border-slate-700/80 text-slate-200 hover:text-white text-[11px] font-semibold transition"
-                  >
-                    <span>Dossier & Slider</span>
-                    <ArrowRight className="w-3 h-3 text-emerald-400" />
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Global Feed Link Banner */}
-        <div className="p-4 rounded-xl bg-[#0b121e] border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono">
-          <div className="flex items-center space-x-2 text-slate-300">
-            <Shield className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>
-              All {genuineCandidates.length} candidate reports feature interactive WAI-ARIA before/after sliders, OpenCV masks, and closed-loop research audit traces.
-            </span>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Metric 1 */}
+          <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-5 hover:border-slate-700/80 transition-colors">
+            <div className="text-xs font-mono uppercase tracking-wider text-slate-400">
+              Total Grid Matrix
+            </div>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-white mt-1.5 tracking-tight">
+              {totalGridSectors.toLocaleString()}
+            </div>
+            <div className="text-xs text-slate-400 mt-1">
+              Authoritative 36 districts (15×15 km grid)
+            </div>
           </div>
 
-          <Link
-            href="/investigations"
-            className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition shrink-0 shadow-md"
-          >
-            Launch Investigations Platform
-          </Link>
+          {/* Metric 2 */}
+          <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-5 hover:border-emerald-500/30 transition-colors">
+            <div className="text-xs font-mono uppercase tracking-wider text-emerald-400/90">
+              Pilot Evaluated
+            </div>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-emerald-400 mt-1.5 tracking-tight">
+              {evaluatedSectors} sectors
+            </div>
+            <div className="text-xs text-slate-400 mt-1">
+              4 processed + 1 occluded sector
+            </div>
+          </div>
+
+          {/* Metric 3 */}
+          <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-5 hover:border-slate-700/80 transition-colors">
+            <div className="text-xs font-mono uppercase tracking-wider text-slate-400">
+              Terrestrial Land Monitored
+            </div>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-white mt-1.5 tracking-tight">
+              {terrestrialLandKm2.toFixed(1)} km²
+            </div>
+            <div className="text-xs text-slate-400 mt-1">
+              0.13% of 307,492.71 km² state territory
+            </div>
+          </div>
+
+          {/* Metric 4 */}
+          <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/80 rounded-2xl p-5 hover:border-amber-500/30 transition-colors">
+            <div className="text-xs font-mono uppercase tracking-wider text-amber-400/90">
+              Active Candidates
+            </div>
+            <div className="text-2xl sm:text-3xl font-bold font-mono text-amber-400 mt-1.5 tracking-tight">
+              {candidateCount}
+            </div>
+            <div className="text-xs text-slate-400 mt-1">
+              Unconfirmed change alerts awaiting verification
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 5. Vision Specification & Methodology Explainer */}
-      <section id="methodology" className="border border-slate-800 bg-[#090f19] rounded-xl p-6 space-y-4">
-        <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400 font-semibold uppercase">
-          <Terminal className="w-4 h-4" />
-          <span>TECHNICAL SPECIFICATION & OPENCV 5 PIPELINE INTEGRITY</span>
-        </div>
-        <h2 className="text-lg font-bold text-white tracking-tight">
-          How Forest Guard Detects & Quantifies Without Spectral Indices
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-slate-300 leading-relaxed font-sans">
-          <div className="space-y-2">
-            <h3 className="font-semibold text-white font-mono text-xs uppercase tracking-wide text-emerald-400">
-              1. Sub-pixel Registration & Reinhard Illumination Normalization
-            </h3>
-            <p>
-              Scenes are coregistered using ORB homography with sub-pixel Enhanced Correlation Coefficient (ECC) optimization. 
-              Before differencing, Reinhard statistical color transfer in CIE L*a*b* space matches channel means and standard deviations, 
-              effectively canceling broad seasonal lighting and atmospheric differences without distorting local clearing edges.
+      {/* 3. Three Recent Candidate Previews with Genuine Before/After Imagery */}
+      <section aria-label="Recent Candidate Investigations" className="space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+          <div>
+            <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-amber-400 mb-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+              <span>Recent Detections Feed</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              Candidate Investigations
+            </h2>
+            <p className="text-sm text-slate-400 mt-1">
+              Representative canopy loss candidates with genuine Sentinel-2 before & after observation pairs.
             </p>
           </div>
-          <div className="space-y-2">
-            <h3 className="font-semibold text-white font-mono text-xs uppercase tracking-wide text-emerald-400">
-              2. Structural Chromatic & Textural Differencing (Zero-NDVI)
+
+          <Link
+            href="/investigations"
+            className="inline-flex items-center space-x-2 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors self-start sm:self-auto group"
+          >
+            <span>View All {candidateCount} Candidates</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {previewCandidates.map((candidate) => (
+            <article
+              key={candidate.incident_id}
+              className="bg-slate-900/50 backdrop-blur-sm border border-slate-800/80 hover:border-emerald-500/40 rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-emerald-950/20 flex flex-col justify-between"
+            >
+              <div>
+                {/* Genuine Side-by-Side Satellite Observation Crops */}
+                <div className="grid grid-cols-2 gap-1 p-2 bg-black/40">
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-slate-950 border border-slate-800/50">
+                    <img
+                      src={assetUrl(`/data/artifacts/${candidate.incident_id}/before.png`)}
+                      alt={`Sentinel-2 before observation for ${candidate.incident_id}`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono bg-black/80 text-slate-300 backdrop-blur-xs">
+                      BEFORE ({candidate.observation_dates?.[0] || 'T0'})
+                    </div>
+                  </div>
+
+                  <div className="relative aspect-square rounded-lg overflow-hidden bg-slate-950 border border-slate-800/50">
+                    <img
+                      src={assetUrl(`/data/artifacts/${candidate.incident_id}/after.png`)}
+                      alt={`Sentinel-2 after observation for ${candidate.incident_id}`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded text-[10px] font-mono bg-black/80 text-amber-300 backdrop-blur-xs font-semibold">
+                      AFTER ({candidate.observation_dates?.[1] || 'T1'})
+                    </div>
+                  </div>
+                </div>
+
+                {/* Candidate Content Body */}
+                <div className="p-5 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-amber-500/10 border border-amber-500/25 text-amber-400 font-medium">
+                      <AlertTriangle className="w-2.5 h-2.5" />
+                      <span>[UNCONFIRMED CANDIDATE]</span>
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      Sector {candidate.incident_id.split('-').slice(1, 4).join('-')}
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-semibold text-white tracking-tight leading-snug line-clamp-2">
+                    {candidate.report_title.replace('[UNCONFIRMED SATELLITE-CHANGE CANDIDATE] ', '')}
+                  </h3>
+
+                  <div className="flex items-center space-x-1.5 text-xs text-slate-400">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>
+                      {candidate.geographic_coordinates
+                        ? `${candidate.geographic_coordinates[1].toFixed(4)}° N, ${candidate.geographic_coordinates[0].toFixed(4)}° E`
+                        : 'Coordinates available in dossier'}
+                    </span>
+                  </div>
+
+                  <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-400">Estimated Change:</span>
+                    <span className="text-amber-300 font-semibold">
+                      {candidate.affected_area_hectares.toFixed(2)} ha (±{candidate.measurement_uncertainty_hectares.toFixed(2)})
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Links */}
+              <div className="p-5 pt-0 border-t border-slate-800/40 flex items-center justify-between gap-2">
+                <Link
+                  href={`/explore?sector=${candidate.incident_id.split('-').slice(1, 4).join('-')}`}
+                  className="text-xs font-mono text-slate-400 hover:text-white transition-colors"
+                >
+                  View on Map
+                </Link>
+
+                <Link
+                  href={`/investigations/${candidate.incident_id}/`}
+                  className="inline-flex items-center space-x-1 text-xs font-medium text-emerald-400 hover:text-emerald-300 transition-colors"
+                >
+                  <span>Dossier & Slider</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Short Three-Step Explanation of How Forest Guard Works */}
+      <section aria-label="How Forest Guard Works" className="space-y-8">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300">
+            <Shield className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Autonomous Surveillance Architecture</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+            How Forest Guard Works
+          </h2>
+          <p className="text-sm text-slate-400 leading-relaxed">
+            From raw multispectral satellite passes to verified environmental intelligence without commercial black-box APIs.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Step 1 */}
+          <div className="bg-slate-900/30 border border-slate-800/80 rounded-2xl p-7 space-y-4 hover:border-slate-700 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+              <Satellite className="w-5 h-5" />
+            </div>
+            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+              Step 01 · Ingest
+            </div>
+            <h3 className="text-lg font-semibold text-white tracking-tight">
+              Multispectral Satellite Ingest
             </h3>
-            <p>
-              In CIE L*a*b* space, channel a* directly captures greenness (&lt; 128) versus soil redness/brown (&gt; 128). 
-              Changes are extracted via directional shift along a* modulated by Euclidean chromatic delta and high-frequency Laplacian 
-              canopy roughness variance. Connected components are scale-corrected using Snyder (1987) Lambert Conformal Conic point scale factor equations.
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Every 5 days, Copernicus Sentinel-2 L2A passes over Maharashtra. Forest Guard catalogues 1,479 sectors of 15×15 km across EPSG:7755, filtering cloud occlusion and normalizing surface reflectance.
             </p>
+          </div>
+
+          {/* Step 2 */}
+          <div className="bg-slate-900/30 border border-slate-800/80 rounded-2xl p-7 space-y-4 hover:border-slate-700 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+              <Eye className="w-5 h-5" />
+            </div>
+            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+              Step 02 · Detect
+            </div>
+            <h3 className="text-lg font-semibold text-white tracking-tight">
+              Classical Vision Differencing
+            </h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              OpenCV 5 CIE Lab chromatic delta and structural variance differencing isolate canopy loss from seasonal agricultural drying. Candidate components ≥1.0 ha trigger automated polygonization.
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="bg-slate-900/30 border border-slate-800/80 rounded-2xl p-7 space-y-4 hover:border-slate-700 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+              Step 03 · Investigate
+            </div>
+            <h3 className="text-lg font-semibold text-white tracking-tight">
+              Ground-Truth Public Dossiers
+            </h3>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              Each candidate alert generates an evidence dossier with split before/after sliders, geospatial bounding boxes, administrative context, and links to PARIVESH statutory environmental clearances.
+            </p>
+          </div>
+        </div>
+
+        {/* Explore Subpages Banner */}
+        <div className="bg-gradient-to-r from-emerald-950/30 via-slate-900/40 to-slate-900/30 border border-emerald-500/20 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-white tracking-tight">
+              Explore the Full Maharashtra Methodology & Cadence
+            </h3>
+            <p className="text-sm text-slate-400">
+              Inspect the EPSG:7755 coordinate reference system, 7-stage vision pipeline, and sector health inventories.
+            </p>
+          </div>
+          <div className="flex items-center space-x-3 shrink-0">
+            <Link
+              href="/status"
+              className="inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-medium shadow-md shadow-emerald-950/40 transition-all"
+            >
+              <span>Methodology & Status</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
