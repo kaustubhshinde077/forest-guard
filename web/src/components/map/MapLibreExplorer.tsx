@@ -42,6 +42,7 @@ export default function MapLibreExplorer({
 
   // Basemap selection (default: genuine Sentinel-2 cloudless composite)
   const [basemapStyle, setBasemapStyle] = useState<BasemapStyleKey>('eox-s2cloudless');
+  const [geoJsonError, setGeoJsonError] = useState<string | null>(null);
 
   // GeoJSON datasets
   const [sectorsGeoJSON, setSectorsGeoJSON] = useState<any | null>(null);
@@ -147,6 +148,7 @@ export default function MapLibreExplorer({
       })
       .catch((err) => {
         console.error('Failed to load derived map GeoJSON:', err);
+        if (mounted) setGeoJsonError('Failed to load sector grid data. Please check network connectivity and retry.');
       });
 
     return () => {
@@ -692,6 +694,20 @@ export default function MapLibreExplorer({
 
   return (
     <div className="relative w-full h-[calc(100vh-64px)] bg-[#05070a] overflow-hidden flex flex-col font-sans">
+      {/* GeoJSON Error / Recovery Banner */}
+      {geoJsonError && (
+        <div className="absolute inset-x-4 top-16 z-30 mx-auto max-w-md rounded-2xl border border-red-500/30 bg-[#080d16]/95 p-4 text-center text-xs font-mono shadow-xl backdrop-blur-md">
+          <p className="text-red-400 font-bold mb-1">Geospatial Grid Error</p>
+          <p className="text-slate-300 mb-3">{geoJsonError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500/30 transition text-[11px]"
+          >
+            Retry Loading Grid
+          </button>
+        </div>
+      )}
+
       {/* Top Floating Control Bar */}
       <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
         {/* Left: Search & Filters */}
@@ -727,7 +743,7 @@ export default function MapLibreExplorer({
                   : 'text-amber-400 hover:text-amber-300'
               }`}
             >
-              Candidates ({sectorStatusCounts.candidateSectors})
+              Sectors with candidates ({sectorStatusCounts.candidateSectors})
             </button>
             <button
               onClick={() => setStatusFilter('clear')}
@@ -737,7 +753,7 @@ export default function MapLibreExplorer({
                   : 'text-emerald-400 hover:text-emerald-300'
               }`}
             >
-              No qualifying change detected ({sectorStatusCounts.clearSectors})
+              No qualifying change ({sectorStatusCounts.clearSectors})
             </button>
             <button
               onClick={() => setStatusFilter('cloud_obscured')}
@@ -747,7 +763,7 @@ export default function MapLibreExplorer({
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              Cloud ({sectorStatusCounts.cloudSectors})
+              Cloud-obscured ({sectorStatusCounts.cloudSectors})
             </button>
           </div>
         </div>
@@ -915,10 +931,10 @@ export default function MapLibreExplorer({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-1.5">
                   <span className="w-2.5 h-2.5 rounded-sm bg-amber-500/80 border border-amber-400" />
-                  <span className="text-slate-200">Candidate Sectors</span>
+                  <span className="text-slate-200">Sectors with Candidates</span>
                 </div>
                 <span className="text-amber-400 font-semibold">
-                  3 sectors ({candidates.length} candidate events)
+                  3 sectors ({candidates.length} unconfirmed candidates)
                 </span>
               </div>
 

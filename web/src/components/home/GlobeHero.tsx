@@ -110,8 +110,7 @@ export default function GlobeHero({
           source: 'maharashtra-boundary-src',
           paint: {
             'fill-color': '#3DFFB0',
-            'fill-opacity': animate ? 0 : 0.22,
-            'fill-opacity-transition': { duration: 1000 },
+            'fill-opacity': 0.22,
           },
         });
 
@@ -124,8 +123,7 @@ export default function GlobeHero({
             'line-color': '#3DFFB0',
             'line-width': 6.0,
             'line-blur': 4.0,
-            'line-opacity': animate ? 0 : 0.75,
-            'line-opacity-transition': { duration: 1000 },
+            'line-opacity': 0.75,
           },
         });
 
@@ -137,8 +135,7 @@ export default function GlobeHero({
           paint: {
             'line-color': '#3DFFB0',
             'line-width': 2.5,
-            'line-opacity': animate ? 0 : 1.0,
-            'line-opacity-transition': { duration: 1000 },
+            'line-opacity': 1.0,
           },
         });
       } else {
@@ -530,6 +527,7 @@ export default function GlobeHero({
     map.on('touchstart', onUserInput);
 
     map.on('load', () => {
+      setGlobeReady(true);
       applyResponsivePadding();
       map.resize();
 
@@ -677,23 +675,10 @@ export default function GlobeHero({
 
       {/* 2. Top-Stacked Globe on Tablet/Mobile (< 1100px) OR Full-Bleed on Desktop (>= 1100px) */}
       <div className="relative w-full min-[1100px]:absolute min-[1100px]:inset-0 min-[1100px]:h-full h-[40svh] min-h-[260px] sm:min-h-[320px] max-h-[420px] z-10">
-        {/* Soft celestial placeholder gradient while map tiles load */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-700 pointer-events-none ${
-            globeReady ? 'opacity-0' : 'opacity-100'
-          }`}
-          style={{
-            background:
-              'radial-gradient(circle at center, rgba(14, 165, 233, 0.06) 0%, rgba(5, 6, 15, 0.8) 60%, transparent 100%)',
-          }}
-        />
-
         {webGLSupported ? (
           <div
             ref={mapContainerRef}
-            className={`w-full h-full transition-opacity duration-700 ${
-              globeReady ? 'opacity-100' : 'opacity-0'
-            }`}
+            className="w-full h-full"
             tabIndex={0}
             aria-label="3D Globe representation of Earth and Maharashtra. Use mouse or keyboard navigation controls."
           />

@@ -62,17 +62,15 @@ export default function CandidateDetailView({ candidate }: CandidateDetailViewPr
     <div className="space-y-8 font-sans max-w-7xl mx-auto">
       {/* 1. Breadcrumbs & Top Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-xs">
-        <div className="flex items-center space-x-2 text-slate-400">
-          <Link href="/" className="hover:text-white transition">
-            Mission Overview
-          </Link>
-          <span>/</span>
+        <nav aria-label="Breadcrumb" className="flex items-center space-x-2 text-slate-400">
           <Link href="/investigations" className="hover:text-white transition">
-            Candidate Investigations Feed
+            Investigations
           </Link>
           <span>/</span>
-          <span className="text-emerald-400 font-bold">{candidate.incident_id}</span>
-        </div>
+          <span className="text-slate-300">{parentSectorId}</span>
+          <span>/</span>
+          <span className="text-bio font-bold">{candidate.incident_id}</span>
+        </nav>
 
         <div className="flex items-center space-x-3">
           <Link
@@ -173,8 +171,8 @@ export default function CandidateDetailView({ candidate }: CandidateDetailViewPr
           <span className="text-xl font-bold text-white mt-1 block">
             {candidate.affected_area_hectares.toFixed(2)} ha
           </span>
-          <span className="text-[10px] text-slate-500 mt-0.5 block">
-            ± {candidate.measurement_uncertainty_hectares.toFixed(2)} ha (Snyder LCC & Equal-Area)
+          <span className="text-[10px] text-slate-500 mt-0.5 block" title="Half-pixel perimeter quantization error at 10 m Ground Sampling Distance (GSD). Engineering measurement uncertainty from raster boundary discretization, not a statistical confidence interval.">
+            ± {candidate.measurement_uncertainty_hectares.toFixed(2)} ha (perimeter discretization)
           </span>
         </div>
 
@@ -219,6 +217,7 @@ export default function CandidateDetailView({ candidate }: CandidateDetailViewPr
             beforeDate={candidate.observation_dates[0]}
             afterDate={candidate.observation_dates[1]}
             sceneIds={candidate.source_scene_ids}
+            incidentId={candidate.incident_id}
           />
         </div>
 
@@ -306,7 +305,7 @@ export default function CandidateDetailView({ candidate }: CandidateDetailViewPr
               href={`/explore?sector=${parentSectorId}`}
               className="text-[10px] text-slate-400 hover:text-white flex items-center space-x-1 mt-1 transition"
             >
-              <span>Explore sector on satellite map</span>
+              <span>View Parent Sector on Map</span>
               <ArrowRight className="w-3 h-3 text-emerald-400" />
             </Link>
           </div>
@@ -324,6 +323,12 @@ export default function CandidateDetailView({ candidate }: CandidateDetailViewPr
                 <span className="text-slate-400 text-xs">Copernicus Sentinel-2 Level-2A Multi-Spectral Surface Reflectance</span>
               )}
             </div>
+            {candidate.source_scene_ids?.some((s) => s.includes('20261020')) && candidate.observation_dates[0] === '2026-10-10' && (
+              <div className="mt-2 p-2.5 rounded bg-amber-500/10 border border-amber-500/20 text-[10.5px] font-mono text-amber-300">
+                <span className="font-semibold block mb-0.5">Observation Provenance Note:</span>
+                Stored query window begins 2026-10-10; Copernicus scene ID confirms optical pass acquisition on 2026-10-20. Preserved unedited per data integrity contract.
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -383,14 +388,14 @@ export default function CandidateDetailView({ candidate }: CandidateDetailViewPr
           <div className="flex items-center justify-between">
             <div className="font-mono font-bold text-white uppercase tracking-wider text-xs flex items-center space-x-2">
               <ExternalLink className="w-4 h-4 text-emerald-400" />
-              <span>Contextual Literature & Public Records ({candidate.citations?.length || 0})</span>
+              <span>Contextual Public Records & Regional Inquiries ({candidate.citations?.length || 0})</span>
             </div>
             <span className="text-[10px] font-mono text-slate-500">Autonomous Retrieval</span>
           </div>
 
           <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 text-[11px] font-mono text-slate-400 leading-relaxed">
             <span className="text-amber-400 font-bold uppercase block text-[10px] mb-0.5">Contextual Evidence Notice</span>
-            Retrieved records provide regional contextual literature and potential investigative leads. They do not constitute verified statutory clearances or incident-specific authorizations for this candidate coordinate.
+            Automated public registry search. Does not confirm statutory clearance status or ground-truth legality. Retrieved records provide regional contextual literature and potential investigative leads.
           </div>
 
           <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
@@ -407,7 +412,7 @@ export default function CandidateDetailView({ candidate }: CandidateDetailViewPr
                     </p>
                     <div className="flex items-center space-x-3 text-[10px] font-mono text-slate-500">
                       <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-[9px] text-slate-400">
-                        {cite.evidence_tier === 'official_clearance' ? 'Verified Clearance' : 'Contextual Background'}
+                        {cite.evidence_tier === 'official_clearance' ? 'Contextual Public Record' : 'Contextual Background'}
                       </span>
                       <span>•</span>
                       <span>Accessed: {cite.access_date}</span>

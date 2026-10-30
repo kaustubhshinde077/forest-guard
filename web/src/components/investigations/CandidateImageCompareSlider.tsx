@@ -9,6 +9,7 @@ interface CandidateImageCompareSliderProps {
   beforeDate: string;
   afterDate: string;
   sceneIds?: string[];
+  incidentId?: string;
 }
 
 export default function CandidateImageCompareSlider({
@@ -17,12 +18,13 @@ export default function CandidateImageCompareSlider({
   beforeDate,
   afterDate,
   sceneIds = [],
+  incidentId,
 }: CandidateImageCompareSliderProps) {
   const [sliderPos, setSliderPos] = useState<number>(50);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [beforeError, setBeforeError] = useState<boolean>(false);
   const [afterError, setAfterError] = useState<boolean>(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Update position from mouse/touch clientX
   const updatePosition = useCallback((clientX: number) => {
@@ -53,6 +55,7 @@ export default function CandidateImageCompareSlider({
 
   // Keyboard navigation for accessibility
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement> | KeyboardEvent) => {
+    if (e.defaultPrevented) return;
     if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
       e.preventDefault();
       setSliderPos((prev) => Math.max(0, prev - 5));
@@ -69,12 +72,37 @@ export default function CandidateImageCompareSlider({
   };
 
   // Attach native keydown listener to container for maximum keyboard compatibility
-  React.useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    const keyListener = (e: KeyboardEvent) => handleKeyDown(e);
-    el.addEventListener('keydown', keyListener);
-    return () => el.removeEventListener('keydown', keyListener);
+  const setSliderRef = useCallback((node: HTMLDivElement | null) => {
+    containerRef.current = node;
+    if (node) {
+      const listener = (e: KeyboardEvent) => {
+        const key = e.key || (e as any).code;
+        if (key === 'ArrowLeft' || key === 'ArrowDown') {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          setSliderPos((prev) => {
+            const next = Math.max(0, prev - 5);
+            node.setAttribute('aria-valuenow', String(Math.round(next)));
+            return next;
+          });
+        } else if (key === 'ArrowRight' || key === 'ArrowUp') {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          setSliderPos((prev) => {
+            const next = Math.min(100, prev + 5);
+            node.setAttribute('aria-valuenow', String(Math.round(next)));
+            return next;
+          });
+        } else if (key === 'Home') {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          setSliderPos(0);
+          node.setAttribute('aria-valuenow', '0');
+        } else if (key === 'End') {
+          if (typeof e.preventDefault === 'function') e.preventDefault();
+          setSliderPos(100);
+          node.setAttribute('aria-valuenow', '100');
+        }
+      };
+      node.addEventListener('keydown', listener);
+    }
   }, []);
 
   // Honest Empty State if either image failed or is missing
@@ -119,28 +147,33 @@ export default function CandidateImageCompareSlider({
         </div>
       </div>
 
-      {/* Interactive Slider Frame */}
+      {/* Interactive Slider Frame — Preserves native image aspect ratio */}
       <div
-        ref={containerRef}
+        ref={setSliderRef}
         role="slider"
         aria-valuenow={Math.round(sliderPos)}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label="Before and after satellite comparison slider"
         tabIndex={0}
+        onKeyDown={handleKeyDown}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        className="relative w-full aspect-square sm:aspect-[16/10] max-h-[460px] rounded-xl overflow-hidden select-none cursor-ew-resize border border-slate-800 bg-[#05070a] shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        className={`relative w-full rounded-xl overflow-hidden select-none cursor-ew-resize border border-slate-800 bg-[#05070a] shadow-inner focus:outline-none focus:ring-2 focus:ring-emerald-400 ${
+          incidentId?.includes('MH-R07-C09')
+            ? 'aspect-[880/1586] max-h-[540px] max-w-[340px] sm:max-w-[380px] mx-auto'
+            : 'aspect-square max-h-[480px] max-w-[480px] mx-auto'
+        }`}
       >
         {/* Layer 1: After / Recent Image (Bottom Layer) */}
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 w-full h-full bg-black">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={afterUrl}
             alt={`Recent Sentinel-2 pass on ${afterDate}`}
-            className="w-full h-full object-cover pointer-events-none"
+            className="w-full h-full object-contain pointer-events-none"
             onError={() => setAfterError(true)}
           />
           {/* Recent Label */}
@@ -151,14 +184,14 @@ export default function CandidateImageCompareSlider({
 
         {/* Layer 2: Before / Historical Image (Top Layer, clipped via CSS clip-path) */}
         <div
-          className="absolute inset-0 w-full h-full pointer-events-none"
+          className="absolute inset-0 w-full h-full pointer-events-none bg-black"
           style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={beforeUrl}
             alt={`Historical Sentinel-2 pass on ${beforeDate}`}
-            className="w-full h-full object-cover pointer-events-none"
+            className="w-full h-full object-contain pointer-events-none"
             onError={() => setBeforeError(true)}
           />
           {/* Historical Label */}

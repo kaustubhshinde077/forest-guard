@@ -93,7 +93,7 @@ export default function CandidateDossierModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto"
+      className="fixed inset-0 z-[80] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="dossier-title"
@@ -262,8 +262,8 @@ export default function CandidateDossierModal({
               <span className="text-base font-bold text-white mt-0.5 block">
                 {candidate.affected_area_hectares.toFixed(2)} ha
               </span>
-              <span className="text-[10px] text-slate-500">
-                ± {candidate.measurement_uncertainty_hectares.toFixed(2)} ha uncertainty
+              <span className="text-[10px] text-slate-500" title="Half-pixel perimeter quantization error at 10 m GSD. Engineering measurement uncertainty from raster boundary discretization.">
+                ± {candidate.measurement_uncertainty_hectares.toFixed(2)} ha uncertainty (perimeter discretization)
               </span>
             </div>
 
@@ -384,11 +384,11 @@ export default function CandidateDossierModal({
             <div className="space-y-3">
               <h3 className="font-mono font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                 <ExternalLink className="w-4 h-4 text-forest-400" />
-                <span>Contextual Literature & Public Records ({candidate.citations.length} Citations)</span>
+                <span>Contextual Public Records & Regional Inquiries ({candidate.citations.length})</span>
               </h3>
               <div className="p-2.5 rounded bg-slate-950/60 border border-slate-800 text-[10px] font-mono text-slate-400">
                 <span className="text-amber-400 font-semibold block uppercase mb-0.5">Integrity Notice</span>
-                Retrieved records provide regional contextual literature and potential investigative leads. They do not constitute verified statutory clearances for this coordinate location.
+                Automated public registry search. Does not confirm statutory clearance status or ground-truth legality. Retrieved records provide regional contextual literature and potential investigative leads.
               </div>
               <div className="grid grid-cols-1 gap-2">
                 {candidate.citations.map((cite, idx) => (
@@ -403,7 +403,7 @@ export default function CandidateDossierModal({
                       </p>
                       <div className="flex items-center space-x-3 text-[10px] font-mono text-slate-500">
                         <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 text-[9px] text-slate-400">
-                          {cite.evidence_tier === 'official_clearance' ? 'Verified Clearance' : 'Contextual Background'}
+                          {cite.evidence_tier === 'official_clearance' ? 'Contextual Public Record' : 'Contextual Background'}
                         </span>
                         <span>•</span>
                         <span>Accessed: {cite.access_date}</span>

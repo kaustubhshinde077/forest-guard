@@ -1,20 +1,26 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
+import clsx from 'clsx';
 import {
-  Search,
-  SlidersHorizontal,
+  ArrowLeftRight,
+  ArrowUp,
+  ArrowUpDown,
+  ArrowUpRight,
+  ArrowDown,
   ChevronLeft,
   ChevronRight,
-  ExternalLink,
-  MapPin,
+  ChevronsLeft,
+  ChevronsRight,
+  RotateCcw,
+  Search,
+  SearchX,
   Trees,
-  Layers,
-  ArrowRight
+  X,
 } from 'lucide-react';
+import { Reveal, SectionHeading, StatusPill } from '@/components/ui';
 import { STATUS_META, SectorStatusCode } from '@/lib/status';
-import { assetUrl } from '@/lib/data';
 
 export interface SectorItem {
   id: string;
@@ -33,21 +39,197 @@ interface SectorInventoryTableProps {
   sectors: SectorItem[];
 }
 
-export default function SectorInventoryTable({ sectors }: SectorInventoryTableProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterMode, setFilterMode] = useState<
-    'all' | 'evaluated' | 'candidate' | 'clear' | 'cloud_obscured' | 'forest_priority'
-  >('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 15;
+type FilterMode =
+  | 'all'
+  | 'assessed'
+  | 'candidate'
+  | 'clear'
+  | 'cloud_obscured'
+  | 'forest_priority';
 
-  // Filter sectors based on search query and selected filterMode
+type SortKey =
+  | 'id'
+  | 'district'
+  | 'status'
+  | 'landAreaKm2'
+  | 'batchDay'
+  | 'lastObservation';
+
+type SortDir = 'asc' | 'desc';
+
+const PAGE_SIZE = 20;
+const CELL_AREA_KM2 = 225;
+
+const STATUS_RANK: Record<SectorStatusCode, number> = {
+  candidate: 0,
+  clear: 1,
+  cloud_obscured: 2,
+  failed: 3,
+  overdue: 4,
+  pending: 5,
+  unassessed: 6,
+};
+
+const PILL_VARIANT: Record<
+  SectorStatusCode,
+  'candidate' | 'live' | 'info' | 'muted' | 'danger'
+> = {
+  candidate: 'candidate',
+  clear: 'live',
+  cloud_obscured: 'muted',
+  failed: 'danger',
+  overdue: 'candidate',
+  pending: 'info',
+  unassessed: 'muted',
+};
+
+const PILL_LABEL: Record<SectorStatusCode, string> = {
+  candidate: 'Unconfirmed',
+  clear: 'No change',
+  cloud_obscured: 'Cloud obscured',
+  failed: 'Failed',
+  overdue: 'Overdue',
+  pending: 'Pending',
+  unassessed: 'Unassessed',
+};
+
+const LEGEND_DOT: Record<SectorStatusCode, string> = {
+  candidate: 'bg-signal',
+  clear: 'bg-bio',
+  cloud_obscured: 'bg-ice-400',
+  failed: 'bg-red-400',
+  overdue: 'bg-signal/70',
+  pending: 'bg-aqua',
+  unassessed: 'bg-ice-500/60',
+};
+
+const LEGEND_LABEL: Record<SectorStatusCode, string> = {
+  candidate: 'Unconfirmed candidate',
+  clear: 'No qualifying change',
+  cloud_obscured: 'Cloud obscured',
+  failed: 'Retrieval failed',
+  overdue: 'Overdue re-check',
+  pending: 'Pending batch',
+  unassessed: 'Unassessed',
+};
+
+/** Deterministic UTC day — same output during static export and in the browser. */
+function formatUtcDay(iso?: string): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+
+interface SortHeaderProps {
+  label: string;
+  column: SortKey;
+  activeKey: SortKey;
+  dir: SortDir;
+  onSort: (key: SortKey) => void;
+  className?: string;
+}
+
+function SortHeader({
+  label,
+  column,
+  activeKey,
+  dir,
+  onSort,
+  className,
+}: SortHeaderProps) {
+  const active = activeKey === column;
+  const ariaSort = active ? (dir === 'asc' ? 'ascending' : 'descending') : 'none';
+
+  return (
+    <th
+      scope="col"
+      aria-sort={ariaSort}
+      className={clsx(
+        'sticky top-0 z-20 border-b border-white/[0.08] bg-ink-850/95 px-4 py-3 backdrop-blur-sm',
+        className
+      )}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(column)}
+        className={clsx(
+          'group/th inline-flex items-center gap-1.5 whitespace-nowrap font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] transition-colors focus-visible:outline-none',
+          active ? 'text-ice-100' : 'text-ice-400 hover:text-ice-100'
+        )}
+      >
+        {label}
+        {active ? (
+          dir === 'asc' ? (
+            <ArrowUp className="h-3 w-3 text-aqua" aria-hidden="true" />
+          ) : (
+            <ArrowDown className="h-3 w-3 text-aqua" aria-hidden="true" />
+          )
+        ) : (
+          <ArrowUpDown
+            className="h-3 w-3 text-ice-500 opacity-0 transition-opacity group-hover/th:opacity-100"
+            aria-hidden="true"
+          />
+        )}
+      </button>
+    </th>
+  );
+}
+
+export default function SectorInventoryTable({
+  sectors,
+}: SectorInventoryTableProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterMode, setFilterMode] = useState<FilterMode>('all');
+  const [sortKey, setSortKey] = useState<SortKey>('status');
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [page, setPage] = useState(1);
+
+  const counts = useMemo(() => {
+    const statusCounts: Record<SectorStatusCode, number> = {
+      candidate: 0,
+      clear: 0,
+      cloud_obscured: 0,
+      failed: 0,
+      overdue: 0,
+      pending: 0,
+      unassessed: 0,
+    };
+
+    let assessed = 0;
+    let forestPriority = 0;
+
+    for (const sector of sectors) {
+      statusCounts[sector.status] = (statusCounts[sector.status] || 0) + 1;
+      if (sector.status !== 'unassessed' && sector.status !== 'pending') {
+        assessed++;
+      }
+      if (sector.isForestPriority) forestPriority++;
+    }
+
+    return {
+      total: sectors.length,
+      assessed,
+      candidate: statusCounts.candidate,
+      clear: statusCounts.clear,
+      cloudObscured: statusCounts.cloud_obscured,
+      forestPriority,
+      statusCounts,
+    };
+  }, [sectors]);
+
   const filteredSectors = useMemo(() => {
     let list = sectors;
 
-    // Filter by mode
-    if (filterMode === 'evaluated') {
-      list = list.filter((s) => s.status !== 'unassessed' && s.status !== 'pending');
+    if (filterMode === 'assessed') {
+      list = list.filter(
+        (s) => s.status !== 'unassessed' && s.status !== 'pending'
+      );
     } else if (filterMode === 'candidate') {
       list = list.filter((s) => s.status === 'candidate');
     } else if (filterMode === 'clear') {
@@ -58,326 +240,574 @@ export default function SectorInventoryTable({ sectors }: SectorInventoryTablePr
       list = list.filter((s) => s.isForestPriority);
     }
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
       list = list.filter(
         (s) =>
-          s.id.toLowerCase().includes(q) ||
-          s.district.toLowerCase().includes(q) ||
-          s.region.toLowerCase().includes(q)
+          s.id.toLowerCase().includes(query) ||
+          s.district.toLowerCase().includes(query) ||
+          s.region.toLowerCase().includes(query)
       );
     }
 
-    // Sort: evaluated sectors first, then by ID
+    const direction = sortDir === 'asc' ? 1 : -1;
+    const byId = (a: SectorItem, b: SectorItem) => a.id.localeCompare(b.id);
+
     return list.slice().sort((a, b) => {
-      const aEval = a.status !== 'unassessed' && a.status !== 'pending';
-      const bEval = b.status !== 'unassessed' && b.status !== 'pending';
-      if (aEval && !bEval) return -1;
-      if (!aEval && bEval) return 1;
-      return a.id.localeCompare(b.id);
+      let comparison = 0;
+
+      switch (sortKey) {
+        case 'id':
+          comparison = byId(a, b);
+          break;
+        case 'district':
+          comparison =
+            a.district.localeCompare(b.district) || byId(a, b);
+          break;
+        case 'status':
+          comparison =
+            (STATUS_RANK[a.status] ?? 9) - (STATUS_RANK[b.status] ?? 9) ||
+            byId(a, b);
+          break;
+        case 'landAreaKm2':
+          comparison = a.landAreaKm2 - b.landAreaKm2 || byId(a, b);
+          break;
+        case 'batchDay':
+          comparison = a.batchDay - b.batchDay || byId(a, b);
+          break;
+        case 'lastObservation': {
+          const aDate = a.lastMonitored || a.lastAttempt || '';
+          const bDate = b.lastMonitored || b.lastAttempt || '';
+          comparison = aDate.localeCompare(bDate) || byId(a, b);
+          break;
+        }
+        default:
+          comparison = byId(a, b);
+      }
+
+      return comparison * direction;
     });
-  }, [sectors, filterMode, searchQuery]);
+  }, [sectors, filterMode, searchQuery, sortKey, sortDir]);
 
-  const totalPages = Math.ceil(filteredSectors.length / pageSize) || 1;
-  const paginatedSectors = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    return filteredSectors.slice(start, start + pageSize);
-  }, [filteredSectors, currentPage, pageSize]);
+  const totalPages = Math.max(1, Math.ceil(filteredSectors.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const pageRows = filteredSectors.slice(startIndex, startIndex + PAGE_SIZE);
 
-  const handleFilterChange = (
-    mode: 'all' | 'evaluated' | 'candidate' | 'clear' | 'cloud_obscured' | 'forest_priority'
-  ) => {
+  const hasActiveFilters = filterMode !== 'all' || searchQuery.trim().length > 0;
+
+  const resetPage = () => setPage(1);
+
+  const changeFilter = (mode: FilterMode) => {
     setFilterMode(mode);
-    setCurrentPage(1);
+    resetPage();
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setCurrentPage(1);
+  const changeSearch = (value: string) => {
+    setSearchQuery(value);
+    resetPage();
   };
 
-  // Counts for tabs
-  const evaluatedCount = useMemo(
-    () => sectors.filter((s) => s.status !== 'unassessed' && s.status !== 'pending').length,
-    [sectors]
-  );
-  const candidateCount = useMemo(
-    () => sectors.filter((s) => s.status === 'candidate').length,
-    [sectors]
-  );
-  const clearCount = useMemo(
-    () => sectors.filter((s) => s.status === 'clear').length,
-    [sectors]
-  );
-  const cloudCount = useMemo(
-    () => sectors.filter((s) => s.status === 'cloud_obscured').length,
-    [sectors]
-  );
-  const forestCount = useMemo(
-    () => sectors.filter((s) => s.isForestPriority).length,
-    [sectors]
-  );
+  const changeSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir((dir) => (dir === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+    resetPage();
+  };
+
+  const resetAll = () => {
+    setFilterMode('all');
+    setSearchQuery('');
+    setPage(1);
+  };
+
+  const filters: Array<{ mode: FilterMode; label: string; count: number }> = [
+    { mode: 'all', label: 'All sectors', count: counts.total },
+    { mode: 'assessed', label: 'Assessed in Pilot', count: counts.assessed },
+    { mode: 'candidate', label: 'Candidate Detected', count: counts.candidate },
+    { mode: 'clear', label: 'No qualifying change detected', count: counts.clear },
+    {
+      mode: 'cloud_obscured',
+      label: 'Cloud Obscured',
+      count: counts.cloudObscured,
+    },
+    {
+      mode: 'forest_priority',
+      label: 'Forest priority',
+      count: counts.forestPriority,
+    },
+  ];
+
+  const legendStatuses = (
+    Object.keys(counts.statusCounts) as SectorStatusCode[]
+  ).filter((status) => counts.statusCounts[status] > 0);
+
+  const firstShown = filteredSectors.length === 0 ? 0 : startIndex + 1;
+  const lastShown = Math.min(startIndex + PAGE_SIZE, filteredSectors.length);
 
   return (
-    <section id="inventory" className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-[#1e293b]">
-        <div className="space-y-0.5">
-          <h2 className="text-lg font-bold text-white font-mono uppercase tracking-wide flex items-center space-x-2">
-            <Layers className="w-4 h-4 text-emerald-400" />
-            <span>Maharashtra Sector Grid Inventory</span>
-          </h2>
-          <p className="text-xs text-slate-400 font-sans">
-            Searchable index of all {sectors.length.toLocaleString()} canonical 15×15 km monitoring sectors with verified status and map deep links.
-          </p>
-        </div>
+    <section id="inventory" className="space-y-10">
+      <SectionHeading
+        eyebrow="Sector inventory"
+        title="Every sector, and how far the pilot has reached"
+        lead={
+          <>
+            The catalogue holds {counts.total.toLocaleString()} canonical 15 × 15
+            km sectors across 36 districts. Only a handful have been assessed;
+            everything else is honestly marked pending or unassessed. Search,
+            filter and sort the full index below.
+          </>
+        }
+        action={
+          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.14em] text-ice-500">
+            <span>
+              <span className="text-ice-100">
+                {counts.total.toLocaleString()}
+              </span>{' '}
+              sectors
+            </span>
+            <span aria-hidden="true" className="h-3 w-px bg-white/10" />
+            <span>
+              <span className="text-ice-100">{counts.assessed}</span> assessed
+            </span>
+            <span aria-hidden="true" className="h-3 w-px bg-white/10" />
+            <span>
+              <span className="text-signal-400">{counts.candidate}</span>{' '}
+              unconfirmed
+            </span>
+          </div>
+        }
+      />
 
-        <div className="text-xs font-mono text-slate-400">
-          Showing <span className="text-white font-bold">{filteredSectors.length}</span> matching sectors
-        </div>
-      </div>
+      <Reveal>
+        <div className="panel overflow-hidden rounded-3xl">
+          {/* Command bar */}
+          <div className="space-y-4 p-5 sm:p-6">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="relative w-full lg:max-w-sm">
+                <label htmlFor="sector-inventory-search" className="sr-only">
+                  Search sectors by ID, district or region
+                </label>
+                <Search
+                  className="pointer-events-none absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ice-500"
+                  aria-hidden="true"
+                />
+                <input
+                  id="sector-inventory-search"
+                  type="text"
+                  inputMode="search"
+                  value={searchQuery}
+                  onChange={(event) => changeSearch(event.target.value)}
+                  placeholder="Search sectors by ID, district or region"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className="h-11 w-full rounded-full border border-white/10 bg-white/[0.03] pl-10 pr-10 font-mono text-[12px] text-ice-100 transition-colors placeholder:text-ice-500 focus:border-aqua/40 focus:outline-none focus:ring-2 focus:ring-aqua/25"
+                />
+                {searchQuery ? (
+                  <button
+                    type="button"
+                    onClick={() => changeSearch('')}
+                    aria-label="Clear search"
+                    className="absolute right-2.5 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-ice-500 transition-colors hover:bg-white/[0.06] hover:text-ice-100"
+                  >
+                    <X className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                ) : null}
+              </div>
 
-      {/* Controls: Search Bar & Filter Tabs */}
-      <div className="space-y-3">
-        {/* Search Input */}
-        <div className="relative">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search sectors by ID (e.g. MH-R01-C06), district (e.g. Sindhudurg), or region..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#080d16] border border-slate-800 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500/60 focus:ring-1 focus:ring-emerald-500/60 transition"
-          />
-        </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                <p
+                  className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-ice-400"
+                  aria-live="polite"
+                >
+                  <span className="text-ice-100">
+                    {filteredSectors.length.toLocaleString()}
+                  </span>{' '}
+                  matching sectors
+                </p>
+                {hasActiveFilters ? (
+                  <button
+                    type="button"
+                    onClick={resetAll}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-ice-400 transition-colors hover:border-aqua/40 hover:text-aqua"
+                  >
+                    <RotateCcw className="h-3 w-3" aria-hidden="true" />
+                    Reset
+                  </button>
+                ) : null}
+              </div>
+            </div>
 
-        {/* Filter Pills */}
-        <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
-          <button
-            onClick={() => handleFilterChange('all')}
-            className={`px-3 py-1.5 rounded-lg border transition ${
-              filterMode === 'all'
-                ? 'bg-emerald-950 border-emerald-500/60 text-emerald-300 font-bold'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            All Sectors ({sectors.length.toLocaleString()})
-          </button>
-
-          <button
-            onClick={() => handleFilterChange('evaluated')}
-            className={`px-3 py-1.5 rounded-lg border transition ${
-              filterMode === 'evaluated'
-                ? 'bg-blue-950 border-blue-500/60 text-blue-300 font-bold'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            Assessed in Pilot ({evaluatedCount})
-          </button>
-
-          <button
-            onClick={() => handleFilterChange('candidate')}
-            className={`px-3 py-1.5 rounded-lg border transition ${
-              filterMode === 'candidate'
-                ? 'bg-amber-950 border-amber-500/60 text-amber-300 font-bold'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            Candidate Detected ({candidateCount})
-          </button>
-
-          <button
-            onClick={() => handleFilterChange('clear')}
-            className={`px-3 py-1.5 rounded-lg border transition ${
-              filterMode === 'clear'
-                ? 'bg-emerald-950 border-emerald-500/60 text-emerald-300 font-bold'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            No qualifying change detected ({clearCount})
-          </button>
-
-          <button
-            onClick={() => handleFilterChange('cloud_obscured')}
-            className={`px-3 py-1.5 rounded-lg border transition ${
-              filterMode === 'cloud_obscured'
-                ? 'bg-slate-800 border-slate-600 text-slate-200 font-bold'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            Cloud Obscured ({cloudCount})
-          </button>
-
-          <button
-            onClick={() => handleFilterChange('forest_priority')}
-            className={`px-3 py-1.5 rounded-lg border transition ${
-              filterMode === 'forest_priority'
-                ? 'bg-forest-950 border-forest-500/60 text-forest-300 font-bold'
-                : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-            }`}
-          >
-            Forest Priority ({forestCount})
-          </button>
-        </div>
-      </div>
-
-      {/* Accessible Table Container */}
-      <div className="border border-slate-800 rounded-xl overflow-hidden bg-[#080d16] shadow-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left font-mono text-xs border-collapse" role="table">
-            <caption className="sr-only">
-              Maharashtra 15×15 km canonical sector monitoring inventory
-            </caption>
-            <thead>
-              <tr className="bg-[#0b121e] border-b border-slate-800 text-[11px] text-slate-400 uppercase tracking-wider">
-                <th scope="col" className="px-4 py-3 font-semibold">Sector ID</th>
-                <th scope="col" className="px-4 py-3 font-semibold">District / Agro-Climatic Zone</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Monitoring Status</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Terrestrial Land Area</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Cadence Batch</th>
-                <th scope="col" className="px-4 py-3 font-semibold">Last Observation</th>
-                <th scope="col" className="px-4 py-3 font-semibold text-right">Map Explorer</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60">
-              {paginatedSectors.length > 0 ? (
-                paginatedSectors.map((sector) => {
-                  const meta = STATUS_META[sector.status] || STATUS_META.unassessed;
-                  const isAssessed = sector.status !== 'unassessed' && sector.status !== 'pending';
-
-                  return (
-                    <tr
-                      key={sector.id}
-                      className="hover:bg-slate-900/40 transition group"
+            {/* Status / attribute filters */}
+            <div
+              role="group"
+              aria-label="Filter sectors"
+              className="flex flex-wrap items-center gap-1.5"
+            >
+              {filters.map((filter) => {
+                const active = filterMode === filter.mode;
+                return (
+                  <button
+                    key={filter.mode}
+                    type="button"
+                    onClick={() => changeFilter(filter.mode)}
+                    aria-pressed={active}
+                    className={clsx(
+                      'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 font-mono text-[11px] tracking-[0.04em] transition-colors',
+                      active
+                        ? 'border-aqua/40 bg-aqua/[0.08] text-aqua'
+                        : 'border-white/10 bg-white/[0.02] text-ice-400 hover:border-white/20 hover:text-ice-100'
+                    )}
+                  >
+                    {filter.label}
+                    <span
+                      className={clsx(
+                        'tabular-nums',
+                        active ? 'text-aqua/70' : 'text-ice-500'
+                      )}
                     >
-                      {/* Sector ID */}
-                      <td className="px-4 py-3 font-bold text-white whitespace-nowrap">
-                        <div className="flex items-center space-x-2">
-                          <span>{sector.id}</span>
-                          {sector.isForestPriority && (
+                      {filter.count.toLocaleString()}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/[0.06] pt-3">
+              <span className="font-mono text-[9.5px] uppercase tracking-[0.16em] text-ice-500">
+                Legend
+              </span>
+              {legendStatuses.map((status) => (
+                <span
+                  key={status}
+                  className="inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.13em] text-ice-400"
+                  title={STATUS_META[status]?.description}
+                >
+                  <span
+                    className={clsx('h-1.5 w-1.5 rounded-full', LEGEND_DOT[status])}
+                    aria-hidden="true"
+                  />
+                  {LEGEND_LABEL[status]}
+                  <span className="text-ice-500 tabular-nums">
+                    {counts.statusCounts[status].toLocaleString()}
+                  </span>
+                </span>
+              ))}
+              <span className="inline-flex items-center gap-1.5 font-mono text-[9.5px] uppercase tracking-[0.13em] text-ice-400">
+                <Trees className="h-3 w-3 text-bio/70" aria-hidden="true" />
+                FSI priority sector
+              </span>
+            </div>
+          </div>
+
+          {/* Mobile scroll hint */}
+          {filteredSectors.length > 0 ? (
+            <div className="flex items-center justify-between gap-3 border-t border-white/[0.07] px-5 pt-3 lg:hidden">
+              <p className="font-mono text-[9.5px] uppercase tracking-[0.14em] text-ice-500">
+                Swipe horizontally for every column
+              </p>
+              <ArrowLeftRight
+                className="h-3 w-3 shrink-0 text-ice-500"
+                aria-hidden="true"
+              />
+            </div>
+          ) : null}
+
+          {/* Table / empty state */}
+          <div className="max-h-[clamp(24rem,66vh,42rem)] overflow-auto overscroll-contain border-t border-white/[0.07]">
+            {filteredSectors.length > 0 ? (
+              <table role="table" className="w-full min-w-[860px] border-collapse text-left">
+                <caption className="sr-only">
+                  Maharashtra 15 × 15 km sector inventory. {filteredSectors.length}{' '}
+                  matching sectors of {counts.total.toLocaleString()} catalogue
+                  sectors, with district, region, batch day, terrestrial land
+                  area, forest priority, monitoring status and last observation.
+                </caption>
+                <thead>
+                  <tr>
+                    <SortHeader
+                      label="Sector"
+                      column="id"
+                      activeKey={sortKey}
+                      dir={sortDir}
+                      onSort={changeSort}
+                      className="pl-5"
+                    />
+                    <SortHeader
+                      label="District / region"
+                      column="district"
+                      activeKey={sortKey}
+                      dir={sortDir}
+                      onSort={changeSort}
+                    />
+                    <SortHeader
+                      label="Status"
+                      column="status"
+                      activeKey={sortKey}
+                      dir={sortDir}
+                      onSort={changeSort}
+                    />
+                    <SortHeader
+                      label="Land area"
+                      column="landAreaKm2"
+                      activeKey={sortKey}
+                      dir={sortDir}
+                      onSort={changeSort}
+                    />
+                    <SortHeader
+                      label="Batch day"
+                      column="batchDay"
+                      activeKey={sortKey}
+                      dir={sortDir}
+                      onSort={changeSort}
+                    />
+                    <SortHeader
+                      label="Last observation"
+                      column="lastObservation"
+                      activeKey={sortKey}
+                      dir={sortDir}
+                      onSort={changeSort}
+                    />
+                    <th
+                      scope="col"
+                      className="sticky top-0 z-20 border-b border-white/[0.08] bg-ink-850/95 px-5 py-3 text-right backdrop-blur-sm"
+                    >
+                      <span className="font-mono text-[9.5px] font-medium uppercase tracking-[0.16em] text-ice-400">
+                        Explorer
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="divide-y divide-white/[0.055]">
+                  {pageRows.map((sector) => {
+                    const monitoredDay = formatUtcDay(sector.lastMonitored);
+                    const attemptedDay = formatUtcDay(sector.lastAttempt);
+                    const meta = STATUS_META[sector.status] ?? STATUS_META.unassessed;
+
+                    return (
+                      <tr
+                        key={sector.id}
+                        className="group transition-colors hover:bg-white/[0.025]"
+                      >
+                        <td
+                          className="whitespace-nowrap px-4 py-3 pl-5 text-left font-mono text-[12px] font-medium text-ice-100"
+                        >
+                          <span className="flex items-center gap-2">
+                            {sector.id}
+                            {sector.isForestPriority ? (
+                              <span
+                                title="Forest Survey of India priority sector"
+                                className="inline-flex items-center gap-1 rounded-full border border-bio/25 bg-bio/[0.06] px-1.5 py-0.5 font-mono text-[8.5px] uppercase tracking-[0.12em] text-bio-400"
+                              >
+                                <Trees
+                                  className="h-2.5 w-2.5"
+                                  aria-hidden="true"
+                                />
+                                Forest
+                              </span>
+                            ) : null}
+                          </span>
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <span className="block text-[12.5px] text-ice-100">
+                            {sector.district}
+                          </span>
+                          <span className="mt-0.5 block font-mono text-[9.5px] uppercase tracking-[0.12em] text-ice-500">
+                            {sector.region}
+                          </span>
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-3">
+                          <StatusPill
+                            variant={PILL_VARIANT[sector.status]}
+                            className="px-2 py-0.5 text-[9px]"
+                          >
+                            {PILL_LABEL[sector.status]}
+                          </StatusPill>
+                          {sector.reason ? (
                             <span
-                              title="FSI Priority Forest Sector"
-                              className="px-1.5 py-0.5 rounded bg-emerald-950/80 border border-emerald-800 text-[10px] text-emerald-400 flex items-center space-x-1"
+                              className="mt-1 block max-w-[14rem] truncate font-mono text-[10px] text-ice-500"
+                              title={sector.reason}
                             >
-                              <Trees className="w-2.5 h-2.5" />
-                              <span className="text-[9px]">Forest</span>
+                              {sector.reason}
+                            </span>
+                          ) : sector.status === 'candidate' ? (
+                            <span className="mt-1 block font-mono text-[9.5px] uppercase tracking-[0.12em] text-signal-400/80">
+                              Awaiting ground truth
+                            </span>
+                          ) : null}
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-3">
+                          <span className="block font-mono text-[12px] text-ice-200">
+                            {sector.landAreaKm2.toFixed(2)} km²
+                          </span>
+                          <span className="mt-0.5 block font-mono text-[9.5px] uppercase tracking-[0.12em] text-ice-500">
+                            {((sector.landAreaKm2 / CELL_AREA_KM2) * 100).toFixed(
+                              1
+                            )}
+                            % of cell
+                          </span>
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-3 font-mono text-[11.5px] text-ice-400">
+                          Day {sector.batchDay}{' '}
+                          <span className="text-ice-500">of 21</span>
+                        </td>
+
+                        <td className="whitespace-nowrap px-4 py-3">
+                          {monitoredDay ? (
+                            <span className="inline-flex items-center gap-1.5 font-mono text-[11.5px] text-ice-200">
+                              <span
+                                className="h-1 w-1 rounded-full bg-bio"
+                                aria-hidden="true"
+                              />
+                              {monitoredDay}
+                            </span>
+                          ) : attemptedDay ? (
+                            <span className="inline-flex items-center gap-1.5 font-mono text-[11.5px] text-ice-400">
+                              <span
+                                className="h-1 w-1 rounded-full bg-signal/70"
+                                aria-hidden="true"
+                              />
+                              {attemptedDay}
+                              <span className="font-sans text-[10.5px] text-ice-500">
+                                (incomplete)
+                              </span>
+                            </span>
+                          ) : (
+                            <span className="font-mono text-[11px] text-ice-500">
+                              Not yet assessed
                             </span>
                           )}
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* District & Region */}
-                      <td className="px-4 py-3 text-slate-300 font-sans text-xs">
-                        <span className="font-semibold text-white">{sector.district}</span>
-                        <span className="text-slate-500 block text-[11px] font-mono">{sector.region}</span>
-                      </td>
-
-                      {/* Status */}
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${meta.badgeClass}`}
-                        >
-                          {meta.shortLabel.toUpperCase()}
-                        </span>
-                        {sector.reason && (
-                          <span className="block text-[10px] text-slate-500 font-mono mt-0.5 max-w-xs truncate" title={sector.reason}>
-                            {sector.reason}
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Terrestrial Land Area */}
-                      <td className="px-4 py-3 whitespace-nowrap text-slate-200">
-                        <span className="font-semibold">{sector.landAreaKm2.toFixed(2)} km²</span>
-                        <span className="text-slate-500 text-[10px] block">
-                          {((sector.landAreaKm2 / 225.0) * 100).toFixed(1)}% terrestrial
-                        </span>
-                      </td>
-
-                      {/* Batch Day */}
-                      <td className="px-4 py-3 whitespace-nowrap text-slate-400 text-xs">
-                        Day {sector.batchDay} of 21
-                      </td>
-
-                      {/* Last Observation */}
-                      <td className="px-4 py-3 whitespace-nowrap text-xs">
-                        {sector.lastMonitored ? (
-                          <span className="text-emerald-400 font-semibold">
-                            {new Date(sector.lastMonitored).toLocaleDateString('en-GB', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric'
-                            })}
-                          </span>
-                        ) : sector.lastAttempt ? (
-                          <span className="text-slate-400">
-                            {new Date(sector.lastAttempt).toLocaleDateString('en-GB', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric'
-                            })} (Incomplete)
-                          </span>
-                        ) : (
-                          <span className="text-slate-600">Not yet assessed</span>
-                        )}
-                      </td>
-
-                      {/* Map Link Action */}
-                      <td className="px-4 py-3 whitespace-nowrap text-right">
-                        <Link
-                          href={`/explore?sector=${sector.id}`}
-                          className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-900 group-hover:bg-emerald-950 border border-slate-800 group-hover:border-emerald-700/60 text-slate-300 group-hover:text-emerald-300 text-xs font-semibold transition"
-                          title={`Open ${sector.id} in Satellite Map Explorer`}
-                        >
-                          <span>Explore</span>
-                          <ArrowRight className="w-3 h-3 text-slate-500 group-hover:text-emerald-400 transition" />
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-slate-500 font-mono text-xs">
-                    No sectors match the query &ldquo;{searchQuery}&rdquo;. Try another filter or search term.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination Bar */}
-        <div className="p-4 border-t border-slate-800 bg-[#0b121e] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
-          <div>
-            Showing <span className="text-white font-bold">{Math.min(filteredSectors.length, (currentPage - 1) * pageSize + 1)}</span> to{' '}
-            <span className="text-white font-bold">{Math.min(filteredSectors.length, currentPage * pageSize)}</span> of{' '}
-            <span className="text-white font-bold">{filteredSectors.length.toLocaleString()}</span> sectors
+                        <td className="whitespace-nowrap px-4 py-3 pr-5 text-right">
+                          <Link
+                            href={`/explore?sector=${sector.id}`}
+                            aria-label={`Open sector ${sector.id} in the explorer`}
+                            title={`Open ${sector.id} in the sector explorer`}
+                            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.02] px-3 py-1.5 font-mono text-[9.5px] uppercase tracking-[0.13em] text-ice-300 transition-colors hover:border-aqua/40 hover:text-aqua"
+                          >
+                            Explore
+                            <ArrowUpRight
+                              className="h-3 w-3"
+                              aria-hidden="true"
+                            />
+                          </Link>
+                          <span className="sr-only">{meta.label}</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            ) : (
+              <div
+                role="status"
+                className="flex flex-col items-center justify-center gap-3 px-6 py-20 text-center"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-ice-400">
+                  <SearchX
+                    className="h-5 w-5"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                </span>
+                <p className="font-heading text-lg text-ice-100">
+                  No sectors match this view
+                </p>
+                <p className="max-w-sm text-[12.5px] leading-relaxed text-ice-400">
+                  {searchQuery.trim()
+                    ? `Nothing in the catalogue matches “${searchQuery.trim()}”.`
+                    : 'No sectors carry this status in the current data.'}{' '}
+                  Try a sector ID such as MH-R01-C06, a district name, or reset
+                  the filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={resetAll}
+                  className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-aqua/30 px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-[0.13em] text-aqua transition-colors hover:bg-aqua/10"
+                >
+                  <RotateCcw className="h-3 w-3" aria-hidden="true" />
+                  Reset filters
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage <= 1}
-              className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 disabled:opacity-30 disabled:pointer-events-none hover:bg-slate-800 text-slate-300 hover:text-white transition"
-              aria-label="Previous page"
+          {/* Pagination */}
+          <div className="flex flex-col gap-3 border-t border-white/[0.07] bg-white/[0.015] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-ice-500">
+              Showing{' '}
+              <span className="text-ice-200">
+                {firstShown.toLocaleString()}–{lastShown.toLocaleString()}
+              </span>{' '}
+              of{' '}
+              <span className="text-ice-200">
+                {filteredSectors.length.toLocaleString()}
+              </span>{' '}
+              matching · {counts.total.toLocaleString()} catalogue sectors ·{' '}
+              {PAGE_SIZE} per page
+            </p>
+
+            <nav
+              aria-label="Sector inventory pagination"
+              className="flex items-center gap-1.5"
             >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <span className="px-2 text-slate-300">
-              Page <strong className="text-white">{currentPage}</strong> of <strong className="text-white">{totalPages}</strong>
-            </span>
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage >= totalPages}
-              className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 disabled:opacity-30 disabled:pointer-events-none hover:bg-slate-800 text-slate-300 hover:text-white transition"
-              aria-label="Next page"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+              <button
+                type="button"
+                onClick={() => setPage(1)}
+                disabled={currentPage <= 1}
+                aria-label="First page"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-ice-300 transition-colors hover:border-aqua/40 hover:text-aqua disabled:pointer-events-none disabled:opacity-30"
+              >
+                <ChevronsLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setPage(currentPage - 1)}
+                disabled={currentPage <= 1}
+                aria-label="Previous page"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-ice-300 transition-colors hover:border-aqua/40 hover:text-aqua disabled:pointer-events-none disabled:opacity-30"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+
+              <span className="px-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ice-500">
+                Page <span className="text-ice-100">{currentPage}</span>
+                <span aria-hidden="true"> / </span>
+                <span className="sr-only">of</span> {totalPages}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setPage(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                aria-label="Next page"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-ice-300 transition-colors hover:border-aqua/40 hover:text-aqua disabled:pointer-events-none disabled:opacity-30"
+              >
+                <ChevronRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setPage(totalPages)}
+                disabled={currentPage >= totalPages}
+                aria-label="Last page"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.02] text-ice-300 transition-colors hover:border-aqua/40 hover:text-aqua disabled:pointer-events-none disabled:opacity-30"
+              >
+                <ChevronsRight className="h-3.5 w-3.5" aria-hidden="true" />
+              </button>
+            </nav>
           </div>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }

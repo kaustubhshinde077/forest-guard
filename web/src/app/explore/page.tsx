@@ -11,7 +11,7 @@ const MapLibreExplorer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-[calc(100vh-64px)] bg-[#05070a] flex flex-col items-center justify-center font-mono text-xs text-slate-400 space-y-3">
+      <div className="w-full h-[calc(100vh-64px)] mt-16 bg-[#05070a] flex flex-col items-center justify-center font-mono text-xs text-slate-400 space-y-3">
         <div className="w-6 h-6 border-2 border-emerald-500/40 border-t-emerald-400 rounded-full animate-spin" />
         <div className="text-slate-300 font-semibold tracking-wider">
           INITIALIZING GEOSPATIAL CORE & SECTOR GRID...
@@ -44,7 +44,7 @@ export default function ExplorePage() {
   }, []);
 
   return (
-    <div className="w-full h-[calc(100vh-64px)] bg-[#05070a] overflow-hidden">
+    <div className="w-full h-[calc(100vh-64px)] mt-16 bg-[#05070a] overflow-hidden">
       <MapLibreExplorer
         monitoringState={monitoringState}
         candidates={candidates}

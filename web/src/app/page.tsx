@@ -135,7 +135,7 @@ export default function Home() {
                 {terrestrialLandKm2.toFixed(2)} km²
               </div>
               <div className="text-xs font-sans text-slate-400">
-                0.13% of 307,492.71 km² state boundary area
+                0.13% of 307,492.71 km² GIS-derived state-boundary area
               </div>
             </div>
           </div>
@@ -145,9 +145,9 @@ export default function Home() {
         <section aria-label="Recent Candidate Investigations" className="space-y-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/[0.08]">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-amber-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                <span>Unconfirmed Candidate Detections</span>
+              <div className="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-ice-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-bio"></span>
+                <span>Unconfirmed candidate detections</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-heading font-bold text-white tracking-tight">
                 Candidate Investigations
@@ -161,7 +161,7 @@ export default function Home() {
               href="/investigations"
               className="inline-flex items-center space-x-2 text-xs font-sans font-semibold text-[#3DFFB0] hover:text-[#64ffc4] transition-colors self-start sm:self-auto group"
             >
-              <span>View All {candidateCount} Candidates</span>
+              <span>View all {candidateCount} candidates</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
@@ -203,8 +203,8 @@ export default function Home() {
                   {/* Candidate Content Body */}
                   <div className="p-5 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-amber-500/10 border border-amber-500/25 text-amber-400 font-medium">
-                        <AlertTriangle className="w-2.5 h-2.5" />
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 font-mono text-[9.5px] uppercase tracking-[0.14em] text-ice-300">
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ice-400" aria-hidden="true" />
                         <span>[UNCONFIRMED CANDIDATE]</span>
                       </span>
                       <span className="text-[11px] font-mono text-slate-400">
@@ -226,9 +226,9 @@ export default function Home() {
                     </div>
 
                     <div className="pt-2.5 border-t border-white/[0.06] flex items-center justify-between text-xs font-mono">
-                      <span className="text-slate-400">Estimated Change:</span>
-                      <span className="text-amber-300 font-semibold">
-                        {candidate.affected_area_hectares.toFixed(2)} ha (±{candidate.measurement_uncertainty_hectares.toFixed(2)})
+                      <span className="text-slate-400">Candidate Area:</span>
+                      <span className="text-white font-semibold" title="Perimeter-discretization engineering uncertainty at 10 m GSD">
+                        {candidate.affected_area_hectares.toFixed(2)} ha <span className="text-slate-400 font-normal">±{candidate.measurement_uncertainty_hectares.toFixed(2)}</span>
                       </span>
                     </div>
                   </div>
@@ -316,7 +316,7 @@ export default function Home() {
                 Ground-Truth Public Dossiers
               </h3>
               <p className="text-sm font-sans text-slate-400 leading-relaxed">
-                Each candidate alert generates an evidence dossier with split before/after sliders, geospatial bounding boxes, administrative context, and links to PARIVESH statutory environmental clearances.
+                Each candidate alert generates an evidence dossier with split before/after sliders, geospatial bounding boxes, administrative context, and retrieved contextual records from public environmental registries.
               </p>
             </div>
           </div>

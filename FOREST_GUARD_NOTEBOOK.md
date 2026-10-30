@@ -1564,3 +1564,79 @@ The complete 18-combination matrix across 6 viewports and 3 visitor states was c
   - Status & Methodology Page Suite: **25 / 25 PASS**
   - Dossier & Split Slider Suite: **25 / 25 PASS**
   - Investigations Feed Suite: **21 / 21 PASS**
+
+
+## 23. Execution of Design Specification v0.2 & Comprehensive Visual Acceptance (2026-10-30)
+
+### 23.1 Objectives & Scope
+Executed the authoritative **Forest Guard Design Specification v0.2** across the Next.js frontend (`web/`), bridging DeepSeek's component library foundations with Antigravity's MapLibre 3D Earth system, while enforcing strict epistemic honesty standards, WAI-ARIA accessibility, and zero-compromise test fidelity.
+
+### 23.2 Architecture & Changes Summary
+
+1. **Shared Design Foundation (Phase 1):**
+   - **Single Source of Truth:** `web/DESIGN_SYSTEM.md` authored to codify the consolidated palette (`#05060F` ink background, `#3DFFB0` bioluminescent teal, `#4CC9F0` aqua accent, `#F4A261` amber signal), hairline surface hierarchy, typography scale (Space Grotesk, Inter, JetBrains Mono), and non-negotiable design invariants.
+   - **Global Navigation (`Navbar.tsx`):** Fixed 64px (`h-16`) height; 4 approved primary routes: `Overview`, `Map`, `Investigations`, `Methodology`; removed nonexistent `/about` link; removed redundant desktop `Explore` action; active tab indicated by 1.5px teal underline; mobile drawer (< 900px) dynamically applies `role="dialog"` and `aria-modal="true"` only when open to prevent DOM collisions with modal dialogs; Escape-to-dismiss and body scroll lock fully integrated.
+   - **Footer (`Footer.tsx`):** Aligned platform links to the 4 approved route labels; removed `/about`; aligned dual CTAs ("Open the map", "Read the methodology").
+   - **Primary Action Restyling (`Button.tsx`):** Restyled primary button variant to crisp `#3DFFB0` teal with dark text `#05060F`, 10–12px radius, no colored glow, hover arrow shift `translate-x-[2px]`, and keyboard focus ring `focus-visible:ring-bio`.
+
+2. **Homepage & Explore Map (Phase 2):**
+   - **Homepage (`page.tsx`):** 0.13% state-boundary denominator explicitly labelled "GIS-derived state-boundary area"; updated candidate cards to neutral status badging `[UNCONFIRMED CANDIDATE]`; Step 01–03 copy updated per methodology instructions.
+   - **Globe Hero (`GlobeHero.tsx`):** Resolved runtime visibility defect where MapLibre container was constrained by `opacity-0` pending `map.once('idle')` (which never fired during continuous orbital animation). Container is now permanently visible (`opacity-100`); `globeReady` set immediately upon `map.on('load')`; NASA GIBS Blue Marble 2004 textures rendered on 3D globe; luminous `#3DFFB0` teal boundary layer with crisp stroke (`2.5px`), soft halo (`6px`), and subtle area fill (`0.22`) rendered across all visitor states.
+   - **Map Explorer (`explore/page.tsx` & `MapLibreExplorer.tsx`):** Container height configured to `h-[calc(100vh-64px)]` with `mt-16` offset to sit cleanly under the 64px navbar; filter buttons disambiguated to `All (1,479)`, `Sectors with candidates (3)`, `No qualifying change (1)`, `Cloud-obscured (1)`; `geoJsonError` recovery banner added; geographic status legend updated.
+
+3. **Investigations Feed (Phase 3):**
+   - **Feed Page (`investigations/page.tsx`):** Added persistent technical provenance & pilot coverage disclaimer banner (`Staged Pilot Mode: Partial Coverage`, `5 of 1,479 grid sectors assessed`, `100% S2-L2A`, `73.97 ha discrete component area sum`, `Sentinel-2 cloudless 2020 by EOX` basemap clarification); 4th metric displays `Monitored land area: 390.86 km²`.
+   - **Feed Component (`CandidateInvestigationsFeed.tsx`):** Neutral candidate badge `[Candidate (unconfirmed)]`; search input placeholder updated to `Search candidate dossiers, sectors, or shapes`; view buttons updated to `aria-label="Grid Card View"` and `aria-label="Tabular List View"`; counter updated to `Showing X of 20 candidates`; `Reset Filters` button text casing normalized; list view refactored to an accessible semantic `<table>` with `<thead>` and `<tbody>`; `CandidateCard` footer button visibly displays `Inspect Dossier`.
+
+4. **Investigation Dossiers (Phase 4):**
+   - **Dossier Page (`investigations/[id]/page.tsx`):** Container padding set to `pt-24 pb-16 sm:pt-28` to clear 64px navbar.
+   - **Detail View (`CandidateDetailView.tsx`):** Breadcrumbs updated to `Investigations / {parentSectorId} / {candidateId}`; uncertainty relabelled to `±X ha (perimeter discretization)`; section title renamed to `Contextual Public Records & Regional Inquiries` with statutory disclaimer: *"Automated public registry search. Does not confirm statutory clearance status or ground-truth legality."*; replaced `Verified Clearance` with `Contextual Public Record`; parent sector link updated to `View Parent Sector on Map` (`/explore?sector=...`); observation provenance note added for `MH-R01-C10` records.
+   - **Interactive Comparison Slider (`CandidateImageCompareSlider.tsx`):** Preserves natural aspect ratio for rectangular `MH-R07-C09` (`aspect-[880/1586]`) and square `MH-R01-C10`/`MH-R01-C06` using `object-contain bg-black` without distorted cropping; resolved keyboard event handling via synchronous `ref` callback listener and direct `aria-valuenow` DOM attribute synchronization for instantaneous responsiveness to ArrowLeft/ArrowRight (+/-5%) and Home/End (0%/100%).
+   - **Dossier Modal (`CandidateDossierModal.tsx`):** Stacking elevated to `z-[80]`; uncertainty keyword explicitly preserved in telemetry; citations section renamed and disclaimer updated; `Verified Clearance` replaced with `Contextual Public Record`.
+
+5. **Status & Methodology (Phase 5):**
+   - **Status Page (`status/page.tsx`):** Un-nested `StatusOverviewHero` so it renders full-bleed; wrapped subsequent sections in `max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16`; added data error recovery banner.
+   - **Status Overview Hero (`StatusOverviewHero.tsx`):** Eyebrow banner updated to `STAGED PILOT MODE — PARTIAL COVERAGE` with satellite icon and unambiguous coverage scope text.
+   - **Monitoring Metrics Grid (`MonitoringMetricsGrid.tsx`):** Replaced "credited monitored land" phrasing with "monitored land area"; metric cards accurately titled `Candidate Detected`, `No Qualifying Change`, and `Cloud Obscured · Incomplete`.
+   - **Sector Inventory Table (`SectorInventoryTable.tsx`):** Added `role="table"` to `<table>` for accessible table semantics; filter tabs labelled `Assessed in Pilot`, `Candidate Detected`, `No qualifying change detected`, `Cloud Obscured`; search placeholder updated to `Search sectors by ID, district or region`; first column rendered as `<td>` containing Sector ID (`MH-R01-C06`, etc.) for clean tabular queries and accessibility tools.
+
+### 23.3 Verification & Test Execution Results
+
+All verification suites executed against the static production build (`NEXT_PUBLIC_BASE_PATH="/forest-guard" npm run build`):
+
+| Test Suite | Script | Total Checks | Passed | Failed | Pass Rate |
+|---|---|---|---|---|---|
+| **Globe 3D & Responsive Viewports** | `test-globe-verification.mjs` | 28 | 28 | 0 | **100.0%** |
+| **Investigations Candidate Feed** | `test-investigations-feed.mjs` | 21 | 21 | 0 | **100.0%** |
+| **Candidate Dossier & Image Slider** | `test-dossier-page.mjs` | 25 | 25 | 0 | **100.0%** |
+| **Status, Telemetry & Methodology** | `test-status-page.mjs` | 25 | 25 | 0 | **100.0%** |
+| **TOTAL** | — | **99** | **99** | **0** | **100.0%** |
+
+**Static Export Verification:**
+- Route Count: `27 / 27` static routes prerendered cleanly into `web/out/`.
+- Derived Sector GeoJSON: `398.8 KB` (Passes budget of `< 400 KB`).
+- TypeScript Compilation: `npx tsc --noEmit` exited `0` with zero diagnostic errors.
+
+**Raster Pixel Verification (NASA GIBS Earth & Teal Maharashtra Boundary):**
+- Python PIL pixel analysis on `overview-1440x900-maharashtra-flyin.png`:
+  - Canvas non-dark pixels: **349,624** (NASA GIBS Blue Marble textures clearly visible).
+  - Teal/cyan boundary pixels: **5,555** (Bioluminescent `#3DFFB0` state boundary unmistakably prominent).
+- Python PIL pixel analysis on `overview-1440x900-returning-session.png`:
+  - Canvas non-dark pixels: **350,762**.
+  - Teal/cyan boundary pixels: **4,908**.
+
+### 23.4 Comprehensive Screenshot Acceptance Manifest
+
+The complete visual acceptance matrix was refreshed and persisted to `<appDataDir>/brain/542e92d3-7284-4d6b-8ff9-143904edbb5f/screenshots/`:
+- **18 Viewport/State Combinations:** Fresh intro, post fly-in, and returning session across 1600×780, 1440×900, 1366×768, 1024×768, 768×1024 (portrait tablet), and 390×667 (mobile).
+- **2 Full-Page Captures:** `overview-1440px-full-page.png` and `overview-390px-mobile-full-page.png`.
+- **1 Mobile 375×667 Validation:** `overview-375x667-validation.png` (zero horizontal overflow: `scrollWidth === 375px`; primary CTA above fold: `617px <= 667px`; hamburger menu verified).
+- **8 Representative Route Captures:** Desktop (1440px) and Mobile (375px) captures of `/explore/`, `/investigations/`, `/investigations/INC-MH-R07-C09-20261026-115/`, and `/status/`.
+- **Machine-Readable Index:** `screenshot-manifest.json` updated with camera coordinates, zoom levels, and layout metrics.
+
+### 23.5 Repository Constraints & Compliance Checklist
+- [x] **No Git Resets / Rewrites:** No resets, cleans, stashes, or history modifications.
+- [x] **No Unapproved Commits or Pushes:** Local tree maintained cleanly; zero commits or pushes created.
+- [x] **No Backend Modifications:** Python pipeline (`src/forestguard/`), GIS sector files, and authoritative data JSON files untouched.
+- [x] **Monitoring Disabled:** Scheduled monitoring in `.github/workflows/monitor.yml` confirmed disabled (`# schedule:`).
+- [x] **Append-Only Notebook:** Maintained strict append-only compliance for `FOREST_GUARD_NOTEBOOK.md`.
